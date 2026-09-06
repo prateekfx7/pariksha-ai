@@ -90,8 +90,40 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-inner">
-        {/* 💻 DESKTOP & LAPTOPS: Command Search Bar */}
-        <div
+      {/* 📱 MOBILE ONLY: Brand Logo — Logo and title on mobile devices */}
+      <Link href="/dashboard" className="header-logo header-mobile-only hide-desktop" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }} aria-label="Pariksha AI Home">
+        <div style={{
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          background: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+          flexShrink: 0
+        }}>
+          <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+        <div style={{
+          fontFamily: "'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontSize: 20,
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          lineHeight: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4
+        }}>
+          <span>Pariksha</span>
+          <span style={{ color: 'var(--primary)' }}>AI</span>
+        </div>
+      </Link>
+
+      {/* 💻 DESKTOP & LAPTOPS: Command Search Bar */}
+      <div
         className="header-search"
         ref={searchRef}
         style={{
@@ -237,24 +269,20 @@ export default function Header() {
         {/* 💻 DESKTOP ONLY: Vertical Divider */}
         <div className="header-divider header-desktop-only hide-mobile" />
 
-        {/* 📱💻 ALWAYS VISIBLE (Mobile & Desktop): Officer ID Badge & Menu */}
+        {/* 📱💻 Profile Avatar Button */}
         <div ref={userMenuRef} style={{ position: 'relative' }}>
           <button
             onClick={() => setShowUserMenu(prev => !prev)}
             className={`header-user-btn ${showUserMenu ? 'active' : ''}`}
-            aria-label="Officer Profile & ID Menu"
+            aria-label="Officer Profile Menu"
           >
             <div className="header-avatar-wrap">
               <div className="header-avatar">
-                {currentUser.avatar}
+                {currentUser.avatar || 'P'}
               </div>
               <span className="header-status-dot" />
             </div>
-            <div className="header-user-meta header-desktop-only hide-mobile">
-              <span className="header-user-name">{currentUser.name}</span>
-              <span className="header-user-badge">ID #{currentUser.id}</span>
-            </div>
-            <span className="header-user-mobile-badge header-mobile-only hide-desktop">ID #{currentUser.id}</span>
+            <span className="header-user-name header-desktop-only hide-mobile">{currentUser.name}</span>
             <ChevronDown size={13} className={`header-user-chevron ${showUserMenu ? 'open' : ''}`} />
           </button>
 
@@ -281,7 +309,7 @@ export default function Header() {
                     <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{currentUser.role}</p>
                     <p style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{currentUser.department}</p>
                   </div>
-                  <span className="tag tag-priority" style={{ fontSize: 10, fontWeight: 700, flexShrink: 0 }}>ID #{currentUser.id}</span>
+                  <span className="tag tag-priority" style={{ fontSize: 10, fontWeight: 700, flexShrink: 0 }}>MoSPI Verified</span>
                 </div>
                 {/* XP & Streak stats */}
                 <div style={{
