@@ -182,10 +182,7 @@ export default function LandingPage() {
         <nav className={`relative z-30 w-full flex justify-between items-center px-4 sm:px-8 md:px-12 lg:px-16 xl:px-24 py-4 md:py-5 bg-transparent animate-fade-in ${manrope.className}`}>
           {/* Brand Logo */}
           <Link href="/landing" className="flex items-center gap-2.5 text-white font-bold text-lg sm:text-xl tracking-tight hover:opacity-90 hover:scale-[1.02] transition-all duration-200 shrink-0">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary fill-current transition-transform duration-300 hover:rotate-3">
-              <path d="M1.04356 6.35771L13.6437 0.666504V5.70019C13.6437 7.74704 12.5284 9.63851 10.741 10.613L1.04356 15.8974V6.35771Z"/>
-              <path d="M22.9564 17.6423L10.3563 23.3335V18.2998C10.3563 16.253 11.4716 14.3615 13.259 13.387L22.9564 8.1026V17.6423Z"/>
-            </svg>
+            <img src="/logo.png" alt="Pariksha AI Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover shadow-md transition-transform duration-300 hover:rotate-6" />
             <span className="text-white">Pariksha <span className="text-primary">AI</span></span>
           </Link>
 
@@ -830,10 +827,7 @@ export default function LandingPage() {
           {/* Brand Info */}
           <div className="max-w-sm">
             <div className={`flex items-center gap-2.5 text-white font-bold text-lg sm:text-xl mb-3 sm:mb-4 ${manrope.className}`}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary fill-current">
-                <path d="M1.04356 6.35771L13.6437 0.666504V5.70019C13.6437 7.74704 12.5284 9.63851 10.741 10.613L1.04356 15.8974V6.35771Z"/>
-                <path d="M22.9564 17.6423L10.3563 23.3335V18.2998C10.3563 16.253 11.4716 14.3615 13.259 13.387L22.9564 8.1026V17.6423Z"/>
-              </svg>
+              <img src="/logo.png" alt="Pariksha AI Logo" className="w-7 h-7 rounded-lg object-cover shadow-sm" />
               <span>Pariksha <span className="text-primary">AI</span></span>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed text-[#9a938c] mb-5 sm:mb-6">

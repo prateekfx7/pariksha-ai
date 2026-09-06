@@ -34,7 +34,8 @@ export default function Sidebar() {
     <aside className={`sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/dashboard" style={{ textDecoration: 'none' }} onClick={handleNavClick}>
-          <div className="sidebar-logo" style={{ borderBottom: 'none', padding: '4px 0 16px', margin: 0 }}>
+          <div className="sidebar-logo" style={{ borderBottom: 'none', padding: '4px 0 16px', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 28, height: 28, borderRadius: 7, objectFit: 'cover' }} />
             <div className="sidebar-logo-text">
               Pariksha <span>AI</span>
             </div>

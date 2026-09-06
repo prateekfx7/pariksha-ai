@@ -128,7 +128,8 @@ export default function LoginPage({ onLogin }) {
             pointerEvents: 'none',
           }} />
 
-          <div style={{ marginBottom: 24, zIndex: 1 }}>
+          <div style={{ marginBottom: 24, zIndex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
             <h2 style={{
               fontFamily: "'Bootzy TM', 'BootzyTM', sans-serif",
               fontSize: 32,

@@ -91,8 +91,9 @@ export default function Header() {
     <header className="header">
       <div className="header-inner">
       {/* 📱 MOBILE ONLY: Brand Logo (Bootzy TM font) — Logo and ID only on mobile devices */}
-      <Link href="/dashboard" className="header-logo header-mobile-only hide-desktop" style={{ textDecoration: 'none' }} aria-label="Pariksha AI Home">
-        <span className="sidebar-logo-text" style={{ fontSize: 24, letterSpacing: '0.02em', display: 'inline-flex', alignItems: 'center' }}>
+      <Link href="/dashboard" className="header-logo header-mobile-only hide-desktop" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }} aria-label="Pariksha AI Home">
+        <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 26, height: 26, borderRadius: 6, objectFit: 'cover' }} />
+        <span className="sidebar-logo-text" style={{ fontSize: 22, letterSpacing: '0.02em', display: 'inline-flex', alignItems: 'center' }}>
           Pariksha <span>AI</span>
         </span>
       </Link>

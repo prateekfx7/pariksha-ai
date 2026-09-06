@@ -6,6 +6,11 @@ export const metadata = {
   title: 'Pariksha AI — Diagnose the Gap. Personalize the Path.',
   description: 'AI-powered competency assessment platform for India\'s Official Statistical System. Diagnose skill gaps, get personalized course recommendations, and auto-generate quizzes from any content.',
   keywords: 'Pariksha AI, iGOT Karmayogi, competency assessment, skill gap analysis, AI quiz generator, official statistics',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export const viewport = {
