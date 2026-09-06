@@ -111,7 +111,7 @@ export default function Header() {
           fontSize: 20,
           fontWeight: 700,
           letterSpacing: '-0.02em',
-          color: '#ffffff',
+          color: 'var(--text-primary)',
           lineHeight: 1,
           display: 'flex',
           alignItems: 'center',

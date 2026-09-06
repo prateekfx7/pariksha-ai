@@ -228,13 +228,25 @@ export function AppProvider({ children }) {
   const gapData = calculateGapScores(userSkills, currentUser.role);
   const recommendations = getRecommendations(gapData.gapList);
 
-  // Theme toggle
+  // Theme management (Light / Dark)
   const toggleTheme = useCallback(() => {
     setTheme(prev => {
       const nextTheme = prev === 'dark' ? 'light' : 'dark';
       try { localStorage.setItem('pariksha_theme', nextTheme); } catch (e) {}
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-theme', nextTheme);
+      }
       return nextTheme;
     });
+  }, []);
+
+  const setThemeMode = useCallback((mode) => {
+    const nextTheme = mode === 'light' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try { localStorage.setItem('pariksha_theme', nextTheme); } catch (e) {}
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', nextTheme);
+    }
   }, []);
 
   useEffect(() => {
@@ -478,6 +490,8 @@ export function AppProvider({ children }) {
       unreadCount,
       theme,
       toggleTheme,
+      setTheme: setThemeMode,
+      setThemeMode,
       showGuideModal,
       setShowGuideModal,
       resetToZero,

@@ -10,7 +10,7 @@ export default function SettingsPage() {
     language, setLanguage,
     defaultDifficulty, setDefaultDifficulty,
     notifPrefs, toggleNotifPref,
-    theme, toggleTheme,
+    theme, toggleTheme, setThemeMode,
     resetToZero, setShowGuideModal
   } = useApp();
 
@@ -231,14 +231,14 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className={`btn btn-sm ${theme === 'dark' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                onClick={() => setThemeMode('dark')}
                 style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
                 <Moon size={14} /> Dark Charcoal
               </button>
               <button
                 className={`btn btn-sm ${theme === 'light' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => { if (theme !== 'light') toggleTheme(); }}
+                onClick={() => setThemeMode('light')}
                 style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
                 <Sun size={14} /> Clean Light
