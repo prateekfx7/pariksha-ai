@@ -36,7 +36,7 @@ export default function AppShell({ children }) {
     return () => window.removeEventListener('keydown', handleGlobalKeys);
   }, [showGuideModal, mobileSidebarOpen, toggleMobileSidebar, setShowGuideModal]);
 
-  const isPublicRoute = pathname === '/landing';
+  const isPublicRoute = pathname === '/landing' || pathname === '/';
 
   if (!isLoggedIn && !isPublicRoute) {
     return <LoginPage onLogin={login} />;
