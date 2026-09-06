@@ -90,12 +90,36 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-inner">
-      {/* 📱 MOBILE ONLY: Brand Logo (Bootzy TM font) — Logo and ID only on mobile devices */}
-      <Link href="/dashboard" className="header-logo header-mobile-only hide-desktop" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }} aria-label="Pariksha AI Home">
-        <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 26, height: 26, borderRadius: 6, objectFit: 'cover' }} />
-        <span className="sidebar-logo-text" style={{ fontSize: 22, letterSpacing: '0.02em', display: 'inline-flex', alignItems: 'center' }}>
-          Pariksha <span>AI</span>
-        </span>
+      {/* 📱 MOBILE ONLY: Brand Logo — Logo and title on mobile devices */}
+      <Link href="/dashboard" className="header-logo header-mobile-only hide-desktop" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }} aria-label="Pariksha AI Home">
+        <div style={{
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          background: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+          flexShrink: 0
+        }}>
+          <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+        <div style={{
+          fontFamily: "'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontSize: 20,
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          lineHeight: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4
+        }}>
+          <span>Pariksha</span>
+          <span style={{ color: 'var(--primary)' }}>AI</span>
+        </div>
       </Link>
 
       {/* 💻 DESKTOP & LAPTOPS: Command Search Bar */}

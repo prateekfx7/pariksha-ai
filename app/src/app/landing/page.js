@@ -181,9 +181,11 @@ export default function LandingPage() {
         {/* Navbar */}
         <nav className={`relative z-30 w-full flex justify-between items-center px-4 sm:px-8 md:px-12 lg:px-16 xl:px-24 py-4 md:py-5 bg-transparent animate-fade-in ${manrope.className}`}>
           {/* Brand Logo */}
-          <Link href="/landing" className="flex items-center gap-2.5 text-white font-bold text-lg sm:text-xl tracking-tight hover:opacity-90 hover:scale-[1.02] transition-all duration-200 shrink-0">
-            <img src="/logo.png" alt="Pariksha AI Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover shadow-md transition-transform duration-300 hover:rotate-6" />
-            <span className="text-white">Pariksha <span className="text-primary">AI</span></span>
+          <Link href="/landing" className="flex items-center gap-3 text-white font-bold text-lg sm:text-xl tracking-tight hover:opacity-90 hover:scale-[1.02] transition-all duration-200 shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-white flex items-center justify-center overflow-hidden shadow-md shrink-0">
+              <img src="/logo.png" alt="Pariksha AI Logo" className="w-full h-full object-cover block" />
+            </div>
+            <span className="text-white font-bold text-xl tracking-tight">Pariksha <span className="text-primary">AI</span></span>
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -826,9 +828,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-8 sm:gap-12 mb-10 sm:mb-12">
           {/* Brand Info */}
           <div className="max-w-sm">
-            <div className={`flex items-center gap-2.5 text-white font-bold text-lg sm:text-xl mb-3 sm:mb-4 ${manrope.className}`}>
-              <img src="/logo.png" alt="Pariksha AI Logo" className="w-7 h-7 rounded-lg object-cover shadow-sm" />
-              <span>Pariksha <span className="text-primary">AI</span></span>
+            <div className={`flex items-center gap-3 text-white font-bold text-lg sm:text-xl mb-3 sm:mb-4 ${manrope.className}`}>
+              <div className="w-8 h-8 rounded-[9px] bg-white flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+                <img src="/logo.png" alt="Pariksha AI Logo" className="w-full h-full object-cover block" />
+              </div>
+              <span className="text-white font-bold text-lg tracking-tight">Pariksha <span className="text-primary">AI</span></span>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed text-[#9a938c] mb-5 sm:mb-6">
               Diagnose the gap and personalize the path. The AI-powered competency management and skill audit platform for civil servants and government departments.

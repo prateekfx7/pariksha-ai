@@ -129,17 +129,34 @@ export default function LoginPage({ onLogin }) {
           }} />
 
           <div style={{ marginBottom: 24, zIndex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
+            <div style={{
+              width: 40,
+              height: 40,
+              borderRadius: 11,
+              background: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
+              flexShrink: 0
+            }}>
+              <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
             <h2 style={{
-              fontFamily: "'Bootzy TM', 'BootzyTM', sans-serif",
-              fontSize: 32,
-              fontWeight: 400,
+              fontFamily: "'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontSize: 28,
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
               color: '#ffffff',
               margin: 0,
-              letterSpacing: '0.02em',
-              lineHeight: 1.1
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
             }}>
-              Pariksha <span style={{ color: 'var(--primary-light)' }}>AI</span>
+              <span>Pariksha</span>
+              <span style={{ color: 'var(--primary-light)' }}>AI</span>
             </h2>
           </div>
 

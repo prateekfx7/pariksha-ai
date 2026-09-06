@@ -34,10 +34,34 @@ export default function Sidebar() {
     <aside className={`sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/dashboard" style={{ textDecoration: 'none' }} onClick={handleNavClick}>
-          <div className="sidebar-logo" style={{ borderBottom: 'none', padding: '4px 0 16px', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: 28, height: 28, borderRadius: 7, objectFit: 'cover' }} />
-            <div className="sidebar-logo-text">
-              Pariksha <span>AI</span>
+          <div className="sidebar-logo" style={{ borderBottom: 'none', padding: '0 0 20px', margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
+              flexShrink: 0
+            }}>
+              <img src="/logo.png" alt="Pariksha AI Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+            <div style={{
+              fontFamily: "'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontSize: 22,
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5
+            }}>
+              <span>Pariksha</span>
+              <span style={{ color: 'var(--primary)' }}>AI</span>
             </div>
           </div>
         </Link>
