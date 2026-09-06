@@ -1,0 +1,200 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { Play, Clock, Award, BrainCircuit, Search, Filter, CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { useApp } from '@/context/AppContext';
+import Link from 'next/link';
+
+export default function QuizListPage() {
+  const { generatedQuizzes, quizHistory } = useApp();
+  const [animateIn, setAnimateIn] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState('All');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
+  const [searchFilter, setSearchFilter] = useState('');
+
+  useEffect(() => { setAnimateIn(true); }, []);
+
+  const skillsList = ['All', 'Survey Design', 'Data Science & Analytics', 'Official Statistics', 'Economic Statistics', 'GIS & Spatial Analysis'];
+
+  // Check if a quiz was completed in quizHistory
+  const isQuizCompleted = (quizId) => {
+    return quizHistory.some(h => h.quizId === quizId);
+  };
+
+  const filteredQuizzes = generatedQuizzes.filter(quiz => {
+    const matchesSkill = selectedSkill === 'All' || quiz.skill.toLowerCase().includes(selectedSkill.toLowerCase());
+    const matchesDiff = selectedDifficulty === 'All' || quiz.difficulty.toLowerCase() === selectedDifficulty.toLowerCase();
+    const matchesSearch = !searchFilter.trim() || quiz.title.toLowerCase().includes(searchFilter.toLowerCase()) || quiz.skill.toLowerCase().includes(searchFilter.toLowerCase());
+    return matchesSkill && matchesDiff && matchesSearch;
+  });
+
+  const hasActiveFilters = selectedSkill !== 'All' || selectedDifficulty !== 'All' || searchFilter.trim().length > 0;
+  const resetFilters = () => {
+    setSelectedSkill('All');
+    setSelectedDifficulty('All');
+    setSearchFilter('');
+  };
+
+  return (
+    <div className={animateIn ? 'fade-in' : ''}>
+      <div className="section-header mb-6">
+        <div>
+          <h1 className="section-title">Assessment & Diagnostic Quizzes</h1>
+          <p className="section-subtitle">Validate your statistical competencies, close your diagnostic skill gaps, and earn iGOT-recognized XP</p>
+        </div>
+        <Link href="/quiz-generator" className="btn btn-primary">
+          <BrainCircuit size={16} /> AI Quiz Generator
+        </Link>
+      </div>
+
+      {/* Quiz History Summary */}
+      {quizHistory.length > 0 && (
+        <div className="stats-row mb-6">
+          <div className="stat-card">
+            <div className="stat-icon orange"><Award size={22} /></div>
+            <div className="stat-content">
+              <h3>{quizHistory.length}</h3>
+              <p>Quizzes Completed</p>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon green"><Award size={22} /></div>
+            <div className="stat-content">
+              <h3>{Math.round(quizHistory.reduce((s, q) => s + q.scorePercent, 0) / quizHistory.length)}%</h3>
+              <p>Average Score</p>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon blue"><Clock size={22} /></div>
+            <div className="stat-content">
+              <h3>{quizHistory.reduce((s, q) => s + Math.ceil(q.totalQuestions * 1.5), 0)} min</h3>
+              <p>Time Invested</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filter and Search Bar */}
+      <div className="card mb-6" style={{ padding: 16 }}>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ flex: 1, minWidth: 180, width: '100%', position: 'relative' }}>
+            <input
+              type="text"
+              placeholder="Filter by quiz title or topic..."
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Difficulty:</span>
+            <select
+              value={selectedDifficulty}
+              onChange={(e) => setSelectedDifficulty(e.target.value)}
+              style={{ width: 130 }}
+            >
+              <option>All</option>
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Skill Chips */}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingTop: 12 }}>
+          {skillsList.map(skill => (
+            <button
+              key={skill}
+              className={`btn btn-sm ${selectedSkill === skill ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setSelectedSkill(skill)}
+              style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', fontSize: 12 }}
+            >
+              {skill}
+            </button>
+          ))}
+        </div>
+
+        {/* Active Filters Summary */}
+        {hasActiveFilters && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid var(--border-light)', marginTop: 10 }}>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+              Showing <strong>{filteredQuizzes.length}</strong> of {generatedQuizzes.length} quizzes
+            </span>
+            <button
+              onClick={resetFilters}
+              style={{
+                background: 'none', border: 'none', color: 'var(--primary)',
+                cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                display: 'inline-flex', alignItems: 'center', gap: 4, padding: 0
+              }}
+            >
+              <X size={13} /> Reset Filters
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Available Quizzes Grid */}
+      <div className="grid-3">
+        {filteredQuizzes.map((quiz, i) => {
+          const completed = isQuizCompleted(quiz.id);
+          const historyItem = quizHistory.find(h => h.quizId === quiz.id);
+
+          return (
+            <div key={quiz.id} className="card fade-in" style={{ animationDelay: `${0.04 * i}s`, display: 'flex', flexDirection: 'column' }}>
+              <div className="flex-between mb-3">
+                <span className={`tag ${quiz.difficulty === 'Easy' ? 'tag-easy' : quiz.difficulty === 'Hard' ? 'tag-hard' : 'tag-medium'}`}>
+                  {quiz.difficulty}
+                </span>
+                <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{quiz.questionCount} Questions</span>
+              </div>
+
+              <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>
+                {quiz.title}
+              </h4>
+
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
+                Domain: <strong style={{ color: 'var(--text-primary)' }}>{quiz.skill}</strong>
+              </p>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, fontSize: 12, color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-light)', paddingTop: 10 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Clock size={14} /> ~{Math.ceil(quiz.questionCount * 1.5)} min
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--warning)' }}>
+                  <Zap size={14} /> +{quiz.questionCount * 30} XP
+                </span>
+              </div>
+
+              <div style={{ marginTop: 'auto' }}>
+                {completed ? (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Link href={`/quiz/${quiz.id}`} className="btn btn-outline" style={{ flex: 1, justifyContent: 'center' }}>
+                      Retake ({historyItem ? `${historyItem.scorePercent}%` : 'Done'})
+                    </Link>
+                  </div>
+                ) : (
+                  <Link href={`/quiz/${quiz.id}`} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                    <Play size={16} /> Start Assessment
+                  </Link>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {filteredQuizzes.length === 0 && (
+        <div className="empty-state">
+          <BrainCircuit size={48} />
+          <h3>No matching assessments found</h3>
+          <p>Try clearing your filters or generate a custom quiz with the AI Quiz Generator.</p>
+          <button className="btn btn-outline mt-4" onClick={() => { setSelectedSkill('All'); setSelectedDifficulty('All'); setSearchFilter(''); }}>
+            Reset Filters
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
