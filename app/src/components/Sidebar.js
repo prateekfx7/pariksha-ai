@@ -3,16 +3,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, BrainCircuit, PenTool,
-  BarChart3, Settings, Bell, Trophy, Zap, MessageSquare, X, HelpCircle
+  BarChart3, Settings, Bell, Trophy, Zap, MessageSquare, X, HelpCircle,
+  Terminal, TrendingUp, ShieldCheck
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-const navItems = [
+const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/micro-learning', label: 'AI Micro-Learning', icon: Zap },
+  { href: '/practical-tasks', label: 'Practical Tasks', icon: Terminal },
+  { href: '/readiness', label: 'Role Readiness', icon: TrendingUp },
+  { href: '/portfolio', label: 'Skill Evidence', icon: ShieldCheck },
   { href: '/recommendations', label: 'Recommendations', icon: BookOpen },
   { href: '/quiz-generator', label: 'Quiz Generator', icon: BrainCircuit },
   { href: '/quiz', label: 'Take Quiz', icon: PenTool },
-  { href: '/admin', label: 'Admin Analytics', icon: BarChart3 },
+  { href: '/admin', label: 'Cadre Heatmap', icon: BarChart3 },
   { href: '/collaboration', label: 'Discussion Hub', icon: MessageSquare },
 ];
 
@@ -89,7 +94,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map(item => {
+        {mainNavItems.map(item => {
           const Icon = item.icon;
           const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
           return (

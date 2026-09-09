@@ -2883,3 +2883,220 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* =========================================
+   Advanced Modules Design System
+   ========================================= */
+
+/* ─── Skill Decay Badges & Controls ─── */
+.decay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.decay-badge.fresh {
+  background: rgba(52, 211, 153, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.decay-badge.fading {
+  background: rgba(251, 191, 36, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+.decay-badge.at_risk {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  animation: pulseRisk 2s infinite ease-in-out;
+}
+@keyframes pulseRisk {
+  0%, 100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+  50% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+}
+
+.refresher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-glow);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.refresher-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ─── AI Micro-Learning & 3D Flashcards ─── */
+.flashcard-wrapper {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 580px;
+  height: 280px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flashcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+.flashcard-front {
+  background: var(--bg-card);
+  border-top: 4px solid var(--primary);
+}
+.flashcard-back {
+  background: var(--bg-surface);
+  border-top: 4px solid var(--accent-blue);
+  transform: rotateY(180deg);
+}
+
+/* ─── Practical Simulation Tasks Lab ─── */
+.task-table-wrapper {
+  overflow-x: auto;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  margin-bottom: 16px;
+}
+.task-snippet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+  font-size: 12px;
+}
+.task-snippet-table th {
+  background: var(--bg-elevated);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.task-snippet-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+.task-snippet-table tr:hover {
+  background: var(--bg-elevated);
+}
+
+.code-editor-area {
+  width: 100%;
+  min-height: 140px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+/* ─── Next-Role Readiness Gauge & Milestones ─── */
+.readiness-meter-circle {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.readiness-meter-circle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 10px;
+  background: conic-gradient(var(--primary) calc(var(--readiness-pct) * 1%), var(--border-light) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+}
+
+.cadre-path-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+}
+
+/* ─── Skill Evidence Passport Card ─── */
+.evidence-passport {
+  background: linear-gradient(135deg, rgba(240, 90, 40, 0.08) 0%, rgba(20, 20, 20, 0.95) 100%);
+  border: 1px solid rgba(240, 90, 40, 0.3);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+[data-theme="light"] .evidence-passport {
+  background: linear-gradient(135deg, rgba(240, 90, 40, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border: 1px solid rgba(240, 90, 40, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.evidence-passport::before {
+  content: 'GOVT OF INDIA • OFFICIAL STATISTICAL SYSTEM';
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-tertiary);
+  opacity: 0.6;
+}
+
+.hash-pill {
+  font-family: monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+

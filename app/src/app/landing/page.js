@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 import { Manrope, Cabin, Instrument_Serif, Inter } from 'next/font/google';
+import {
+  Zap, Terminal, TrendingUp, ShieldCheck, BarChart3, Clock,
+  Sparkles, ArrowUpRight, Award, CheckCircle2, ChevronRight, Play,
+  BookOpen, Brain, FileCheck, Layers
+} from 'lucide-react';
 
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 const cabin = Cabin({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
@@ -136,20 +141,32 @@ export default function LandingPage() {
       a: "Our proprietary AI models evaluate diagnostic answers based on conceptual context, analytical depth, and domain precision—going far beyond simple keyword checks. It cross-references scores against standardized MoSPI competency benchmarks to calculate exact deficit points."
     },
     {
+      q: "What is the Skill & Competency Decay Engine and how does it work?",
+      a: "Based on the Hermann Ebbinghaus forgetting curve, the decay engine monitors when each competency was last exercised. If an officer does not practice a skill for 14 days, it enters 'Fading' status (-0.7%/day); past 30 days, it is classified as 'At Risk' (up to -35% deficit). Officers can run the Freshness Time Machine slider to simulate intervals and trigger 1-click ⚡ micro-refreshers to instantly restore 100% freshness."
+    },
+    {
+      q: "How does the Next-Role Readiness Predictor support career promotions?",
+      a: "The Readiness Predictor tracks progress across the 6-tier MoSPI cadre ladder (Junior Statistical Officer, Senior Statistical Officer, Assistant Director, Deputy Director, Director, Deputy Director General). It evaluates an animated 0–100% readiness gauge, dual-radar benchmark comparisons, and provides an exportable APAR promotion dossier for Departmental Promotion Committee (DPC) reviews."
+    },
+    {
+      q: "What are AI Practical Tasks and how does the simulation lab evaluate submissions?",
+      a: "The Practical Simulation Lab places officers into real MoSPI scenarios—such as NSSO 79th Round sample multiplier reconciliation, SNA 2008 informal sector GVA imputation, and urban GIS harmonization. Officers review authentic data tables and submit Python/R code or official SOP protocols. An automated 3-tier AI rubric grades Methodology (40%), Compliance (35%), and Edge-Case Handling (25%), awarding +75 XP."
+    },
+    {
+      q: "What is the Skill Evidence Engine & Competency Passport?",
+      a: "The Skill Evidence Engine generates a tamper-evident MoSPI Competency Passport with a cryptographic SHA-256 integrity hash, QR seal, and verified audit logs. It compiles simulation results, diagnostic certificates, and field reports into an official APAR portfolio with a 1-click print dossier."
+    },
+    {
       q: "How does Pariksha AI integrate with iGOT Karmayogi?",
       a: "Pariksha AI is aligned with the National Programme for Civil Services Capacity Building (NPCSCB) framework. When competency gaps are identified, our algorithm dynamically recommends official iGOT Karmayogi and MoSPI courses directly targeted at closing those specific deficiencies."
     },
     {
+      q: "Can administrators view cadre-wide heatmaps and deploy automated interventions?",
+      a: "Yes. In the Cadre Heatmap, training directors can filter across All Cadres, ISS, or SSS, inspect skill deficits across all 10 MoSPI divisions (NAD, FOD, SDRD, ESD, etc.), view individual staff rosters, and deploy targeted micro-learning interventions to at-risk officers with 1 click."
+    },
+    {
       q: "Is government and departmental data protected and secure?",
       a: "Yes, security is foundational. Pariksha AI adheres to enterprise-grade security protocols, including AES-256 encryption at rest and in transit, strict role-based access control (RBAC), and alignment with government data residency guidelines."
-    },
-    {
-      q: "Can administrators generate customized quizzes from circulars & documents?",
-      a: "Absolutely. With our AI Quiz Generator, training directors and officers can paste circular text, enter specific topics, or upload training guidelines to create calibrated quizzes with instant answer key generation and multi-tier difficulty levels."
-    },
-    {
-      q: "Can officers re-take assessments to track competency improvement?",
-      a: "Yes. After completing recommended courses, officers can take verified re-assessments. Their updated competency radar and deficit scores update in real time on the officer dashboard and administrative analytics."
     }
   ];
 
@@ -191,10 +208,11 @@ export default function LandingPage() {
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex gap-6 xl:gap-8 items-center">
             <a href="#hero" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5">Home</a>
-            <a href="#features" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1 group">
-              Features
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-y-0.5 transition-transform duration-200"><path d="m6 9 6 6 6-6"/></svg>
+            <a href="#modules" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1 group">
+              <span>Ecosystem</span>
+              <span className="bg-primary/20 text-orange-300 text-[10px] font-bold px-1.5 py-0.2 rounded border border-primary/30">v3.0</span>
             </a>
+            <a href="#features" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5">Features</a>
             <a href="#how-it-works" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5">How it Works</a>
             <a href="#testimonials" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5">Reviews</a>
             <a href="#faq" className="text-white/80 hover:text-primary-light text-[14px] font-medium transition-all duration-200 hover:-translate-y-0.5">FAQ</a>
@@ -234,6 +252,10 @@ export default function LandingPage() {
         {mobileMenuOpen && (
           <div className="absolute top-16 sm:top-20 left-0 right-0 z-40 w-full px-5 sm:px-8 py-5 bg-[#1a1613]/98 backdrop-blur-2xl border-b border-white/15 lg:hidden flex flex-col gap-3 animate-fade-in shadow-2xl">
             <a href="#hero" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-primary-light py-2 text-base font-medium transition-colors border-b border-white/5">Home</a>
+            <a href="#modules" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-primary-light py-2 text-base font-medium transition-colors border-b border-white/5 flex items-center justify-between">
+              <span>Ecosystem Pillars</span>
+              <span className="bg-primary/20 text-orange-300 text-xs font-bold px-2 py-0.5 rounded border border-primary/30">v3.0</span>
+            </a>
             <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-primary-light py-2 text-base font-medium transition-colors border-b border-white/5">Features</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-primary-light py-2 text-base font-medium transition-colors border-b border-white/5">How it Works</a>
             <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-primary-light py-2 text-base font-medium transition-colors border-b border-white/5">Reviews</a>
@@ -252,8 +274,8 @@ export default function LandingPage() {
             style={{ animationDelay: '100ms' }}
             className={`opacity-0 animate-fade-in-up [animation-fill-mode:forwards] inline-flex items-center gap-2 bg-[rgba(65,45,35,0.6)] backdrop-blur-md border border-[rgba(240,90,40,0.35)] rounded-full py-1 px-3 sm:px-3.5 mb-5 sm:mb-6 text-white text-xs sm:text-[13.5px] font-medium shadow-sm transition-transform duration-300 hover:scale-105 ${cabin.className}`}
           >
-            <span className="bg-primary px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wide uppercase shadow-sm">New</span>
-            <span className="text-white/90 truncate">Pariksha AI v2.0 • MoSPI Framework Aligned</span>
+            <span className="bg-primary px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wide uppercase shadow-sm">v3.0 Ecosystem</span>
+            <span className="text-white/90 truncate">MoSPI Statistical Cadres • Micro-Learning • Simulation Lab • Decay Engine</span>
           </div>
 
           {/* Majestic Hero Headline with Warm Glowing Loop Animation */}
@@ -271,7 +293,7 @@ export default function LandingPage() {
             style={{ animationDelay: '300ms' }}
             className={`opacity-0 animate-fade-in-up [animation-fill-mode:forwards] text-[#d6cec7] text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mb-7 sm:mb-8 leading-relaxed font-normal px-2 ${inter.className}`}
           >
-            The AI-powered competency assessment platform designed to identify civil service skill gaps and generate personalized learning journeys for your team.
+            The complete AI competency ecosystem for India's Official Statistical System: diagnostic gap audits, Ebbinghaus skill decay tracking, practical simulation labs, and verified promotion readiness.
           </p>
 
           {/* Call to Action Buttons */}
@@ -320,7 +342,7 @@ export default function LandingPage() {
                   {/* Centered address pill */}
                   <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70 truncate ${manrope.className}`}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <span className="truncate">pariksha.ai/dashboard/pathways</span>
+                    <span className="truncate">pariksha.ai/cadre-ecosystem</span>
                   </div>
 
                   {/* MoSPI Synchronized Pill */}
@@ -364,15 +386,15 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col items-center group transition-transform duration-300 hover:-translate-y-1 p-2">
               <span className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary tracking-tight ${cabin.className}`}>
-                <AnimatedCounter end={10} decimals={0} suffix="x" duration={1800} />
+                <AnimatedCounter end={6} decimals={0} suffix=" Cadres" duration={1800} />
               </span>
-              <span className={`text-[#9a938c] text-[11px] sm:text-xs md:text-sm mt-1.5 ${inter.className}`}>Faster Pathway Generation</span>
+              <span className={`text-[#9a938c] text-[11px] sm:text-xs md:text-sm mt-1.5 ${inter.className}`}>JSO to DDG Promotion Ladder</span>
             </div>
             <div className="flex flex-col items-center group transition-transform duration-300 hover:-translate-y-1 p-2">
               <span className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight ${cabin.className}`}>
-                <AnimatedCounter end={50000} decimals={0} suffix="+" duration={2200} />
+                <AnimatedCounter end={35} decimals={0} suffix="%" duration={2200} />
               </span>
-              <span className={`text-[#9a938c] text-[11px] sm:text-xs md:text-sm mt-1.5 ${inter.className}`}>Civil Servants Benchmarked</span>
+              <span className={`text-[#9a938c] text-[11px] sm:text-xs md:text-sm mt-1.5 ${inter.className}`}>Ebbinghaus Decay Monitored</span>
             </div>
             <div className="flex flex-col items-center group transition-transform duration-300 hover:-translate-y-1 p-2">
               <span className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary-light tracking-tight ${cabin.className}`}>
@@ -382,6 +404,220 @@ export default function LandingPage() {
             </div>
           </div>
         </Reveal>
+      </section>
+
+
+      {/* ========================================================================= */}
+      {/* 6 ADVANCED ECOSYSTEM PILLARS SECTION                                      */}
+      {/* ========================================================================= */}
+      <section id="modules" className="relative py-16 sm:py-24 px-4 sm:px-8 md:px-12 lg:px-16 max-w-7xl mx-auto">
+        {/* Glow ambient background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[580px] md:w-[720px] h-[380px] bg-primary/15 rounded-full blur-[110px] pointer-events-none -z-10 animate-pulse-glow" />
+
+        {/* Section Header */}
+        <Reveal>
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20 px-2">
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-orange-300 mb-3 sm:mb-4 ${cabin.className}`}>
+              <Sparkles size={13} className="text-primary" />
+              <span>MoSPI Next-Gen Capabilities • v3.0</span>
+            </div>
+            <h2 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 sm:mb-5 tracking-tight ${instrumentSerif.className}`}>
+              6 Advanced Pillars of <i className="italic">Statistical Excellence</i>.
+            </h2>
+            <p className={`text-[#9a938c] text-sm sm:text-base md:text-lg leading-relaxed ${inter.className}`}>
+              From bite-sized flash retention and authentic MoSPI simulation labs to verified cryptographic competency passports and promotion readiness.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* 6 Pillars Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-7">
+          {/* Card 1: AI Micro-Learning Generator */}
+          <Reveal delay={100}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-5 text-primary group-hover:scale-110 group-hover:bg-primary/25 transition-all duration-300">
+                  <Zap size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-orange-500/10 border border-orange-500/20 text-xs font-medium text-orange-300 mb-3 ${cabin.className}`}>
+                  Rapid Retention
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  AI Micro-Learning Generator
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Generate 3D tactile flashcards, 60-second concept nuggets, and high-stakes administrative caselet decision drills. Immediately restores skill decay to 100% with +25 XP rewards.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">3D Flashcards</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">60s Nuggets</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Caselet Drills</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">Offline Bank + Gemini 1.5</span>
+                <Link href="/micro-learning" className="text-primary font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Launch Drills <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Card 2: AI Practical Task Generator & Simulation Lab */}
+          <Reveal delay={150}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mb-5 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/25 transition-all duration-300">
+                  <Terminal size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-xs font-medium text-blue-300 mb-3 ${cabin.className}`}>
+                  Applied Simulations
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  AI Practical Task Lab
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Hands-on MoSPI problem solving: sample multiplier reconciliation, informal sector GVA imputation, and GIS harmonization with a live Python/R protocol editor and 3-tier AI rubric.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Real Datasets</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Code Workspace</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">+75 XP Verified</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">3-Tier AI Evaluation</span>
+                <Link href="/practical-tasks" className="text-blue-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Enter Lab <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Card 3: Next-Role Readiness Predictor */}
+          <Reveal delay={200}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-5 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/25 transition-all duration-300">
+                  <TrendingUp size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-300 mb-3 ${cabin.className}`}>
+                  Promotion Intelligence
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  Next-Role Readiness Predictor
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Map cadre advancement from JSO to DDG. Calculates a dynamic 0–100% readiness score with comparative dual-radar overlays and printable APAR promotion review dossiers.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Cadre Ladder</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Dual-Radar Overlay</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">APAR Dossier</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">DPC Benchmark Criteria</span>
+                <Link href="/readiness" className="text-emerald-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Check Readiness <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Card 4: Skill Evidence Engine & Competency Passport */}
+          <Reveal delay={250}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mb-5 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/25 transition-all duration-300">
+                  <ShieldCheck size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-3 ${cabin.className}`}>
+                  Institutional Credential
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  Skill Evidence Passport
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Official holographic MoSPI Competency Passport with cryptographic SHA-256 verification hash, digital QR seal, supervisor endorsement workflows, and print-ready dossiers.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Holographic Card</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">SHA-256 Hash</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Endorsements</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">Tamper-Evident Proof</span>
+                <Link href="/portfolio" className="text-purple-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  View Passport <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Card 5: Department Cadre Skill Heatmap */}
+          <Reveal delay={300}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-5 text-amber-400 group-hover:scale-110 group-hover:bg-amber-500/25 transition-all duration-300">
+                  <BarChart3 size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs font-medium text-amber-300 mb-3 ${cabin.className}`}>
+                  Macro Analytics
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  Cadre & Decay Heatmap
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Macro oversight across 10 MoSPI divisions with ISS vs SSS cadre filtering, 3 metric views (Gap %, Score, Decay Risk %), staff roster drilldowns, and 1-click micro-interventions.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">ISS / SSS Breakdown</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Cell Drilldowns</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">1-Click Dispatch</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">10 MoSPI Divisions</span>
+                <Link href="/admin" className="text-amber-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Explore Heatmap <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Card 6: Ebbinghaus Skill & Competency Decay Engine */}
+          <Reveal delay={350}>
+            <div className="group relative h-full bg-[#1e1a17]/90 hover:bg-[#28221c]/95 backdrop-blur-xl border border-white/10 hover:border-primary/50 rounded-xl sm:rounded-2xl p-6 sm:p-7 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_45px_-10px_rgba(240,90,40,0.3)] flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mb-5 text-rose-400 group-hover:scale-110 group-hover:bg-rose-500/25 transition-all duration-300">
+                  <Clock size={24} />
+                </div>
+                <div className={`inline-block px-2.5 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-medium text-rose-300 mb-3 ${cabin.className}`}>
+                  Memory Retention
+                </div>
+                <h3 className={`text-lg sm:text-xl font-bold text-white mb-2.5 tracking-tight ${manrope.className}`}>
+                  Ebbinghaus Skill Decay Engine
+                </h3>
+                <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed mb-4 ${inter.className}`}>
+                  Tracks mathematical skill depreciation: ≤14 days (Fresh), 15–30 days (Fading), &gt;30 days (At Risk). Features an interactive 0–90 day Time Machine slider and 1-click ⚡ flash refreshers.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Forgetting Curve</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">Time Machine Slider</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5">1-Click Refresher</span>
+                </div>
+              </div>
+              <div className={`pt-4 border-t border-white/5 flex items-center justify-between text-xs ${manrope.className}`}>
+                <span className="text-white/40">Real-Time Calibration</span>
+                <Link href="/dashboard" className="text-rose-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Simulate Decay <ArrowUpRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
 
@@ -517,84 +753,107 @@ export default function LandingPage() {
           <Reveal>
             <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20 px-2">
               <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-orange-300 mb-3 sm:mb-4 ${cabin.className}`}>
-                <span>The Methodology</span>
+                <span>The Continuous Lifecycle</span>
               </div>
               <h2 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 sm:mb-5 tracking-tight ${instrumentSerif.className}`}>
-                A systematic pathway <i className="italic">to institutional mastery</i>.
+                A 4-stage pathway <i className="italic">to cadre mastery</i>.
               </h2>
               <p className={`text-[#9a938c] text-sm sm:text-base md:text-lg leading-relaxed ${inter.className}`}>
-                A 3-step closed-loop cycle designed to elevate competencies rapidly with empirical validation.
+                A continuous, empirical loop designed to calibrate skills, track retention decay, upskill rapidly, and prove readiness for promotion.
               </p>
             </div>
           </Reveal>
 
           {/* Steps Timeline / Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 relative">
             {/* Step 1 */}
             <Reveal delay={100}>
-              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
+              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
                 <div>
-                  <div className="flex items-center justify-between mb-6 sm:mb-8">
-                    <div className={`w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg sm:text-xl shadow-lg shadow-primary/40 group-hover:scale-110 transition-transform duration-300 ${cabin.className}`}>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`w-10 sm:w-11 h-10 sm:h-11 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-lg shadow-primary/40 group-hover:scale-110 transition-transform duration-300 ${cabin.className}`}>
                       01
                     </div>
-                    <span className={`text-xs uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20 ${cabin.className}`}>Diagnostic</span>
+                    <span className={`text-[11px] uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20 ${cabin.className}`}>Diagnostic</span>
                   </div>
-                  <h3 className={`text-xl sm:text-2xl font-bold text-white mb-2.5 sm:mb-3 tracking-tight ${manrope.className}`}>
-                    Take the Assessment
+                  <h3 className={`text-lg sm:text-xl font-bold text-white mb-2 tracking-tight ${manrope.className}`}>
+                    Baseline & Simulation
                   </h3>
-                  <p className={`text-[#9a938c] text-sm sm:text-base leading-relaxed ${inter.className}`}>
-                    Complete a baseline diagnostic quiz evaluating your conceptual understanding and practical problem-solving in your specific cadre role.
+                  <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed ${inter.className}`}>
+                    Take calibrated diagnostic MCQs and tackle hands-on MoSPI simulation challenges with real NSSO datasets to establish Day 0 capability baselines.
                   </p>
                 </div>
-                <div className="mt-6 sm:mt-8 pt-4 border-t border-white/5 text-xs text-white/40">
-                  Phase 1: Diagnostic Evaluation
+                <div className="mt-6 pt-3 border-t border-white/5 text-[11px] text-white/40">
+                  Phase 1: Initial Calibration
                 </div>
               </div>
             </Reveal>
 
             {/* Step 2 */}
             <Reveal delay={200}>
-              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
+              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
                 <div>
-                  <div className="flex items-center justify-between mb-6 sm:mb-8">
-                    <div className={`w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-[#241c17] text-orange-300 border border-orange-500/40 flex items-center justify-center font-bold text-lg sm:text-xl shadow-lg group-hover:scale-110 group-hover:border-primary/70 transition-transform duration-300 ${cabin.className}`}>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`w-10 sm:w-11 h-10 sm:h-11 rounded-xl bg-[#241c17] text-orange-300 border border-orange-500/40 flex items-center justify-center font-bold text-base sm:text-lg shadow-lg group-hover:scale-110 group-hover:border-primary/70 transition-transform duration-300 ${cabin.className}`}>
                       02
                     </div>
-                    <span className={`text-xs uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20 ${cabin.className}`}>Discovery</span>
+                    <span className={`text-[11px] uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20 ${cabin.className}`}>Audit</span>
                   </div>
-                  <h3 className={`text-xl sm:text-2xl font-bold text-white mb-2.5 sm:mb-3 tracking-tight ${manrope.className}`}>
-                    Review Your Gaps
+                  <h3 className={`text-lg sm:text-xl font-bold text-white mb-2 tracking-tight ${manrope.className}`}>
+                    Deficit & Decay Audit
                   </h3>
-                  <p className={`text-[#9a938c] text-sm sm:text-base leading-relaxed ${inter.className}`}>
-                    Analyze your customized radar chart to pinpoint exact skill deficits against the MoSPI benchmark standards.
+                  <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed ${inter.className}`}>
+                    Evaluate dual-radar benchmark gaps against your cadre thresholds while the Ebbinghaus engine tracks skill freshness and identifies at-risk competencies.
                   </p>
                 </div>
-                <div className="mt-6 sm:mt-8 pt-4 border-t border-white/5 text-xs text-white/40">
-                  Phase 2: Real-time Deficit Mapping
+                <div className="mt-6 pt-3 border-t border-white/5 text-[11px] text-white/40">
+                  Phase 2: Retention Tracking
                 </div>
               </div>
             </Reveal>
 
             {/* Step 3 */}
             <Reveal delay={300}>
-              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
+              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
                 <div>
-                  <div className="flex items-center justify-between mb-6 sm:mb-8">
-                    <div className={`w-11 sm:w-12 h-11 sm:h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg sm:text-xl shadow-lg shadow-primary/40 group-hover:scale-110 transition-transform duration-300 ${cabin.className}`}>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`w-10 sm:w-11 h-10 sm:h-11 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-lg shadow-primary/40 group-hover:scale-110 transition-transform duration-300 ${cabin.className}`}>
                       03
                     </div>
-                    <span className={`text-xs uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20 ${cabin.className}`}>Mastery</span>
+                    <span className={`text-[11px] uppercase font-semibold text-orange-300 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20 ${cabin.className}`}>Upskilling</span>
                   </div>
-                  <h3 className={`text-xl sm:text-2xl font-bold text-white mb-2.5 sm:mb-3 tracking-tight ${manrope.className}`}>
-                    Follow the Path
+                  <h3 className={`text-lg sm:text-xl font-bold text-white mb-2 tracking-tight ${manrope.className}`}>
+                    Micro-Drills & iGOT Paths
                   </h3>
-                  <p className={`text-[#9a938c] text-sm sm:text-base leading-relaxed ${inter.className}`}>
-                    Enroll in prioritized iGOT Karmayogi modules to close specific gaps, complete re-assessments, and earn verified certifications.
+                  <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed ${inter.className}`}>
+                    Complete 2-minute 3D flashcards and high-impact caselets, or enroll in prioritized iGOT Karmayogi modules to eliminate specific deficits with +25 XP rewards.
                   </p>
                 </div>
-                <div className="mt-6 sm:mt-8 pt-4 border-t border-white/5 text-xs text-white/40">
+                <div className="mt-6 pt-3 border-t border-white/5 text-[11px] text-white/40">
                   Phase 3: Targeted Upskilling
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Step 4 */}
+            <Reveal delay={400}>
+              <div className="group relative h-full bg-[#1e1a17]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 flex flex-col justify-between hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-[0_15px_40px_-10px_rgba(240,90,40,0.25)] transition-all duration-300 ease-out">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`w-10 sm:w-11 h-10 sm:h-11 rounded-xl bg-[#241c17] text-purple-300 border border-purple-500/40 flex items-center justify-center font-bold text-base sm:text-lg shadow-lg group-hover:scale-110 group-hover:border-purple-400 transition-transform duration-300 ${cabin.className}`}>
+                      04
+                    </div>
+                    <span className={`text-[11px] uppercase font-semibold text-purple-300 bg-purple-500/10 px-2.5 py-0.5 rounded-full border border-purple-500/20 ${cabin.className}`}>Advancement</span>
+                  </div>
+                  <h3 className={`text-lg sm:text-xl font-bold text-white mb-2 tracking-tight ${manrope.className}`}>
+                    Passport & Promotion
+                  </h3>
+                  <p className={`text-[#9a938c] text-xs sm:text-sm leading-relaxed ${inter.className}`}>
+                    Lock in tamper-evident SHA-256 evidence in your holographic Competency Passport, track cadre progression, and generate print dossiers for APAR review.
+                  </p>
+                </div>
+                <div className="mt-6 pt-3 border-t border-white/5 text-[11px] text-white/40">
+                  Phase 4: Promotion Verification
                 </div>
               </div>
             </Reveal>
@@ -839,26 +1098,30 @@ export default function LandingPage() {
             </p>
             <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs text-white/70 ${manrope.className}`}>
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>All Systems Operational • v2.0</span>
+              <span>All Systems Operational • v3.0</span>
             </div>
           </div>
 
           {/* Navigation Links Columns */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-12 text-xs sm:text-sm">
             <div className="flex flex-col gap-2.5 sm:gap-3">
-              <h4 className={`text-white font-semibold text-xs tracking-wider uppercase ${cabin.className}`}>Platform</h4>
-              <a href="#features" className="hover:text-primary-light transition-colors duration-200">Gap Analysis</a>
-              <a href="#features" className="hover:text-primary-light transition-colors duration-200">Personalized Paths</a>
-              <a href="#features" className="hover:text-primary-light transition-colors duration-200">Quiz Generator</a>
-              <a href="#features" className="hover:text-primary-light transition-colors duration-200">Cadre Analytics</a>
+              <h4 className={`text-white font-semibold text-xs tracking-wider uppercase ${cabin.className}`}>Pillars</h4>
+              <Link href="/micro-learning" className="hover:text-primary-light transition-colors duration-200">AI Micro-Learning</Link>
+              <Link href="/practical-tasks" className="hover:text-primary-light transition-colors duration-200">Practical Task Lab</Link>
+              <Link href="/readiness" className="hover:text-primary-light transition-colors duration-200">Role Readiness</Link>
+              <Link href="/portfolio" className="hover:text-primary-light transition-colors duration-200">Evidence Passport</Link>
+              <Link href="/admin" className="hover:text-primary-light transition-colors duration-200">Cadre Heatmap</Link>
+              <Link href="/dashboard" className="hover:text-primary-light transition-colors duration-200">Decay Engine</Link>
             </div>
 
             <div className="flex flex-col gap-2.5 sm:gap-3">
-              <h4 className={`text-white font-semibold text-xs tracking-wider uppercase ${cabin.className}`}>Resources</h4>
-              <a href="#how-it-works" className="hover:text-primary-light transition-colors duration-200">How it Works</a>
-              <a href="#testimonials" className="hover:text-primary-light transition-colors duration-200">Case Studies</a>
+              <h4 className={`text-white font-semibold text-xs tracking-wider uppercase ${cabin.className}`}>Platform</h4>
+              <Link href="/dashboard" className="hover:text-primary-light transition-colors duration-200">Officer Dashboard</Link>
+              <Link href="/recommendations" className="hover:text-primary-light transition-colors duration-200">Course Catalog</Link>
+              <Link href="/quiz-generator" className="hover:text-primary-light transition-colors duration-200">Quiz Generator</Link>
+              <Link href="/quiz" className="hover:text-primary-light transition-colors duration-200">Take Assessment</Link>
+              <Link href="/collaboration" className="hover:text-primary-light transition-colors duration-200">Discussion Hub</Link>
               <a href="#faq" className="hover:text-primary-light transition-colors duration-200">FAQ</a>
-              <Link href="/dashboard" className="hover:text-primary-light transition-colors duration-200">Officer Portal</Link>
             </div>
 
             <div className="flex flex-col gap-2.5 sm:gap-3 col-span-2 sm:col-span-1">
@@ -866,7 +1129,7 @@ export default function LandingPage() {
               <a href="#" className="hover:text-primary-light transition-colors duration-200">MoSPI Compliance</a>
               <a href="#" className="hover:text-primary-light transition-colors duration-200">iGOT Framework</a>
               <a href="#" className="hover:text-primary-light transition-colors duration-200">Data Privacy</a>
-              <a href="#" className="hover:text-primary-light transition-colors duration-200">Terms of Service</a>
+              <a href="#" className="hover:text-primary-light transition-colors duration-200">APAR Standards</a>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, BookOpen, Brain, Database, Shield, MessageSquare, Zap, Target, Sparkles } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Brain, Database, Shield, MessageSquare, Zap, Target, Sparkles, Play } from 'lucide-react';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { Radar, Bar } from 'react-chartjs-2';
 import { useApp } from '@/context/AppContext';
@@ -18,7 +18,18 @@ const lessonIcons = {
 };
 
 export default function DashboardPage() {
-  const { currentUser, gapData, quizHistory, theme, setShowGuideModal } = useApp();
+  const {
+    currentUser,
+    gapData,
+    quizHistory,
+    theme,
+    setShowGuideModal,
+    getSkillDecayStatus,
+    refreshSkill,
+    decaySimulationDays,
+    setDecaySimulationDays,
+    targetRole
+  } = useApp();
   const [animateIn, setAnimateIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -281,13 +292,30 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-          <Link
-            href={isDayZero ? "/quiz" : "/recommendations"}
-            className="btn btn-primary btn-sm"
-            style={{ padding: '8px 16px', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}
-          >
-            {isDayZero ? 'Start Quiz' : 'Target Deficit'} <ArrowUpRight size={14} />
-          </Link>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <Link
+                href={isDayZero ? '/quiz/quiz-1' : '/quiz'}
+                className="btn btn-primary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+              >
+                <Play size={14} />
+                {isDayZero ? 'Start 1st Assessment' : 'Take Diagnostic'}
+              </Link>
+              <Link
+                href="/micro-learning"
+                className="btn btn-outline btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+              >
+                <Zap size={14} /> 2-Min Micro-Drill
+              </Link>
+              <Link
+                href="/practical-tasks"
+                className="btn btn-ghost btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+              >
+                <Database size={14} /> Practical Lab
+              </Link>
+            </div>
         </div>
       </div>
 
@@ -326,6 +354,95 @@ export default function DashboardPage() {
               <div style={{ height: 300 }}>
                 <Bar data={gapBarData} options={gapBarOptions} />
               </div>
+            </div>
+          </div>
+
+          {/* Competency Freshness & Skill Decay Engine Widget */}
+          <div className="card mb-6 fade-in fade-in-delay-2" style={{ padding: 22, background: 'var(--bg-surface)' }}>
+            <div className="flex-between mb-3" style={{ flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Zap size={18} style={{ color: 'var(--primary)' }} />
+                  <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>
+                    Competency Freshness & Forgetting Curve Model
+                  </h3>
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
+                  Unpracticed skills experience natural decay over time. Take 2-minute refreshers to maintain 100% calibration.
+                </p>
+              </div>
+              <Link href="/micro-learning" className="btn btn-outline btn-sm">
+                <Sparkles size={13} /> Launch Micro-Learning
+              </Link>
+            </div>
+
+            {/* Inactivity Simulation Slider */}
+            <div style={{ background: 'var(--bg-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', marginBottom: 16, border: '1px solid var(--border-light)' }}>
+              <div className="flex-between" style={{ fontSize: 12, marginBottom: 6 }}>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                  ⏳ Inactivity Decay Simulator: <strong>{decaySimulationDays} days elapsed</strong>
+                </span>
+                <span style={{ color: 'var(--text-tertiary)' }}>
+                  Slide to test live Ebbinghaus decay
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={90}
+                step={7}
+                value={decaySimulationDays}
+                onChange={(e) => setDecaySimulationDays(Number(e.target.value))}
+                style={{ width: '100%', accentColor: 'var(--primary)' }}
+              />
+              <div className="flex-between" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 4 }}>
+                <span>0 Days (Active)</span>
+                <span>14 Days (Grace Period)</span>
+                <span>30 Days (Fading)</span>
+                <span>60+ Days (High Risk)</span>
+              </div>
+            </div>
+
+            {/* Skill Freshness Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+              {skills.map(s => {
+                const dec = getSkillDecayStatus(s);
+                return (
+                  <div
+                    key={s}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--bg-card)',
+                      border: dec.status === 'at_risk' ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border-light)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600 }}>{s}</span>
+                        <span className={`decay-badge ${dec.status}`} style={{ fontSize: 9 }}>
+                          {dec.status === 'fresh' ? 'Fresh' : dec.status === 'fading' ? `-${dec.decayPct}%` : `-${dec.decayPct}% Risk`}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                        Score: {dec.effectiveScore}% ({dec.daysInactive}d inactive)
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => refreshSkill(s)}
+                      className="refresher-btn"
+                      title="Take quick 1-click drill to restore skill"
+                    >
+                      ⚡ Refresh
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

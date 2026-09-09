@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills } from '@/data/mockData';
+import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills, samplePortfolioEvidence, cadreHierarchy, samplePracticalTasks, sampleMicroLearning } from '@/data/mockData';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
 import {
   getProfile,
@@ -76,6 +76,32 @@ export function AppProvider({ children }) {
     { id: 2, user: 'Amit Verma', text: 'The new survey design quiz is excellent! Scored 80%.', time: '25 min ago', avatar: 'AV' },
     { id: 3, user: 'Sneha Patel', text: 'Admin analytics show our department improved 5% this quarter! 🎉', time: '1 hr ago', avatar: 'SP' },
   ]);
+
+  // ─── Module 1: Skill & Competency Decay Engine ───
+  const [skillActivityDates, setSkillActivityDates] = useState(() => {
+    const now = Date.now();
+    return {
+      "Survey Design": now,
+      "GIS & Spatial Analysis": now,
+      "Data Science & Analytics": now,
+      "AI & Machine Learning": now,
+      "Statistical Methods": now,
+      "Data Governance": now
+    };
+  });
+  const [decaySimulationDays, setDecaySimulationDays] = useState(0);
+
+  // ─── Module 2: AI Micro-Learning Units ───
+  const [completedMicroUnits, setCompletedMicroUnits] = useState([]);
+
+  // ─── Module 3: AI Practical Simulation Tasks ───
+  const [completedTasks, setCompletedTasks] = useState([]);
+
+  // ─── Module 4: Skill Evidence Dossier ───
+  const [portfolioItems, setPortfolioItems] = useState([...samplePortfolioEvidence]);
+
+  // ─── Module 5: Next-Role Readiness ───
+  const [targetRole, setTargetRole] = useState("Senior Statistical Officer");
 
   // Load persisted theme and apiKey from localStorage or environment on mount
   useEffect(() => {
@@ -345,6 +371,9 @@ export function AppProvider({ children }) {
           .catch(err => console.warn('Supabase saveOfficerSkill:', err));
       }
 
+      // Reset decay activity timer on skill practice
+      setSkillActivityDates(dates => ({ ...dates, [skill]: Date.now() }));
+
       return { ...prev, [skill]: newLevel };
     });
   }, [currentUser]);
@@ -457,6 +486,168 @@ export function AppProvider({ children }) {
     }
   }, [currentUser]);
 
+  // ─── Decay Calculation Helper ───
+  const getSkillDecayStatus = useCallback((skill) => {
+    const lastTime = skillActivityDates[skill] || Date.now();
+    const realDaysElapsed = (Date.now() - lastTime) / (1000 * 60 * 60 * 24);
+    const totalDays = Math.max(0, Math.round(realDaysElapsed + decaySimulationDays));
+    const baseScore = userSkills[skill] || 0;
+
+    let decayPct = 0;
+    let status = 'fresh'; // 'fresh' | 'fading' | 'at_risk'
+
+    if (baseScore > 0) {
+      if (totalDays <= 14) {
+        decayPct = 0;
+        status = 'fresh';
+      } else if (totalDays <= 30) {
+        decayPct = Math.min(15, Math.round((totalDays - 14) * 0.7));
+        status = 'fading';
+      } else {
+        decayPct = Math.min(35, Math.round(11 + (totalDays - 30) * 0.6));
+        status = 'at_risk';
+      }
+    }
+
+    const effectiveScore = Math.max(0, Math.round(baseScore * (1 - decayPct / 100)));
+    return {
+      skill,
+      baseScore,
+      effectiveScore,
+      decayPct,
+      status,
+      daysInactive: totalDays,
+    };
+  }, [userSkills, skillActivityDates, decaySimulationDays]);
+
+  // 1-Click Refresher drill handler
+  const refreshSkill = useCallback((skill) => {
+    setSkillActivityDates(prev => ({ ...prev, [skill]: Date.now() }));
+    setCurrentUser(prev => ({
+      ...prev,
+      xp: (prev.xp || 0) + 35,
+      streak: Math.max(1, (prev.streak || 0) + 1)
+    }));
+    setNotifications(prev => [{
+      id: Date.now(),
+      text: `⚡ Refresher Drill Completed: ${skill} restored to 100% calibration (+35 XP)`,
+      time: 'Just now',
+      read: false
+    }, ...prev]);
+  }, []);
+
+  // Micro-learning completion handler
+  const addMicroLearningResult = useCallback(({ skill, title, format, score, total }) => {
+    const xpBonus = 25;
+    setCompletedMicroUnits(prev => [{
+      id: Date.now(),
+      skill,
+      title,
+      format,
+      score,
+      total,
+      date: new Date().toLocaleDateString()
+    }, ...prev]);
+
+    setSkillActivityDates(prev => ({ ...prev, [skill]: Date.now() }));
+    setCurrentUser(prev => ({
+      ...prev,
+      xp: (prev.xp || 0) + xpBonus,
+      streak: Math.max(1, (prev.streak || 0) + 1)
+    }));
+
+    // If officer is on Day 0 or has 0 skill in this domain, give starter calibration (+15%)
+    setUserSkills(prev => {
+      const current = prev[skill] || 0;
+      if (current === 0) return { ...prev, [skill]: 20 };
+      return { ...prev, [skill]: Math.min(100, current + 4) };
+    });
+
+    setNotifications(prev => [{
+      id: Date.now(),
+      text: `Micro-Learning Completed: ${title} (${format}) (+${xpBonus} XP, ${skill} refreshed!)`,
+      time: 'Just now',
+      read: false
+    }, ...prev]);
+  }, []);
+
+  // Practical Simulation Task submission
+  const submitPracticalTask = useCallback(({ taskId, taskTitle, skill, solution, score, feedback }) => {
+    const xpBonus = 75;
+    setCompletedTasks(prev => [{
+      id: Date.now(),
+      taskId,
+      taskTitle,
+      skill,
+      solution,
+      score,
+      feedback,
+      date: new Date().toLocaleDateString()
+    }, ...prev]);
+
+    setSkillActivityDates(prev => ({ ...prev, [skill]: Date.now() }));
+    setCurrentUser(prev => ({
+      ...prev,
+      xp: (prev.xp || 0) + xpBonus,
+      streak: Math.max(1, (prev.streak || 0) + 1)
+    }));
+
+    // Calibrate skill based on practical execution
+    setUserSkills(prev => {
+      const current = prev[skill] || 0;
+      const boost = Math.round(score * 0.12);
+      return { ...prev, [skill]: Math.min(100, Math.max(25, current + boost)) };
+    });
+
+    setNotifications(prev => [{
+      id: Date.now(),
+      text: `Simulation Lab Evaluated: ${taskTitle} — Score ${score}% (+${xpBonus} XP)`,
+      time: 'Just now',
+      read: false
+    }, ...prev]);
+  }, []);
+
+  // Evidence Portfolio Handler
+  const addPortfolioItem = useCallback(({ title, competency, type, summary }) => {
+    const idNum = Math.floor(1000 + Math.random() * 9000);
+    const hash = '0x' + Math.random().toString(16).slice(2, 10) + Math.random().toString(16).slice(2, 10);
+    const newItem = {
+      id: `ev-${Date.now()}`,
+      title,
+      competency,
+      date: new Date().toISOString().split('T')[0],
+      type: type || 'Technical Memo',
+      status: 'AI Rubric Verified',
+      verifiedBy: 'Pariksha AI Automated Auditor',
+      hash,
+      summary,
+      credentialId: `MOSPI-EVD-${new Date().getFullYear()}-${idNum}`
+    };
+
+    setPortfolioItems(prev => [newItem, ...prev]);
+    setCurrentUser(prev => ({ ...prev, xp: (prev.xp || 0) + 50 }));
+    setNotifications(prev => [{
+      id: Date.now(),
+      text: `Evidence Dossier Updated: "${title}" registered under ${competency} (+50 XP)`,
+      time: 'Just now',
+      read: false
+    }, ...prev]);
+  }, []);
+
+  const verifyPortfolioItem = useCallback((id) => {
+    setPortfolioItems(prev => prev.map(item =>
+      item.id === id
+        ? { ...item, status: 'Verified by Cadre Supervisor', verifiedBy: `${currentUser.name}, Cadre Authority` }
+        : item
+    ));
+    setNotifications(prev => [{
+      id: Date.now(),
+      text: `Evidence artifact verified and sealed in Official Competency Passport.`,
+      time: 'Just now',
+      read: false
+    }, ...prev]);
+  }, [currentUser]);
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
@@ -505,6 +696,22 @@ export function AppProvider({ children }) {
       markAllNotificationsRead,
       deleteNotification,
       isSupabaseConnected: isSupabaseConfigured,
+      // Advanced Module Additions
+      skillActivityDates,
+      decaySimulationDays,
+      setDecaySimulationDays,
+      getSkillDecayStatus,
+      refreshSkill,
+      completedMicroUnits,
+      addMicroLearningResult,
+      completedTasks,
+      submitPracticalTask,
+      portfolioItems,
+      addPortfolioItem,
+      verifyPortfolioItem,
+      targetRole,
+      setTargetRole,
+      cadreHierarchy,
     }}>
       {children}
     </AppContext.Provider>
