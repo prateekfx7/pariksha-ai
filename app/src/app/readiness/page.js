@@ -18,19 +18,20 @@ export default function NextRoleReadinessPage() {
   const gridColor = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(58, 53, 48, 0.5)';
   const tooltipBg = isLight ? '#ffffff' : '#282420';
 
-  // Available promotion target roles (excluding very lowest if already above)
+  // Available promotion target roles (Official MoSPI 7th CPC Cadre Hierarchy)
   const targetRoles = [
-    "Statistical Investigator",
     "Junior Statistical Officer",
-    "Statistical Officer",
     "Senior Statistical Officer",
+    "Assistant Director",
     "Deputy Director",
-    "Director"
+    "Joint Director",
+    "Director",
+    "Deputy Director General"
   ];
 
   // Benchmark required levels for target role
   const targetRequirements = requiredLevels[targetRole] || requiredLevels["Senior Statistical Officer"];
-  const currentRequirements = requiredLevels[currentUser.role] || requiredLevels["Statistical Officer"];
+  const currentRequirements = requiredLevels[currentUser.role] || requiredLevels["Junior Statistical Officer"];
 
   // Calculate promotion readiness score
   const { readinessScore, skillComparisons, metCount, unmetCount } = useMemo(() => {
@@ -204,7 +205,7 @@ export default function NextRoleReadinessPage() {
                     {item.role}
                   </p>
                   <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
-                    {item.cadre} • {isCurrent ? 'Current' : isTarget ? 'Target' : item.minExperience}
+                    {item.cadre} • {item.payLevel ? `${item.payLevel} • ` : ''}{isCurrent ? 'Current' : isTarget ? 'Target' : item.minExperience}
                   </span>
                 </div>
                 {idx < cadreHierarchy.length - 1 && (

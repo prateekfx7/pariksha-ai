@@ -5,6 +5,161 @@ import { useApp } from '@/context/AppContext';
 import { samplePracticalTasks, skills } from '@/data/mockData';
 import Link from 'next/link';
 
+// ─── Authentic MoSPI Procedural Rubric Evaluator ───
+function evaluateSolutionRubric(task, solution) {
+  const text = solution.trim();
+  const lower = text.toLowerCase();
+
+  if (text.length < 25) {
+    return {
+      score: 20,
+      feedback: "Submission is too brief to evaluate against official MoSPI operational standards. It lacks methodological rationale, specific data record references, and verifiable validation assertions.",
+      breakdown: {
+        methodology: Math.round(task.rubric.methodologyWeight * 0.2),
+        protocol: Math.round(task.rubric.protocolWeight * 0.25),
+        completeness: Math.round(task.rubric.completenessWeight * 0.2)
+      }
+    };
+  }
+
+  let methodologyScore = 0;
+  let protocolScore = 0;
+  let completenessScore = 0;
+  let specificCritiques = [];
+
+  if (task.id === 'task-1') {
+    // PLFS 2022-23 UPSS Validation
+    const checks = [
+      { terms: ['0102', 'child', 'age 8', 'age < 15', 'primary', 'public admin'], desc: 'Identified PLFS-0102 child wage labour anomaly' },
+      { terms: ['0103', '81', 'unemployed', 'earnings', '65000', 'seeking', 'contradiction'], desc: 'Identified PLFS-0103 unemployed status with positive earnings' },
+      { terms: ['0104', '67', 'illiterate', '91', 'education', 'pension', '95'], desc: 'Identified PLFS-0104 elderly illiterate attending school' },
+      { terms: ['0105', '-3200', 'negative', 'casual labour', 'non-negativ'], desc: 'Identified PLFS-0105 negative earnings constraint' },
+      { terms: ['assert', 'if', 'where', 'then', 'select', 'flag', 'rule', '<=', '==', 'def '], desc: 'Formulated conditional logic or validation code' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.22) + (text.length > 180 ? 0.12 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('mospi') || lower.includes('plfs') || lower.includes('upss') || lower.includes('schedule 10') ? 0.95 : 0.65));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 4));
+
+    if (passed >= 4) {
+      specificCritiques.push("Excellently audited PLFS microdata records. Correctly articulated UPSS status codes and established robust data hygiene assertions.");
+    } else if (passed >= 2) {
+      specificCritiques.push("Identified key record anomalies, but missed some cross-tabulation validations (e.g. child labour restrictions or negative income checks).");
+    } else {
+      specificCritiques.push("Limited anomaly detection. Ensure you reference specific PLFS record IDs and write programmatic assertion logic.");
+    }
+  } else if (task.id === 'task-2') {
+    // ASI 2021-22 GVA & Input-Output
+    const checks = [
+      { terms: ['4011', '21', '21000', 'accurate', 'correct', 'nva'], desc: 'Verified ASI-MH-4011 GVA calculation' },
+      { terms: ['4012', 'fraud', 'negative', '-7', 'discrepancy', '19', 'textiles'], desc: 'Identified ASI-TN-4012 reported GVA fraud' },
+      { terms: ['4015', '-9', 'brick', 'minerals', 'semi-finished', 'inventory', 'power'], desc: 'Evaluated ASI-UP-4015 negative GVA vs fuel ratio' },
+      { terms: ['gva =', 'output - input', 'gross output -', 'raw materials', 'depreciation', 'nva ='], desc: 'Applied exact GVA and NVA accounting identities' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.26) + (text.length > 180 ? 0.12 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('asi') || lower.includes('nad') || lower.includes('block') || lower.includes('gva') ? 0.95 : 0.60));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 3));
+
+    if (passed >= 3) {
+      specificCritiques.push("Rigorously applied National Accounts Division ASI audit procedures. Identified fraudulent textile return and computed true Net Value Added.");
+    } else if (passed >= 2) {
+      specificCritiques.push("Computed baseline input-output sums, but check factory ASI-TN-4012 for the discrepancy between calculated GVA (-7M) and reported GVA (+12M).");
+    } else {
+      specificCritiques.push("Incomplete reconciliation of ASI Block J accounts. Write out the full Gross Output minus Total Inputs arithmetic.");
+    }
+  } else if (task.id === 'task-3') {
+    // CPI Base 2012=100
+    const checks = [
+      { terms: ['147', '159', '175', '193', '224', 'relative', 'p_t / p_0'], desc: 'Computed price relatives for rice/milk/fuel' },
+      { terms: ['7.46', '4.64', 'weight', 'rural', 'urban', 'basket', 'twice', 'sensitivity'], desc: 'Referenced Laspeyres commodity basket weights' },
+      { terms: ['laspeyres', 'sum(w', 'index', 'inflation', 'percentage'], desc: 'Articulated official index compilation formula' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.35) + (text.length > 150 ? 0.15 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('cpi') || lower.includes('laspeyres') || lower.includes('psd') ? 0.95 : 0.65));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 2.5));
+
+    if (passed >= 2) {
+      specificCritiques.push("Accurately explained rural inflation sensitivity driven by higher food/vegetable weights (7.46% vs 4.64%) under Laspeyres aggregation.");
+    } else {
+      specificCritiques.push("Review official CPI basket weight distribution between rural and urban sectors to explain differential inflation impact.");
+    }
+  } else if (task.id === 'task-4') {
+    // Neyman Sample Allocation
+    const checks = [
+      { terms: ['308', '504', '520', '612', '1944', '1,944,000', 'n * s', 'n_h * s_h'], desc: 'Calculated N_h * S_h products' },
+      { terms: ['190', '311', '321', '378', 'total = 1200', '1,200'], desc: 'Allocated stratum sample sizes' },
+      { terms: ['1.36', '1.11', '4.01', '2.10', 'fraction', 'f_h', 'variance', 'heterogeneity'], desc: 'Analyzed sampling fractions & variance minimization' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.35) + (text.length > 150 ? 0.15 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('neyman') || lower.includes('sdrd') || lower.includes('strat') ? 0.95 : 0.60));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 2.5));
+
+    if (passed >= 2) {
+      specificCritiques.push("Methodologically sound execution of Neyman optimal sample allocation. Clearly recognized why high-variance strata receive disproportionate sampling fractions.");
+    } else {
+      specificCritiques.push("Remember the Neyman formula: n_h = n * (N_h * S_h) / sum(N_i * S_i). Ensure all stratum multiplications are calculated.");
+    }
+  } else if (task.id === 'task-5') {
+    // GIS LGD Boundary
+    const checks = [
+      { terms: ['epsg', '32643', 'utm', 'reproject', 'projection', 'wgs84', 'meters'], desc: 'Addressed CRS coordinate reprojection' },
+      { terms: ['snap', 'tolerance', '5', 'meter', 'vertex'], desc: 'Configured snapping tolerance' },
+      { terms: ['eliminate', 'sliver', '50', 'shared boundary', 'neighbor'], desc: 'Defined sliver polygon merging rule' },
+      { terms: ['fix geometries', 'union', 'planar', 'area', 'self-intersect'], desc: 'Specified topological cleaning & validation' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.28) + (text.length > 150 ? 0.15 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('qgis') || lower.includes('lgd') || lower.includes('gis') ? 0.95 : 0.60));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 3));
+
+    if (passed >= 3) {
+      specificCritiques.push("Excellent geoprocessing sequence. Addressed CRS transformation, topological snapping, and planar union validation to prevent double-counting.");
+    } else {
+      specificCritiques.push("Include explicit CRS parameters (e.g. EPSG:32643) and snapping threshold metrics to avoid micro-gaps.");
+    }
+  } else if (task.id === 'task-6') {
+    // NDGFP SDC
+    const checks = [
+      { terms: ['4005', '4009', 'med-04', 'med-05', 'med-06', 'k=3', 'k < 3', 'violate'], desc: 'Identified k-anonymity violations' },
+      { terms: ['pin', '208', 'mask', 'generaliz', 'age band', 'group'], desc: 'Proposed postal/age generalization' },
+      { terms: ['top-code', 'top code', 'percentile', 'expenditure', '145000', 'suppression'], desc: 'Applied top-coding and cell suppression' },
+    ];
+    let passed = checks.filter(c => c.terms.some(t => lower.includes(t))).length;
+    methodologyScore = Math.round(task.rubric.methodologyWeight * Math.min(1, (passed * 0.35) + (text.length > 150 ? 0.15 : 0)));
+    protocolScore = Math.round(task.rubric.protocolWeight * (lower.includes('ndgfp') || lower.includes('anonymity') || lower.includes('sdc') ? 0.95 : 0.60));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, passed / 2.5));
+
+    if (passed >= 2) {
+      specificCritiques.push("Compliant with National Data Governance Framework guidelines. Effectively balanced analytical utility with k-anonymity disclosure control.");
+    } else {
+      specificCritiques.push("Identify the exact equivalence classes with fewer than 3 records (e.g. MED-04, MED-06) and detail the masking techniques.");
+    }
+  } else {
+    // Generic fallback for custom generated tasks
+    const keywords = task.modelAnswerKey.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+    const matches = keywords.filter(w => lower.includes(w));
+    const ratio = Math.min(1, matches.length / Math.max(5, keywords.length * 0.2));
+    methodologyScore = Math.round(task.rubric.methodologyWeight * (0.3 + ratio * 0.65));
+    protocolScore = Math.round(task.rubric.protocolWeight * (0.4 + (lower.includes('mospi') ? 0.5 : 0.3)));
+    completenessScore = Math.round(task.rubric.completenessWeight * Math.min(1, text.length / 250));
+    specificCritiques.push(ratio > 0.5 ? "Good domain coverage aligning with MoSPI operational practice." : "Consider referencing official guidelines and methodological formulas more explicitly.");
+  }
+
+  const totalScore = Math.min(98, Math.max(15, methodologyScore + protocolScore + completenessScore));
+  return {
+    score: totalScore,
+    feedback: specificCritiques.join(' ') || "Solution evaluated against MoSPI competency standards.",
+    breakdown: {
+      methodology: methodologyScore,
+      protocol: protocolScore,
+      completeness: completenessScore
+    }
+  };
+}
+
 export default function PracticalTasksPage() {
   const { apiKey, submitPracticalTask, completedTasks, getSkillDecayStatus } = useApp();
 
@@ -12,6 +167,8 @@ export default function PracticalTasksPage() {
   const [solutionInput, setSolutionInput] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] = useState(null);
+  const [dataViewMode, setDataViewMode] = useState('table'); // 'table' | 'json'
+  const [copiedData, setCopiedData] = useState(false);
 
   // Custom AI generation state
   const [isGeneratingTask, setIsGeneratingTask] = useState(false);
@@ -21,6 +178,13 @@ export default function PracticalTasksPage() {
     setActiveTask(task);
     setSolutionInput('');
     setEvaluationResult(null);
+  };
+
+  const handleCopyData = () => {
+    if (!activeTask.datasetSnippet) return;
+    navigator.clipboard.writeText(JSON.stringify(activeTask.datasetSnippet, null, 2));
+    setCopiedData(true);
+    setTimeout(() => setCopiedData(false), 2000);
   };
 
   const handleGenerateCustomTask = async () => {
@@ -85,13 +249,9 @@ Format required in raw JSON:
     if (!solutionInput.trim()) return;
     setIsEvaluating(true);
 
-    let score = 88;
-    let feedback = "Accurately identified core discrepancies and framed correct MoSPI validation logic.";
-    let breakdown = {
-      methodology: 36,
-      protocol: 27,
-      completeness: 25
-    };
+    let score = 0;
+    let feedback = "";
+    let breakdown = { methodology: 0, protocol: 0, completeness: 0 };
 
     if (apiKey && apiKey.trim().length > 10) {
       try {
@@ -103,10 +263,10 @@ Model answer key: ${activeTask.modelAnswerKey}
 Officer's submitted solution:
 "${solutionInput}"
 
-Evaluate and output ONLY valid JSON:
+Evaluate rigorously against the model answer and output ONLY valid JSON:
 {
   "score": number (0-100),
-  "feedback": "2-3 sentences of constructive technical feedback",
+  "feedback": "2-3 sentences of constructive technical feedback referencing specific rules and formulas",
   "methodology": number (out of ${activeTask.rubric.methodologyWeight}),
   "protocol": number (out of ${activeTask.rubric.protocolWeight}),
   "completeness": number (out of ${activeTask.rubric.completenessWeight})
@@ -126,8 +286,8 @@ Evaluate and output ONLY valid JSON:
           const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (rawText) {
             const parsed = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim());
-            score = parsed.score || 85;
-            feedback = parsed.feedback || feedback;
+            score = parsed.score;
+            feedback = parsed.feedback;
             breakdown = {
               methodology: parsed.methodology || Math.round(score * 0.4),
               protocol: parsed.protocol || Math.round(score * 0.3),
@@ -136,19 +296,17 @@ Evaluate and output ONLY valid JSON:
           }
         }
       } catch (e) {
-        console.warn('Gemini eval fallback:', e);
+        console.warn('Gemini eval fallback to True Rubric Evaluator:', e);
       }
-    } else {
-      // Procedural evaluation based on length and key statistical terms
-      await new Promise(r => setTimeout(r, 800));
-      const hasKeywords = activeTask.modelAnswerKey.split(' ').filter(w => w.length > 5 && solutionInput.toLowerCase().includes(w.toLowerCase()));
-      const keywordRatio = Math.min(1, hasKeywords.length / 5);
-      score = Math.min(96, Math.max(70, Math.round(75 + keywordRatio * 20 + Math.min(10, solutionInput.length / 50))));
-      breakdown = {
-        methodology: Math.round(activeTask.rubric.methodologyWeight * (score / 100)),
-        protocol: Math.round(activeTask.rubric.protocolWeight * (score / 100)),
-        completeness: Math.round(activeTask.rubric.completenessWeight * (score / 100))
-      };
+    }
+
+    // Authentic MoSPI Procedural Rubric Evaluator (if API key omitted or call failed)
+    if (!score || score === 0) {
+      await new Promise(r => setTimeout(r, 700));
+      const rubricResult = evaluateSolutionRubric(activeTask, solutionInput);
+      score = rubricResult.score;
+      feedback = rubricResult.feedback;
+      breakdown = rubricResult.breakdown;
     }
 
     const evalObj = {
@@ -260,32 +418,95 @@ Evaluate and output ONLY valid JSON:
               </p>
             </div>
 
-            {/* Dataset Snippet Viewer */}
+            {/* Dataset Snippet Viewer with Mode Switcher & Copy */}
             {activeTask.datasetSnippet && activeTask.datasetSnippet.length > 0 && (
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 6 }}>
-                  📋 Official Data Sample / Microdata Snippet:
-                </p>
-                <div className="task-table-wrapper">
-                  <table className="task-snippet-table">
-                    <thead>
-                      <tr>
-                        {Object.keys(activeTask.datasetSnippet[0]).map(key => (
-                          <th key={key}>{key}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activeTask.datasetSnippet.map((row, rIdx) => (
-                        <tr key={rIdx}>
-                          {Object.values(row).map((val, vIdx) => (
-                            <td key={vIdx}>{String(val)}</td>
+              <div style={{ marginBottom: 16 }}>
+                <div className="flex-between mb-2" style={{ flexWrap: 'wrap', gap: 6 }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', margin: 0 }}>
+                    📋 Official MoSPI Microdata Records ({activeTask.datasetSnippet.length} rows):
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ display: 'flex', background: 'var(--bg-surface)', padding: 2, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                      <button
+                        type="button"
+                        onClick={() => setDataViewMode('table')}
+                        style={{
+                          padding: '3px 8px',
+                          fontSize: 11,
+                          borderRadius: 'var(--radius-xs)',
+                          background: dataViewMode === 'table' ? 'var(--primary)' : 'transparent',
+                          color: dataViewMode === 'table' ? '#fff' : 'var(--text-secondary)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontWeight: 600
+                        }}
+                      >
+                        Table
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDataViewMode('json')}
+                        style={{
+                          padding: '3px 8px',
+                          fontSize: 11,
+                          borderRadius: 'var(--radius-xs)',
+                          background: dataViewMode === 'json' ? 'var(--primary)' : 'transparent',
+                          color: dataViewMode === 'json' ? '#fff' : 'var(--text-secondary)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontWeight: 600
+                        }}
+                      >
+                        JSON / Schema
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyData}
+                      className="btn btn-ghost btn-xs"
+                      style={{ fontSize: 11, padding: '3px 8px' }}
+                    >
+                      {copiedData ? '✓ Copied' : 'Copy Snippet'}
+                    </button>
+                  </div>
+                </div>
+
+                {dataViewMode === 'table' ? (
+                  <div className="task-table-wrapper" style={{ maxHeight: 280, overflowY: 'auto' }}>
+                    <table className="task-snippet-table">
+                      <thead>
+                        <tr>
+                          {Object.keys(activeTask.datasetSnippet[0]).map(key => (
+                            <th key={key}>{key}</th>
                           ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {activeTask.datasetSnippet.map((row, rIdx) => (
+                          <tr key={rIdx}>
+                            {Object.values(row).map((val, vIdx) => (
+                              <td key={vIdx}>{String(val)}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <pre style={{
+                    background: 'var(--bg-elevated)',
+                    padding: 12,
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: 11.5,
+                    fontFamily: 'monospace',
+                    overflowX: 'auto',
+                    maxHeight: 250,
+                    margin: 0,
+                    border: '1px solid var(--border-light)'
+                  }}>
+                    {JSON.stringify(activeTask.datasetSnippet, null, 2)}
+                  </pre>
+                )}
               </div>
             )}
 
@@ -346,16 +567,26 @@ Evaluate and output ONLY valid JSON:
 
           {/* AI Rubric Evaluation Report Card */}
           {evaluationResult && (
-            <div className="card fade-in" style={{ padding: 22, borderColor: 'var(--success)', background: 'var(--bg-surface)' }}>
+            <div className="card fade-in" style={{
+              padding: 22,
+              borderColor: evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)',
+              background: 'var(--bg-surface)'
+            }}>
               <div className="flex-between mb-3">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <ShieldCheck size={20} style={{ color: 'var(--success)' }} />
+                  <ShieldCheck size={20} style={{ color: evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)' }} />
                   <h3 style={{ fontSize: 16, fontWeight: 700 }}>
                     AI Rubric Evaluation Score
                   </h3>
                 </div>
-                <div className="header-badge xp" style={{ fontSize: 14, fontWeight: 800 }}>
-                  {evaluationResult.score}% (Passed)
+                <div className="header-badge xp" style={{
+                  fontSize: 14,
+                  fontWeight: 800,
+                  background: evaluationResult.score >= 70 ? 'rgba(34, 197, 94, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                  color: evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)',
+                  border: `1px solid ${evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)'}`
+                }}>
+                  {evaluationResult.score}% {evaluationResult.score >= 70 ? '(Passed & Certified)' : '(Revision Required)'}
                 </div>
               </div>
 
@@ -410,11 +641,17 @@ Evaluate and output ONLY valid JSON:
               </details>
 
               {/* Rewards info */}
-              <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                 <span className="tag tag-priority">+75 XP Awarded</span>
-                <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600 }}>
-                  ✓ {activeTask.skill} Calibrated (+12%)
-                </span>
+                {evaluationResult.score >= 70 ? (
+                  <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600 }}>
+                    ✓ Credential Sealed in Competency Dossier (+12% {activeTask.skill})
+                  </span>
+                ) : (
+                  <span style={{ fontSize: 12, color: 'var(--warning)', fontWeight: 600 }}>
+                    Score &lt; 70% benchmark (70% required to seal verifiable APAR credential)
+                  </span>
+                )}
               </div>
             </div>
           )}

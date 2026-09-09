@@ -43,12 +43,16 @@ export const skills = [
 ];
 
 export const requiredLevels = {
+  "Deputy Director General": { "Survey Design": 95, "GIS & Spatial Analysis": 85, "Data Science & Analytics": 90, "AI & Machine Learning": 80, "Statistical Methods": 95, "Data Governance": 95 },
   "Director": { "Survey Design": 90, "GIS & Spatial Analysis": 75, "Data Science & Analytics": 85, "AI & Machine Learning": 70, "Statistical Methods": 95, "Data Governance": 90 },
+  "Joint Director": { "Survey Design": 85, "GIS & Spatial Analysis": 72, "Data Science & Analytics": 80, "AI & Machine Learning": 65, "Statistical Methods": 90, "Data Governance": 85 },
   "Deputy Director": { "Survey Design": 80, "GIS & Spatial Analysis": 70, "Data Science & Analytics": 75, "AI & Machine Learning": 60, "Statistical Methods": 85, "Data Governance": 80 },
-  "Senior Statistical Officer": { "Survey Design": 75, "GIS & Spatial Analysis": 65, "Data Science & Analytics": 70, "AI & Machine Learning": 55, "Statistical Methods": 80, "Data Governance": 70 },
+  "Assistant Director": { "Survey Design": 75, "GIS & Spatial Analysis": 65, "Data Science & Analytics": 70, "AI & Machine Learning": 55, "Statistical Methods": 80, "Data Governance": 72 },
+  "Senior Statistical Officer": { "Survey Design": 70, "GIS & Spatial Analysis": 60, "Data Science & Analytics": 65, "AI & Machine Learning": 50, "Statistical Methods": 75, "Data Governance": 65 },
+  "Junior Statistical Officer": { "Survey Design": 55, "GIS & Spatial Analysis": 45, "Data Science & Analytics": 50, "AI & Machine Learning": 35, "Statistical Methods": 60, "Data Governance": 50 },
+  // Backward-compatible aliases
   "Statistical Officer": { "Survey Design": 65, "GIS & Spatial Analysis": 55, "Data Science & Analytics": 60, "AI & Machine Learning": 45, "Statistical Methods": 70, "Data Governance": 60 },
-  "Junior Statistical Officer": { "Survey Design": 50, "GIS & Spatial Analysis": 40, "Data Science & Analytics": 45, "AI & Machine Learning": 30, "Statistical Methods": 55, "Data Governance": 45 },
-  "Statistical Investigator": { "Survey Design": 55, "GIS & Spatial Analysis": 45, "Data Science & Analytics": 50, "AI & Machine Learning": 35, "Statistical Methods": 60, "Data Governance": 50 },
+  "Statistical Investigator": { "Survey Design": 50, "GIS & Spatial Analysis": 40, "Data Science & Analytics": 45, "AI & Machine Learning": 30, "Statistical Methods": 55, "Data Governance": 45 },
 };
 
 // Base skill levels for a fresh officer starting from 0 (unassessed baseline)
@@ -66,10 +70,10 @@ export const currentUserSkills = { ...initialUserSkills };
 export const initialOfficer = {
   id: 0,
   name: "New Officer",
-  role: "Statistical Officer",
+  role: "Junior Statistical Officer",
   department: "National Sample Survey",
   cadre: "SSS",
-  avatar: "SO",
+  avatar: "NO",
   xp: 0,
   streak: 0
 };
@@ -274,54 +278,69 @@ export const currentModule = {
   ]
 };
 
-// ─── Cadre Promotion Hierarchy & Progression ───
+// ─── Cadre Promotion Hierarchy & Progression (Official MoSPI 7th CPC Structure) ───
 export const cadreHierarchy = [
-  {
-    role: "Statistical Investigator",
-    cadre: "SSS",
-    rank: 1,
-    minExperience: "Entry Level",
-    summary: "Primary field data collection, preliminary verification, and household enumeration.",
-    nextRole: "Junior Statistical Officer",
-  },
   {
     role: "Junior Statistical Officer",
     cadre: "SSS",
-    rank: 2,
-    minExperience: "2+ Years",
-    summary: "Supervision of field survey teams, data cleaning, and sample frame validation.",
-    nextRole: "Statistical Officer",
-  },
-  {
-    role: "Statistical Officer",
-    cadre: "SSS",
-    rank: 3,
-    minExperience: "4+ Years",
-    summary: "Survey round design, variance estimation, national accounts tabulations, and district reports.",
+    payLevel: "Level 6 (GP 4200)",
+    rank: 1,
+    minExperience: "Entry / 0-2 Years",
+    summary: "Primary field survey data collection, CAPI enumeration, preliminary validation, and household listing.",
     nextRole: "Senior Statistical Officer",
   },
   {
     role: "Senior Statistical Officer",
-    cadre: "SSS / ISS Inducted",
-    rank: 4,
-    minExperience: "7+ Years",
-    summary: "Methodological drafting, econometric modeling, automated survey pipelines, and division supervision.",
+    cadre: "SSS",
+    payLevel: "Level 7 (GP 4600)",
+    rank: 2,
+    minExperience: "3+ Years",
+    summary: "Field team supervision, FSU sample frame inspection, preliminary microdata cleaning, and district census reports.",
+    nextRole: "Assistant Director",
+  },
+  {
+    role: "Assistant Director",
+    cadre: "ISS (JTS)",
+    payLevel: "Level 10 (GP 5400)",
+    rank: 3,
+    minExperience: "5+ Years",
+    summary: "Induction into Indian Statistical Service; division survey design, complex variance estimation, and state-level tabulations.",
     nextRole: "Deputy Director",
   },
   {
     role: "Deputy Director",
-    cadre: "ISS",
+    cadre: "ISS (STS)",
+    payLevel: "Level 11 (GP 6600)",
+    rank: 4,
+    minExperience: "8+ Years",
+    summary: "National accounts estimation, CPI/IIP index governance, econometric modeling, and inter-ministerial statistical coordination.",
+    nextRole: "Joint Director",
+  },
+  {
+    role: "Joint Director",
+    cadre: "ISS (JAG)",
+    payLevel: "Level 12 (GP 7600)",
     rank: 5,
-    minExperience: "10+ Years",
-    summary: "Division leadership, policy advice to ministries, census master planning, and national data governance.",
+    minExperience: "12+ Years",
+    summary: "Strategic division leadership (NAD, SDRD, FOD), survey round master schedules, and data dissemination architecture.",
     nextRole: "Director",
   },
   {
     role: "Director",
-    cadre: "ISS",
+    cadre: "ISS (NFSG / SAG)",
+    payLevel: "Level 13 (GP 8700)",
     rank: 6,
-    minExperience: "15+ Years",
-    summary: "Strategic direction of official statistical system, international statistical liaison (UN/OECD), and cabinet briefs.",
+    minExperience: "16+ Years",
+    summary: "Policy advisory to Central Ministries, National Statistical Commission (NSC) committee liaison, and international statistical standards.",
+    nextRole: "Deputy Director General",
+  },
+  {
+    role: "Deputy Director General",
+    cadre: "ISS (SAG)",
+    payLevel: "Level 14 (GP 10000)",
+    rank: 7,
+    minExperience: "20+ Years",
+    summary: "Overall institutional head of MoSPI divisions, national data governance policy execution, and cabinet-level statistical oversight.",
     nextRole: null,
   }
 ];
@@ -571,24 +590,25 @@ export const sampleMicroLearning = {
   }
 };
 
-// ─── Practical Simulation Tasks Bank ───
+// ─── Practical Simulation Tasks Bank (Authentic MoSPI Datasets) ───
 export const samplePracticalTasks = [
   {
     id: "task-1",
-    title: "NSS Survey Data Cleaning: Anomaly & Inconsistency Detection",
+    title: "PLFS 2022-23 (Schedule 10.4): Household Microdata Inconsistency & UPSS Validation",
     skill: "Data Science & Analytics",
     difficulty: "Operational",
     estimatedMinutes: 8,
-    scenario: "You are the supervising officer inspecting raw microdata from a district-level Household Consumer Expenditure Survey. The automated ingestion script has flagged 5 potential inconsistencies across 10 sample records.",
+    scenario: "As Field Supervision Officer for the Periodic Labour Force Survey (PLFS 2022-23, Schedule 10.4), you are auditing raw household microdata from District Kanpur. The automated ingestion pipeline has flagged 4 potential activity status inconsistencies across 6 sample member records.",
     datasetSnippet: [
-      { hhid: "H-101", members: 4, monthlyExp: 18500, mainIncome: "Agriculture", reportedLandAcres: 2.5, childUnder14: 2, schoolingCost: 3200 },
-      { hhid: "H-102", members: 1, monthlyExp: 84000, mainIncome: "Daily Wage Labour", reportedLandAcres: 0.0, childUnder14: 0, schoolingCost: 14000 },
-      { hhid: "H-103", members: 6, monthlyExp: 22000, mainIncome: "Self Employed", reportedLandAcres: 1.2, childUnder14: 3, schoolingCost: 1200 },
-      { hhid: "H-104", members: 3, monthlyExp: -4500, mainIncome: "Salaried", reportedLandAcres: 0.5, childUnder14: 1, schoolingCost: 5000 },
-      { hhid: "H-105", members: 5, monthlyExp: 31000, mainIncome: "Agriculture", reportedLandAcres: 4.0, childUnder14: 0, schoolingCost: 8500 },
+      { hhid: "PLFS-2023-0101", personId: 1, age: 42, sex: "M", eduLevel: "Post-Graduate", upssCode: 11, statusDesc: "Own account worker", industryNIC: "01111 (Cereal cultivation)", monthlyEarnings: 28500, weeklyHours: 48 },
+      { hhid: "PLFS-2023-0102", personId: 2, age: 8, sex: "F", eduLevel: "Primary", upssCode: 31, statusDesc: "Regular wage/salaried employee", industryNIC: "84112 (Public Administration)", monthlyEarnings: 42000, weeklyHours: 40 },
+      { hhid: "PLFS-2023-0103", personId: 1, age: 24, sex: "M", eduLevel: "Graduate (Tech)", upssCode: 81, statusDesc: "Unemployed seeking work", industryNIC: "62011 (Software development)", monthlyEarnings: 65000, weeklyHours: 45 },
+      { hhid: "PLFS-2023-0104", personId: 3, age: 67, sex: "F", eduLevel: "Illiterate", upssCode: 91, statusDesc: "Attended educational institution", industryNIC: "00000 (Non-economic)", monthlyEarnings: 0, weeklyHours: 0 },
+      { hhid: "PLFS-2023-0105", personId: 1, age: 34, sex: "F", eduLevel: "Secondary", upssCode: 51, statusDesc: "Casual labourer (other works)", industryNIC: "41001 (Construction)", monthlyEarnings: -3200, weeklyHours: 36 },
+      { hhid: "PLFS-2023-0106", personId: 2, age: 29, sex: "M", eduLevel: "Higher Secondary", upssCode: 12, statusDesc: "Employer", industryNIC: "47110 (Retail trade)", monthlyEarnings: 55000, weeklyHours: 54 }
     ],
-    taskPrompt: "Identify the critical inconsistencies in H-102, H-104, and H-105. Write the precise conditional validation rules (in pseudocode, SQL, or Python) to automatically flag these in future survey rounds.",
-    modelAnswerKey: "1. H-102 has high expenditure (84,000) for daily wage labourer with schooling cost (14,000) despite 0 children under 14.\n2. H-104 has negative monthly expenditure (-4500), which violates non-negativity constraint.\n3. H-105 has schooling expenditure (8500) reported despite 0 children under 14 (could be higher education/vocational, requires field verification note).\nRule logic:\n- IF monthlyExp <= 0 THEN FLAG_FATAL('Negative or zero consumption')\n- IF childUnder14 == 0 AND schoolingCost > 0 THEN FLAG_WARNING('Check vocational/adult education or coding error')",
+    taskPrompt: "Audit records PLFS-2023-0102, PLFS-2023-0103, PLFS-2023-0104, and PLFS-2023-0105. Specify the exact statistical rule violations according to MoSPI PLFS Instructions to Field Staff (Volume I), and write the executable validation assertions (in Python/Pandas or SQL) to automatically flag invalid records in subsequent survey quarters.",
+    modelAnswerKey: "Audit Violations:\n1. PLFS-2023-0102: Child labour & legal impossibility — Age is 8, but coded as UPSS 31 (Regular wage employee in Public Administration) with earnings 42,000. Under MoSPI guidelines, age < 15 cannot be classified in formal public wage employment.\n2. PLFS-2023-0103: Logical contradiction — UPSS 81 denotes 'Seeking or available for work (unemployed)'. Reporting positive monthly earnings (65,000) and 45 weekly hours directly violates unemployment classification. Must be coded as UPSS 31 or 11.\n3. PLFS-2023-0104: Age-activity mismatch — Person age 67 with Illiterate education coded as UPSS 91 (Attended educational institution). Likely should be UPSS 95 (Rentiers, pensioners, old age).\n4. PLFS-2023-0105: Non-negativity violation — Casual labour reported negative earnings (-3200 INR). Labour income cannot be negative.\n\nValidation Rules (Python / SQL):\n- ASSERT NOT (age < 15 AND upssCode IN (31, 12, 21))\n- ASSERT NOT (upssCode == 81 AND (monthlyEarnings > 0 OR weeklyHours > 0))\n- ASSERT NOT (age > 60 AND upssCode == 91 AND eduLevel == 'Illiterate')\n- ASSERT monthlyEarnings >= 0",
     rubric: {
       methodologyWeight: 40,
       protocolWeight: 30,
@@ -597,18 +617,20 @@ export const samplePracticalTasks = [
   },
   {
     id: "task-2",
-    title: "Optimum Sample Allocation using Neyman Formula",
+    title: "ASI 2021-22: Gross Value Added (GVA) & Factory Input-Output Audit",
     skill: "Statistical Methods",
     difficulty: "Advanced",
     estimatedMinutes: 10,
-    scenario: "A state statistical bureau has a fixed budget to interview n = 1,000 agricultural enterprises across 3 distinct agro-climatic strata. Historical variance indicates high heterogeneity in Stratum 2.",
+    scenario: "Auditing factory returns for the Annual Survey of Industries (ASI 2021-22) under National Accounts Division (NAD) guidelines. Factory microdata from Block E (Employment & Wages) and Block J (Manufacturing Inputs & Output) must be reconciled to derive authentic Gross Value Added (GVA = Ex-factory value of output - Total Inputs).",
     datasetSnippet: [
-      { stratum: "1: Coastal Plains", populationN: 12000, stdDevS: 25 },
-      { stratum: "2: Highland Plateau", populationN: 6000, stdDevS: 80 },
-      { stratum: "3: Inland Semi-Arid", populationN: 22000, stdDevS: 15 },
+      { dslCode: "ASI-MH-4011", industry2Digit: "10 (Food products)", grossOutput: 84000000, rawMaterials: 52000000, fuelPower: 6500000, industrialServices: 4500000, reportedGVA: 21000000, depreciation: 3200000, workers: 45 },
+      { dslCode: "ASI-TN-4012", industry2Digit: "13 (Textiles)", grossOutput: 38000000, rawMaterials: 29000000, fuelPower: 14000000, industrialServices: 2000000, reportedGVA: 12000000, depreciation: 1800000, workers: 120 },
+      { dslCode: "ASI-GJ-4013", industry2Digit: "20 (Chemicals)", grossOutput: 125000000, rawMaterials: 78000000, fuelPower: 18000000, industrialServices: 9000000, reportedGVA: 20000000, depreciation: 5500000, workers: 82 },
+      { dslCode: "ASI-KA-4014", industry2Digit: "26 (Electronics)", grossOutput: 95000000, rawMaterials: 61000000, fuelPower: 4500000, industrialServices: 6500000, reportedGVA: 23000000, depreciation: 4000000, workers: 95 },
+      { dslCode: "ASI-UP-4015", industry2Digit: "23 (Non-metallic minerals)", grossOutput: 45000000, rawMaterials: 36000000, fuelPower: 15000000, industrialServices: 3000000, reportedGVA: -9000000, depreciation: 2500000, workers: 60 }
     ],
-    taskPrompt: "Calculate the Neyman optimum sample allocation (n1, n2, n3) for the 1,000 total enterprises. Explain why Stratum 2 receives a higher sampling fraction despite having the smallest population.",
-    modelAnswerKey: "Calculations:\nN1 * S1 = 12,000 * 25 = 300,000\nN2 * S2 = 6,000 * 80 = 480,000\nN3 * S3 = 22,000 * 15 = 330,000\nSum(Ni * Si) = 300,000 + 480,000 + 330,000 = 1,110,000\n\nAllocations:\nn1 = 1,000 * (300,000 / 1,110,000) = ~270\nn2 = 1,000 * (480,000 / 1,110,000) = ~432\nn3 = 1,000 * (330,000 / 1,110,000) = ~298\nTotal = 270 + 432 + 298 = 1,000\n\nExplanation: Stratum 2 exhibits substantially higher standard deviation (S2 = 80 vs 15-25), requiring more samples to constrain total survey variance.",
+    taskPrompt: "Audit reported GVA for all 5 factories. Calculate true GVA = Gross Output - (Raw Materials + Fuel/Power + Industrial Services). Identify which factory submitted mathematically fraudulent GVA, calculate Net Value Added (NVA = GVA - Depreciation) for ASI-MH-4011 and ASI-GJ-4013, and assess whether ASI-UP-4015's negative GVA of -9,000,000 is mathematically correct or indicates an operational anomaly.",
+    modelAnswerKey: "Calculations:\n1. ASI-MH-4011: Total Input = 52M + 6.5M + 4.5M = 63.0M. True GVA = 84.0M - 63.0M = 21.0M. Reported GVA (21.0M) is ACCURATE. NVA = 21.0M - 3.2M = 17.8M.\n2. ASI-TN-4012: Total Input = 29M + 14M + 2M = 45.0M. True GVA = 38.0M - 45.0M = -7.0M! Factory reported positive +12.0M, which is a FRAUDULENT discrepancy of +19.0M.\n3. ASI-GJ-4013: Total Input = 78M + 18M + 9M = 105.0M. True GVA = 125.0M - 105.0M = 20.0M. Reported GVA (20.0M) is ACCURATE. NVA = 20.0M - 5.5M = 14.5M.\n4. ASI-KA-4014: Total Input = 61M + 4.5M + 6.5M = 72.0M. True GVA = 95.0M - 72.0M = 23.0M. Accurate.\n5. ASI-UP-4015: Total Input = 36M + 15M + 3M = 54.0M. True GVA = 45.0M - 54.0M = -9.0M. The negative GVA calculation is mathematically correct. However, fuel/power is 33.3% of output in brick/mineral kiln; verify whether inventory accumulation (semi-finished goods) was omitted from gross output.",
     rubric: {
       methodologyWeight: 50,
       protocolWeight: 25,
@@ -617,50 +639,104 @@ export const samplePracticalTasks = [
   },
   {
     id: "task-3",
-    title: "Urban Slum Field Enumeration Non-Response Protocol",
-    skill: "Survey Design",
-    difficulty: "Operational",
-    estimatedMinutes: 6,
-    scenario: "During the 3rd week of field data collection in a designated slum enumeration block (FSU #402), the enumerator team reports that 6 out of 16 selected households work informal night shifts and cannot be contacted during standard hours.",
+    title: "CPI Base 2012=100: Inflation Basket Price Shock & Weight Decomposition",
+    skill: "Statistical Methods",
+    difficulty: "Advanced",
+    estimatedMinutes: 10,
+    scenario: "Price Statistics Division (PSD) is compiling the monthly Consumer Price Index (CPI Base 2012=100) bulletin. Significant divergence is observed between rural and urban price trends. You must evaluate the commodity price relatives and isolate the basket weighting impact.",
     datasetSnippet: [
-      { fsu: "402", totalSample: 16, completed: 8, refused: 2, nonContactShift: 6, daysLeft: 4 }
+      { item: "Rice (PDS & Open Market)", cpiWeightRural: 10.66, cpiWeightUrban: 4.88, basePrice2012: 28.50, currentRuralPrice: 42.00, currentUrbanPrice: 45.50 },
+      { item: "Milk & Milk Products", cpiWeightRural: 7.21, cpiWeightUrban: 6.42, basePrice2012: 32.00, currentRuralPrice: 56.00, currentUrbanPrice: 62.00 },
+      { item: "Vegetables (Onion/Tomato/Potato)", cpiWeightRural: 7.46, cpiWeightUrban: 4.64, basePrice2012: 18.00, currentRuralPrice: 38.00, currentUrbanPrice: 44.00 },
+      { item: "Fuel & Light (LPG & Electricity)", cpiWeightRural: 10.65, cpiWeightUrban: 5.58, basePrice2012: 410.00, currentRuralPrice: 920.00, currentUrbanPrice: 880.00 },
+      { item: "Housing (Rent)", cpiWeightRural: 0.00, cpiWeightUrban: 21.67, basePrice2012: 4500.00, currentRuralPrice: 0.00, currentUrbanPrice: 9200.00 },
+      { item: "Health & Medicine", cpiWeightRural: 6.83, cpiWeightUrban: 4.41, basePrice2012: 120.00, currentRuralPrice: 215.00, currentUrbanPrice: 240.00 }
     ],
-    taskPrompt: "Draft an operational field action plan complying with MoSPI NSS guidelines to achieve minimum required 90% response rate without unauthorized convenience substitutions.",
-    modelAnswerKey: "Action plan:\n1. Split enumerator shift into evening callback windows (6:30 PM - 8:30 PM) and early morning (6:00 AM - 7:30 AM).\n2. Coordinate with local community volunteer / Anganwadi worker for pre-survey notification.\n3. If non-contact persists after 3 documented visits, consult designated reserve sampling frame (List B) authorized by the Senior Statistical Officer.\n4. Document non-response codes strictly in Schedule 0.0 block.",
-    rubric: {
-      methodologyWeight: 35,
-      protocolWeight: 45,
-      completenessWeight: 20
-    }
-  },
-  {
-    id: "task-4",
-    title: "GIS LGD Boundary Harmonization & Polygon Topology Check",
-    skill: "GIS & Spatial Analysis",
-    difficulty: "Expert",
-    estimatedMinutes: 8,
-    scenario: "When integrating Census 2011 enumeration blocks with 2024 updated Local Government Directory (LGD) shapefiles, QGIS topology validator reports 14 sliver polygons and 3 multi-part disconnected geometries along the district periphery.",
-    datasetSnippet: [
-      { layerA: "Census_2011_EB.shp", layerB: "LGD_2024_SubDistrict.shp", errorType: "Sliver overlap & Gap", featureCount: 17 }
-    ],
-    taskPrompt: "Specify the exact sequence of GIS geoprocessing operations (buffer, snap, eliminate sliver polygons, topological editing) required to harmonize the boundary without duplicating population counts.",
-    modelAnswerKey: "Sequence:\n1. Verify both layers are projected to same CRS (e.g. EPSG:32643 - UTM Zone 43N).\n2. Set topological editing ON with snapping tolerance of 5 meters.\n3. Run 'Fix Geometries' to resolve self-intersecting loops.\n4. Run 'Eliminate Sliver Polygons' merging slivers < 50 sq meters into adjacent polygon with largest shared boundary.\n5. Validate spatial union so total area equals the official gazetted district area.",
+    taskPrompt: "Compute the Price Relatives (P_t / P_0 * 100) for Rice, Milk, and Fuel & Light across Rural and Urban markets. Explain why a 100% surge in vegetable prices impacts the Rural CPI index nearly twice as severely as the Urban CPI index based on official Laspeyres basket weights.",
+    modelAnswerKey: "Price Relatives (P_t / P_0 * 100):\n1. Rice:\n- Rural Relative = (42.00 / 28.50) * 100 = 147.37 (47.37% inflation)\n- Urban Relative = (45.50 / 28.50) * 100 = 159.65 (59.65% inflation)\n2. Milk:\n- Rural Relative = (56.00 / 32.00) * 100 = 175.00 (75% inflation)\n- Urban Relative = (62.00 / 32.00) * 100 = 193.75 (93.75% inflation)\n3. Fuel & Light:\n- Rural Relative = (920.00 / 410.00) * 100 = 224.39 (124.39% inflation)\n- Urban Relative = (880.00 / 410.00) * 100 = 214.63 (114.63% inflation)\n\nVegetable Impact Explanation:\nVegetables carry a weight of 7.46% in the CPI Rural basket versus only 4.64% in the CPI Urban basket. Under the Laspeyres index formula I = sum(W_i * R_i) / sum(W_i), a 100% price spike in vegetables contributes 7.46 percentage points to rural headline inflation but only 4.64 percentage points to urban headline inflation (a 1.61x higher sensitivity in rural areas).",
     rubric: {
       methodologyWeight: 45,
       protocolWeight: 30,
       completenessWeight: 25
     }
+  },
+  {
+    id: "task-4",
+    title: "NSS 79th Round: Multi-Stage Stratified Neyman Sample Allocation",
+    skill: "Survey Design",
+    difficulty: "Advanced",
+    estimatedMinutes: 10,
+    scenario: "Survey Design and Research Division (SDRD) is designing an enterprise survey with total sample budget n = 1,200 enterprises across 4 agro-climatic sub-strata. To minimize overall sampling variance, you must compute Neyman Optimum Allocation.",
+    datasetSnippet: [
+      { stratum: "Stratum 1: Coastal Alluvial Plain", populationN: 14000, stdDevS: 22, unitCostC: 450 },
+      { stratum: "Stratum 2: Semi-Arid Deccan Plateau", populationN: 28000, stdDevS: 18, unitCostC: 380 },
+      { stratum: "Stratum 3: Central Hill & Forest Belt", populationN: 8000, stdDevS: 65, unitCostC: 620 },
+      { stratum: "Stratum 4: Intensive Canal Irrigated Delta", populationN: 18000, stdDevS: 34, unitCostC: 410 }
+    ],
+    taskPrompt: "Calculate the Neyman optimum sample allocation (n1, n2, n3, n4) for the fixed sample size of n = 1,200. Compute the sampling fraction (f_h = n_h / N_h) for each stratum and justify why Stratum 3 receives a sampling fraction more than triple that of Stratum 2.",
+    modelAnswerKey: "Calculations:\nN_h * S_h products:\n1. Stratum 1: 14,000 * 22 = 308,000\n2. Stratum 2: 28,000 * 18 = 504,000\n3. Stratum 3: 8,000 * 65 = 520,000\n4. Stratum 4: 18,000 * 34 = 612,000\nSum(N_i * S_i) = 308,000 + 504,000 + 520,000 + 612,000 = 1,944,000\n\nNeyman Allocations (n_h = n * (N_h * S_h) / sum):\n- n1 = 1,200 * (308,000 / 1,944,000) = 190.1 => 190\n- n2 = 1,200 * (504,000 / 1,944,000) = 311.1 => 311\n- n3 = 1,200 * (520,000 / 1,944,000) = 321.0 => 321\n- n4 = 1,200 * (612,000 / 1,944,000) = 377.8 => 378\nTotal = 190 + 311 + 321 + 378 = 1,200.\n\nSampling Fractions:\n- f1 = 190 / 14,000 = 1.36%\n- f2 = 311 / 28,000 = 1.11%\n- f3 = 321 / 8,000 = 4.01%\n- f4 = 378 / 18,000 = 2.10%\n\nJustification: Stratum 3 has extremely high standard deviation (S3 = 65 vs S2 = 18). Neyman allocation allocates sample size in proportion to population heterogeneity (N*S), ensuring higher precision where variance is greatest.",
+    rubric: {
+      methodologyWeight: 50,
+      protocolWeight: 25,
+      completenessWeight: 25
+    }
+  },
+  {
+    id: "task-5",
+    title: "GIS LGD vs Census 2011: Boundary Harmonization & Polygon Topology Check",
+    skill: "GIS & Spatial Analysis",
+    difficulty: "Expert",
+    estimatedMinutes: 8,
+    scenario: "Integrating Census 2011 enumeration blocks (EB) with 2024 updated Local Government Directory (LGD) sub-district shapefiles in QGIS/Python Geopandas. The topology validation check flags sliver overlaps and multi-part geometries.",
+    datasetSnippet: [
+      { district: "Kanpur Nagar (Code 164)", layerA: "Census2011_EB_WGS84.shp", layerB: "LGD2024_Tehsil_UTM.shp", crsA: "EPSG:4326", crsB: "EPSG:32643", sliverPolygons: 14, sliverMaxAreaSqM: 42.5, disconnectedParts: 3 },
+      { district: "Varanasi (Code 196)", layerA: "Census2011_EB_WGS84.shp", layerB: "LGD2024_Tehsil_UTM.shp", crsA: "EPSG:4326", crsB: "EPSG:32643", sliverPolygons: 8, sliverMaxAreaSqM: 18.2, disconnectedParts: 1 },
+      { district: "Prayagraj (Code 175)", layerA: "Census2011_EB_WGS84.shp", layerB: "LGD2024_Tehsil_UTM.shp", crsA: "EPSG:4326", crsB: "EPSG:32643", sliverPolygons: 21, sliverMaxAreaSqM: 68.0, disconnectedParts: 5 }
+    ],
+    taskPrompt: "Detail the 5-step GIS geoprocessing procedure required to eliminate sliver polygons without causing population double-counting. Address Coordinate Reference System (CRS) transformation, snapping tolerance, sliver elimination threshold, and topological union validation.",
+    modelAnswerKey: "1. CRS Reprojection: Reproject Census2011_EB from geographic EPSG:4326 (degrees) to projected CRS EPSG:32643 (UTM Zone 43N, meters) so spatial distance and area calculations are metric.\n2. Snapping Tolerance: Set vertex snapping tolerance to 5.0 meters with topological editing enabled to prevent creating new sliver micro-gaps.\n3. Resolve Self-Intersections: Execute 'Fix Geometries' on both vector layers to repair invalid self-intersecting loops and ring self-intersections.\n4. Eliminate Sliver Polygons: Apply 'Eliminate Selected Polygons' with area threshold < 50 sq meters, merging slivers into adjacent polygon sharing largest boundary.\n5. Planar Topology Validation: Execute overlay union and verify that total combined area matches official gazetted district area exactly with 0 unassigned gap slivers.",
+    rubric: {
+      methodologyWeight: 45,
+      protocolWeight: 30,
+      completenessWeight: 25
+    }
+  },
+  {
+    id: "task-6",
+    title: "NDGFP: Statistical Disclosure Control (SDC) & k-Anonymity on Health Microdata",
+    skill: "Data Governance",
+    difficulty: "Advanced",
+    estimatedMinutes: 8,
+    scenario: "Under the National Data Governance Framework Policy (NDGFP), you are preparing a high-resolution district public health survey microdata release. You must enforce k-anonymity (k>=3) and l-diversity on quasi-identifiers to prevent re-identification.",
+    datasetSnippet: [
+      { recId: "MED-01", ageGroup: "20-29", gender: "F", pinCode: "208001", diseaseCategory: "Diabetes", monthlyExp: 2200 },
+      { recId: "MED-02", ageGroup: "20-29", gender: "F", pinCode: "208001", diseaseCategory: "Hypertension", monthlyExp: 1800 },
+      { recId: "MED-03", ageGroup: "20-29", gender: "F", pinCode: "208001", diseaseCategory: "Tuberculosis", monthlyExp: 4500 },
+      { recId: "MED-04", ageGroup: "50-59", gender: "M", pinCode: "208005", diseaseCategory: "HIV/AIDS", monthlyExp: 8900 },
+      { recId: "MED-05", ageGroup: "70-79", gender: "F", pinCode: "208009", diseaseCategory: "Rare Genetic Disorder", monthlyExp: 145000 },
+      { recId: "MED-06", ageGroup: "50-59", gender: "M", pinCode: "208005", diseaseCategory: "Cardiovascular", monthlyExp: 12000 }
+    ],
+    taskPrompt: "Evaluate the quasi-identifiers (ageGroup, gender, pinCode). Identify which records violate k=3 anonymity. Propose the exact Statistical Disclosure Control (SDC) transformations: generalization of PIN codes, top-coding extreme expenditures, and cell suppression for sensitive diagnoses.",
+    modelAnswerKey: "Violations:\n1. Equivalence Class {20-29, F, 208001}: Contains MED-01, MED-02, MED-03. Size = 3. Satisfies k=3 anonymity.\n2. Equivalence Class {50-59, M, 208005}: Contains MED-04, MED-06. Size = 2 < 3. Violates k=3 anonymity!\n3. Equivalence Class {70-79, F, 208009}: Contains only MED-05. Unique record (size=1) with extreme expenditure (145,000). Highly vulnerable to identity disclosure!\n\nSDC Transformation Plan:\n1. Generalization: Mask PIN codes to 3-digit postal sorting district: '208***'. This combines 208005 and 208009 into a single broad geographic cluster.\n2. Age Generalization: Group ages into 20-year bands ('40-59', '60+'), merging MED-04, MED-06, and MED-05 into broader cohorts.\n3. Top-Coding: Top-code monthly health expenditure at 95th percentile (e.g. '>= 50,000 INR') to prevent expenditure-based outlier re-identification of MED-05.\n4. Perturbation / Suppression: For ultra-sensitive diagnosis (MED-04 HIV/AIDS), recode into high-level ICD-11 chapter 'Infectious & Parasitic Diseases' or apply cell suppression.",
+    rubric: {
+      methodologyWeight: 40,
+      protocolWeight: 30,
+      completenessWeight: 30
+    }
   }
 ];
 
-// ─── Initial Skill Evidence Portfolio Items ───
-export const samplePortfolioEvidence = [
+// ─── Day 0: Clean Slate for Active Officer (0 mock evidence items) ───
+export const samplePortfolioEvidence = [];
+
+// ─── Historical Evidence Dossier for Senior Demo Personas (e.g. Officer 1) ───
+export const demoPersonaEvidence = [
   {
-    id: "ev-1",
+    id: "ev-demo-1",
     title: "NSS 79th Round Urban Field Survey Supervision Report",
     competency: "Survey Design",
     date: "2024-06-15",
-    type: "Field Report",
+    type: "Field Survey Report",
     status: "Verified by Cadre Supervisor",
     verifiedBy: "Rajesh Kumar Sharma, Deputy Director",
     hash: "0x8f4d92a1c6e3b745",
@@ -668,11 +744,11 @@ export const samplePortfolioEvidence = [
     credentialId: "MOSPI-EVD-2024-0891"
   },
   {
-    id: "ev-2",
+    id: "ev-demo-2",
     title: "R Pipeline for Taylor Series Complex Variance Estimation",
     competency: "Statistical Methods",
     date: "2024-07-22",
-    type: "Code Artifact",
+    type: "Code / Analytical Script",
     status: "AI Rubric Verified",
     verifiedBy: "Pariksha AI Automated Auditor",
     hash: "0x3e1b7829fa04bc91",
@@ -680,13 +756,13 @@ export const samplePortfolioEvidence = [
     credentialId: "MOSPI-EVD-2024-1142"
   },
   {
-    id: "ev-3",
+    id: "ev-demo-3",
     title: "District Census Boundary Harmonization Memo",
     competency: "GIS & Spatial Analysis",
     date: "2024-08-10",
-    type: "Spatial Protocol",
-    status: "Pending Cadre Review",
-    verifiedBy: "Under Evaluation",
+    type: "Spatial / GIS Protocol",
+    status: "Verified by Cadre Supervisor",
+    verifiedBy: "Vikram Singh, Director",
     hash: "0x9c41f6e07a2318df",
     summary: "Resolved 17 border polygon gaps between Survey of India 1:50k maps and state LGD gazette boundaries using topological snapping in QGIS.",
     credentialId: "MOSPI-EVD-2024-1509"

@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills, samplePortfolioEvidence, cadreHierarchy, samplePracticalTasks, sampleMicroLearning } from '@/data/mockData';
+import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills, samplePortfolioEvidence, demoPersonaEvidence, cadreHierarchy, samplePracticalTasks, sampleMicroLearning } from '@/data/mockData';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
 import {
   getProfile,
@@ -97,8 +97,8 @@ export function AppProvider({ children }) {
   // ─── Module 3: AI Practical Simulation Tasks ───
   const [completedTasks, setCompletedTasks] = useState([]);
 
-  // ─── Module 4: Skill Evidence Dossier ───
-  const [portfolioItems, setPortfolioItems] = useState([...samplePortfolioEvidence]);
+  // ─── Module 4: Skill Evidence Dossier (Clean Day 0 State: 0 items for New Officer) ───
+  const [portfolioItems, setPortfolioItems] = useState([]);
 
   // ─── Module 5: Next-Role Readiness ───
   const [targetRole, setTargetRole] = useState("Senior Statistical Officer");
@@ -341,6 +341,9 @@ export function AppProvider({ children }) {
     });
     setQuizHistory([]);
     setEnrolledCourses([]);
+    setPortfolioItems([]);
+    setCompletedTasks([]);
+    setCompletedMicroUnits([]);
     setNotifications([{ id: Date.now(), text: "Platform reset to Day 0. Begin your baseline diagnostic assessment.", time: "Just now", read: false }]);
   }, []);
 
@@ -350,8 +353,12 @@ export function AppProvider({ children }) {
     setCurrentUser(officers[index]);
     if (index === 0) {
       setUserSkills({ ...currentUserSkills });
+      setPortfolioItems([]);
+      setCompletedTasks([]);
+      setCompletedMicroUnits([]);
     } else {
       setUserSkills(generateSkillsForOfficer(officers[index]));
+      setPortfolioItems([...demoPersonaEvidence]);
     }
     setQuizHistory([]);
     setEnrolledCourses([]);
@@ -392,6 +399,25 @@ export function AppProvider({ children }) {
       time: 'Just now',
       read: false,
     }, ...prev]);
+
+    // Automatically issue authentic examination certificate evidence if passed with >= 70%
+    if (result.scorePercent >= 70 || (result.totalQuestions && (result.score / result.totalQuestions) >= 0.7)) {
+      const idNum = Math.floor(1000 + Math.random() * 9000);
+      const hash = '0x' + Math.random().toString(16).slice(2, 10) + Math.random().toString(16).slice(2, 10);
+      const certItem = {
+        id: `ev-cert-${Date.now()}`,
+        title: `Official Assessment Certificate: ${result.skill}`,
+        competency: result.skill,
+        date: new Date().toISOString().split('T')[0],
+        type: 'Assessment Certificate',
+        status: 'Verified by Cadre Supervisor',
+        verifiedBy: 'MoSPI Examination & Training Cell',
+        hash,
+        summary: `Passed formal competency evaluation with ${result.scorePercent}% score (${result.score}/${result.totalQuestions} questions correct). Certified for APAR record.`,
+        credentialId: `MOSPI-CERT-${new Date().getFullYear()}-${idNum}`
+      };
+      setPortfolioItems(prev => [certItem, ...prev]);
+    }
 
     // Persist attempt asynchronously to Supabase
     if (isSupabaseConfigured && currentUser.id && typeof currentUser.id === 'string' && currentUser.id.includes('-')) {
@@ -598,6 +624,25 @@ export function AppProvider({ children }) {
       const boost = Math.round(score * 0.12);
       return { ...prev, [skill]: Math.min(100, Math.max(25, current + boost)) };
     });
+
+    // Automatically seal real verified credential in Skill Evidence Dossier if score >= 70%
+    if (score >= 70) {
+      const idNum = Math.floor(1000 + Math.random() * 9000);
+      const hash = '0x' + Math.random().toString(16).slice(2, 10) + Math.random().toString(16).slice(2, 10);
+      const simCredential = {
+        id: `ev-sim-${Date.now()}`,
+        title: `Practical Simulation: ${taskTitle}`,
+        competency: skill,
+        date: new Date().toISOString().split('T')[0],
+        type: 'Code / Analytical Script',
+        status: 'AI Rubric Verified',
+        verifiedBy: 'Pariksha AI Automated Auditor',
+        hash,
+        summary: `Executed official MoSPI simulation protocol with score ${score}%. ${feedback}`,
+        credentialId: `MOSPI-EVD-${new Date().getFullYear()}-${idNum}`
+      };
+      setPortfolioItems(prev => [simCredential, ...prev]);
+    }
 
     setNotifications(prev => [{
       id: Date.now(),

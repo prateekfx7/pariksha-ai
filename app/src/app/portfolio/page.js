@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { ShieldCheck, Plus, Award, CheckCircle2, FileText, Code2, MapPin, Hash, QrCode, ExternalLink, Printer, Filter, X, Sparkles } from 'lucide-react';
+import { ShieldCheck, Plus, Award, CheckCircle2, FileText, Code2, MapPin, Hash, QrCode, ExternalLink, Printer, Filter, X, Sparkles, Terminal, GraduationCap, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { skills } from '@/data/mockData';
+import Link from 'next/link';
 
 export default function PortfolioPage() {
   const { currentUser, portfolioItems, addPortfolioItem, verifyPortfolioItem } = useApp();
@@ -252,11 +253,80 @@ export default function PortfolioPage() {
         })}
 
         {filteredItems.length === 0 && (
-          <div className="empty-state">
-            <FileText size={48} />
-            <h3>No Evidence Artifacts Found</h3>
-            <p>Try clearing your filter or click "Log Evidence Artifact" to add your first fieldwork record.</p>
-          </div>
+          portfolioItems.length === 0 ? (
+            <div className="card" style={{ padding: 'clamp(24px, 5vw, 36px)', textAlign: 'center', background: 'var(--bg-surface)' }}>
+              <div style={{
+                width: 60,
+                height: 60,
+                borderRadius: '50%',
+                background: 'rgba(240, 90, 40, 0.12)',
+                color: 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px'
+              }}>
+                <ShieldCheck size={32} />
+              </div>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>
+                Day 0: Clean Slate Evidence Portfolio
+              </h3>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', maxWidth: 540, margin: '0 auto 24px', lineHeight: 1.6 }}>
+                Your Official APAR Competency Passport is currently unsealed. In accordance with MoSPI guidelines, credentials must be earned through verified practical execution or certified examination.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left', maxWidth: 840, margin: '0 auto 20px' }}>
+                <Link href="/practical-tasks" className="card" style={{ padding: 18, textDecoration: 'none', color: 'inherit', border: '1px solid var(--border)', transition: 'transform 150ms ease, border-color 150ms ease' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, color: 'var(--primary)' }}>
+                    <Terminal size={20} />
+                    <strong style={{ fontSize: 14 }}>1. AI Practical Lab</strong>
+                  </div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '0 0 10px', lineHeight: 1.5 }}>
+                    Solve authentic PLFS, ASI, or Neyman simulation challenges. Scoring &ge;70% automatically seals an AI-Audited Code/Analytical credential.
+                  </p>
+                  <span style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    Launch Simulation <ArrowRight size={13} />
+                  </span>
+                </Link>
+
+                <Link href="/quiz" className="card" style={{ padding: 18, textDecoration: 'none', color: 'inherit', border: '1px solid var(--border)', transition: 'transform 150ms ease, border-color 150ms ease' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, color: 'var(--success)' }}>
+                    <GraduationCap size={20} />
+                    <strong style={{ fontSize: 14 }}>2. Examination Cell</strong>
+                  </div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '0 0 10px', lineHeight: 1.5 }}>
+                    Take an official 5-question MoSPI diagnostic quiz. Passing score (&ge;70%) automatically issues a verified Assessment Certificate.
+                  </p>
+                  <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    Start Assessment <ArrowRight size={13} />
+                  </span>
+                </Link>
+
+                <div
+                  onClick={() => setShowLogModal(true)}
+                  className="card"
+                  style={{ padding: 18, cursor: 'pointer', border: '1px solid var(--border)', transition: 'transform 150ms ease, border-color 150ms ease' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, color: 'var(--info)' }}>
+                    <FileText size={20} />
+                    <strong style={{ fontSize: 14 }}>3. Log Fieldwork Artifact</strong>
+                  </div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '0 0 10px', lineHeight: 1.5 }}>
+                    Manually register a verified district survey inspection memo, R/Python pipeline, or GIS shapefile for supervisor sign-off.
+                  </p>
+                  <span style={{ fontSize: 12, color: 'var(--info)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    Open Intake Form <ArrowRight size={13} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <FileText size={48} />
+              <h3>No Matching Artifacts</h3>
+              <p>No evidence items match the selected domain or status filter. Try selecting "All".</p>
+            </div>
+          )
         )}
       </div>
 
