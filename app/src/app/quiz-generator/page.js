@@ -309,14 +309,23 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
 
   return (
     <div className={animateIn ? 'fade-in' : ''}>
-      {/* Contextual Back Navigation Breadcrumb */}
-      <div style={{ marginBottom: 14 }}>
-        <Link
-          href="/quiz"
-          className="btn btn-ghost btn-sm"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 10px', fontSize: 13 }}
-        >
-          <ChevronLeft size={16} /> Back to Quizzes
+      {/* Quiz Hub Tab Navigation */}
+      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+        <Link href="/quiz" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Play size={16} /> Take a Quiz
+        </Link>
+        <Link href="/quiz-generator" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Sparkles size={16} /> Generate New Quiz
         </Link>
       </div>
 

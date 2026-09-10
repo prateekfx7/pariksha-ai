@@ -2,37 +2,42 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, BookOpen, BrainCircuit, PenTool,
-  BarChart3, Settings, Bell, Trophy, Zap, MessageSquare, X, HelpCircle,
-  Terminal, TrendingUp, ShieldCheck
+  LayoutDashboard, BookOpen, BrainCircuit,
+  BarChart3, MessageSquare, X, Zap
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/micro-learning', label: 'AI Micro-Learning', icon: Zap },
-  { href: '/practical-tasks', label: 'Practical Tasks', icon: Terminal },
-  { href: '/readiness', label: 'Role Readiness', icon: TrendingUp },
-  { href: '/portfolio', label: 'Skill Evidence', icon: ShieldCheck },
-  { href: '/recommendations', label: 'Recommendations', icon: BookOpen },
-  { href: '/quiz-generator', label: 'Quiz Generator', icon: BrainCircuit },
-  { href: '/quiz', label: 'Take Quiz', icon: PenTool },
-  { href: '/admin', label: 'Cadre Heatmap', icon: BarChart3 },
-  { href: '/collaboration', label: 'Discussion Hub', icon: MessageSquare },
+  { href: '/recommendations', label: 'Learn', icon: BookOpen },
+  { href: '/quiz', label: 'Quizzes', icon: BrainCircuit },
+  { href: '/admin', label: 'Analytics', icon: BarChart3 },
+  { href: '/collaboration', label: 'Community', icon: MessageSquare },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { unreadCount, mobileSidebarOpen, toggleMobileSidebar, setShowGuideModal } = useApp();
-
-  const secondaryNav = [
-    { href: '/notifications', label: 'Notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
-    { href: '/achievements', label: 'Achievements', icon: Trophy, badge: null },
-    { href: '/settings', label: 'Settings', icon: Settings, badge: null },
-  ];
+  const { mobileSidebarOpen, toggleMobileSidebar } = useApp();
 
   const handleNavClick = () => {
     if (mobileSidebarOpen) toggleMobileSidebar();
+  };
+
+  // Determine if a nav item is active, including sub-routes
+  const isNavActive = (href) => {
+    if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/recommendations') {
+      return pathname === '/recommendations' ||
+        pathname === '/micro-learning' ||
+        pathname === '/practical-tasks' ||
+        pathname === '/readiness';
+    }
+    if (href === '/quiz') {
+      return pathname === '/quiz' ||
+        pathname.startsWith('/quiz/') ||
+        pathname === '/quiz-generator';
+    }
+    return pathname === href || pathname.startsWith(href + '/');
   };
 
   return (
@@ -96,7 +101,7 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         {mainNavItems.map(item => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
+          const isActive = isNavActive(item.href);
           return (
             <Link key={item.href} href={item.href} className={`nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
               <Icon />
@@ -104,52 +109,6 @@ export default function Sidebar() {
             </Link>
           );
         })}
-
-        <hr className="divider" style={{ margin: '12px 0' }} />
-
-        {secondaryNav.map(item => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} className={`nav-item ${isActive ? 'active' : ''}`} style={{ position: 'relative' }} onClick={handleNavClick}>
-              <Icon />
-              {item.label}
-              {item.badge && (
-                <span style={{
-                  marginLeft: 'auto',
-                  background: 'var(--primary)',
-                  color: 'white',
-                  borderRadius: 'var(--radius-full)',
-                  padding: '2px 8px',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  minWidth: 20,
-                  textAlign: 'center',
-                }}>
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-
-        <button
-          onClick={() => { setShowGuideModal(true); if (mobileSidebarOpen) toggleMobileSidebar(); }}
-          className="nav-item"
-          style={{
-            width: '100%',
-            textAlign: 'left',
-            background: 'var(--primary-subtle)',
-            color: 'var(--primary)',
-            border: '1px solid var(--border-light)',
-            cursor: 'pointer',
-            marginTop: 10,
-            fontWeight: 600
-          }}
-        >
-          <HelpCircle />
-          Software Guide
-        </button>
       </nav>
 
       <div className="sidebar-spacer" />

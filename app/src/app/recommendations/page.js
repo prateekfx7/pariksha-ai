@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Clock, BookOpen, BarChart2, Filter, TrendingUp, Award, ArrowUpRight, CheckCircle2, Search, X, Play, Check } from 'lucide-react';
+import { Clock, BookOpen, BarChart2, Filter, TrendingUp, Award, ArrowUpRight, CheckCircle2, Search, X, Play, Check, Zap, Terminal } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { skills } from '@/data/mockData';
 import Link from 'next/link';
@@ -55,6 +55,42 @@ export default function RecommendationsPage() {
           </div>
         </div>
       )}
+
+      {/* Learn Hub Tab Navigation */}
+      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+        <Link href="/recommendations" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <BookOpen size={16} /> Courses
+        </Link>
+        <Link href="/micro-learning" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Zap size={16} /> Micro-Drills
+        </Link>
+        <Link href="/practical-tasks" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Terminal size={16} /> Practical Labs
+        </Link>
+        <Link href="/readiness" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <TrendingUp size={16} /> Role Readiness
+        </Link>
+      </div>
 
       <div className="section-header mb-6">
         <div>

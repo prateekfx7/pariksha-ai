@@ -1,21 +1,17 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, BookOpen, Brain, Database, Shield, MessageSquare, Zap, Target, Sparkles, Play } from 'lucide-react';
-import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
-import { Radar, Bar } from 'react-chartjs-2';
+import {
+  ArrowUpRight, BookOpen, Brain, Database, Zap, Target,
+  Sparkles, Play, ChevronDown, ChevronUp, CheckCircle2,
+  TrendingUp, BarChart3, FileQuestion, GraduationCap, Award
+} from 'lucide-react';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
+import { Radar } from 'react-chartjs-2';
 import { useApp } from '@/context/AppContext';
-import { dashboardModules, currentModule, scheduledItems, skills } from '@/data/mockData';
+import { skills } from '@/data/mockData';
 
-ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
-
-const lessonIcons = {
-  book: BookOpen,
-  brain: Brain,
-  database: Database,
-  shield: Shield,
-  message: MessageSquare,
-};
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 export default function DashboardPage() {
   const {
@@ -28,10 +24,11 @@ export default function DashboardPage() {
     refreshSkill,
     decaySimulationDays,
     setDecaySimulationDays,
-    targetRole
   } = useApp();
+
   const [animateIn, setAnimateIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showDecayEngine, setShowDecayEngine] = useState(false);
 
   useEffect(() => {
     setAnimateIn(true);
@@ -81,9 +78,9 @@ export default function DashboardPage() {
         pointHoverRadius: 7,
       },
       {
-        label: 'Required Level',
+        label: 'Target Requirement',
         data: skills.map(s => gapData.gaps[s]?.required || 0),
-        backgroundColor: isLight ? 'rgba(100, 116, 139, 0.1)' : 'rgba(154, 147, 140, 0.1)',
+        backgroundColor: isLight ? 'rgba(100, 116, 139, 0.08)' : 'rgba(154, 147, 140, 0.08)',
         borderColor: isLight ? '#64748b' : '#9a938c',
         borderWidth: 2,
         borderDash: [5, 5],
@@ -122,7 +119,7 @@ export default function DashboardPage() {
         position: 'bottom',
         labels: {
           color: textMuted,
-          padding: 16,
+          padding: 14,
           usePointStyle: true,
           font: { size: 11, weight: '600' },
         },
@@ -139,131 +136,112 @@ export default function DashboardPage() {
     },
   };
 
-  const gapBarData = {
-    labels: isMobile ? skills.map(s => shortSkillMap[s] || s) : skills,
-    datasets: [
-      {
-        label: 'Competency Deficit (Gap)',
-        data: skills.map(s => gapData.gaps[s]?.gap || 0),
-        backgroundColor: skills.map(s => {
-          const gap = gapData.gaps[s]?.gap || 0;
-          if (gap >= 30) return '#f05a28';
-          if (gap >= 15) return '#f59e0b';
-          return '#10b981';
-        }),
-        borderRadius: 6,
-        barThickness: isMobile ? 14 : 18,
-      },
-    ],
-  };
-
-  const gapBarOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-      x: {
-        beginAtZero: true,
-        max: 60,
-        grid: { color: isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(58, 53, 48, 0.3)' },
-        ticks: { color: textMuted, font: { size: 10 } },
-      },
-      y: {
-        grid: { display: false },
-        ticks: { color: textColor, font: { size: isMobile ? 10.5 : 12, weight: '600' } },
-      },
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: tooltipBg,
-        titleColor: tooltipTitle,
-        bodyColor: tooltipBody,
-        borderColor: tooltipBorder,
-        borderWidth: 1,
-        padding: 10,
-        cornerRadius: 8,
-      },
-    },
-  };
-
   return (
-    <div className={animateIn ? 'fade-in' : ''}>
-      {/* Hero Banner */}
-      <div className="hero-banner">
-        <div>
-          {isDayZero ? (
-            <>
-              <p className="hero-greeting">Welcome, {currentUser.name}!</p>
-              <h1 className="hero-title">
-                Start from Day 0<br />
-                Calibrate Your Baseline<br />
-                Competencies
-              </h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16, maxWidth: 460, lineHeight: 1.5 }}>
-                You begin with 0 XP and unassessed baseline skills. Complete your first diagnostic assessment to calibrate your competency radar and unlock personalized iGOT pathways.
-              </p>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <Link href="/quiz" className="btn btn-primary">
-                  Start 1st Assessment <ArrowUpRight size={16} />
-                </Link>
-                <button
-                  onClick={() => setShowGuideModal(true)}
-                  className="btn btn-outline"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)' }}
-                >
-                  <BookOpen size={16} /> Software Guide
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="hero-greeting">Namaste, {currentUser.name.split(' ')[0]}!</p>
-              <h1 className="hero-title">
-                You've completed<br />
-                {completedModules} assessment{completedModules === 1 ? '' : 's'}<br />
-                on your journey
-              </h1>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16 }}>
-                <Link href="/recommendations" className="btn btn-primary">
-                  View Recommendations <ArrowUpRight size={16} />
-                </Link>
-                <button
-                  onClick={() => setShowGuideModal(true)}
-                  className="btn btn-outline"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)' }}
-                >
-                  <BookOpen size={16} /> Software Guide
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-        <div className="hero-cards">
-          {dashboardModules.map((mod, i) => (
-            <div key={mod.num} className="hero-module-card fade-in" style={{ animationDelay: `${0.2 + i * 0.1}s` }}>
-              <span className="card-num">{mod.num}</span>
-              <span className="card-title">{mod.title}</span>
-              <span className="card-icon">{mod.icon}</span>
+    <div className={animateIn ? 'fade-in' : ''} style={{ maxWidth: 1180, margin: '0 auto' }}>
+      {/* 1. Welcoming Hero Bar */}
+      <div className="card mb-6" style={{
+        padding: '24px 28px',
+        background: 'var(--bg-card)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border-light)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: -40,
+          right: -40,
+          width: 180,
+          height: 180,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <span className="hero-greeting" style={{ margin: 0 }}>
+                {isDayZero ? `Welcome, ${currentUser.name}` : `Namaste, ${currentUser.name.split(' ')[0]}`}
+              </span>
+              <span className="tag tag-priority" style={{ fontSize: 11 }}>
+                {currentUser.role}
+              </span>
+              {isDayZero && (
+                <span className="tag" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', fontSize: 10 }}>
+                  Day 0 Baseline
+                </span>
+              )}
             </div>
-          ))}
+            <h1 style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              {isDayZero ? 'Calibrate Your Statistical Competencies' : 'Your Competency Command Center'}
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 13.5, margin: '6px 0 0', maxWidth: 620, lineHeight: 1.5 }}>
+              {isDayZero
+                ? 'Answer diagnostic questions to calibrate your radar chart and generate personalized iGOT Karmayogi learning pathways.'
+                : `You've completed ${completedModules} assessment${completedModules === 1 ? '' : 's'}. Track your skill calibration, take 2-minute refreshers, and close competency deficits.`}
+            </p>
+          </div>
+
+          {/* Officer Quick Stats Pills */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '8px 14px',
+              textAlign: 'center',
+              minWidth: 90
+            }}>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600 }}>OVERALL</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--primary)' }}>
+                {gapData.overallScore}%
+              </div>
+            </div>
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '8px 14px',
+              textAlign: 'center',
+              minWidth: 90
+            }}>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600 }}>XP EARNED</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#f59e0b' }}>
+                {currentUser.xp.toLocaleString()}
+              </div>
+            </div>
+            <div style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '8px 14px',
+              textAlign: 'center',
+              minWidth: 90
+            }}>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600 }}>STREAK</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--success)' }}>
+                {currentUser.streak}d 🔥
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Next Best Action Card (Intuitive 1-Tap Officer Guidance) */}
+      {/* 2. Next Recommended Action Card (Clear single priority) */}
       <div className="card mb-6" style={{
         background: isDayZero
           ? 'linear-gradient(135deg, rgba(240, 90, 40, 0.08) 0%, var(--bg-card) 100%)'
           : 'var(--bg-card)',
         border: '1.5px solid var(--primary)',
-        padding: '14px 18px',
+        padding: '18px 22px',
         borderRadius: 'var(--radius-lg)',
         boxShadow: 'var(--shadow-md)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 240 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 260 }}>
             <div style={{
-              width: 42, height: 42,
+              width: 48, height: 48,
               borderRadius: 'var(--radius-md)',
               background: 'var(--primary-subtle)',
               border: '1px solid var(--primary-glow)',
@@ -271,112 +249,300 @@ export default function DashboardPage() {
               color: 'var(--primary)',
               flexShrink: 0
             }}>
-              {isDayZero ? <Target size={22} /> : <Zap size={22} />}
+              {isDayZero ? <Target size={24} /> : <Zap size={24} />}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                 <span className="tag tag-priority" style={{ fontSize: 10, textTransform: 'uppercase', fontWeight: 800 }}>
                   {isDayZero ? 'Next Recommended Step' : 'Priority Action'}
                 </span>
-                <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>• ~5 min</span>
+                <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>• ~5 min</span>
               </div>
-              <h3 style={{ fontSize: 14.5, fontWeight: 700, margin: 0, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                 {isDayZero
                   ? 'Take Your 5-Minute Baseline Diagnostic Quiz'
                   : `Target Largest Skill Deficit: ${topGapSkill?.skill || 'Statistical Methods'}`}
               </h3>
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '2px 0 0', lineHeight: 1.4 }}>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '4px 0 0', lineHeight: 1.4 }}>
                 {isDayZero
-                  ? 'Answer 5 diagnostic questions to calibrate your radar chart and unlock personalized iGOT courses.'
+                  ? 'Calibrate all 6 statistical competencies and unlock personalized recommendations based on your actual score.'
                   : `Current rating: ${topGapSkill?.current || 0}/100. Target required: ${topGapSkill?.required || 60}. Earn +150 XP.`}
               </p>
             </div>
           </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <Link
-                href={isDayZero ? '/quiz/quiz-1' : '/quiz'}
-                className="btn btn-primary btn-sm"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
-              >
-                <Play size={14} />
-                {isDayZero ? 'Start 1st Assessment' : 'Take Diagnostic'}
-              </Link>
-              <Link
-                href="/micro-learning"
-                className="btn btn-outline btn-sm"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
-              >
-                <Zap size={14} /> 2-Min Micro-Drill
-              </Link>
-              <Link
-                href="/practical-tasks"
-                className="btn btn-ghost btn-sm"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
-              >
-                <Database size={14} /> Practical Lab
-              </Link>
-            </div>
+
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link
+              href={isDayZero ? '/quiz/quiz-1' : '/quiz'}
+              className="btn btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}
+            >
+              <Play size={16} />
+              {isDayZero ? 'Start 1st Assessment' : 'Take Diagnostic'}
+            </Link>
+            <Link
+              href="/recommendations"
+              className="btn btn-outline"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}
+            >
+              <GraduationCap size={15} /> Explore Courses
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Main Grid: Charts + Scheduled */}
-      <div className="grid-sidebar">
-        <div>
-          {/* Charts Row */}
-          <div className="grid-2 mb-6">
-            <div className="chart-container fade-in fade-in-delay-1" style={{ position: 'relative' }}>
-              <div className="flex-between mb-2">
-                <h3>Competency Radar</h3>
-                {isDayZero && (
-                  <span className="tag tag-priority" style={{ fontSize: 10 }}>Day 0 Baseline</span>
-                )}
-              </div>
-              <div style={{ height: 280 }}>
-                <Radar data={radarData} options={radarOptions} />
-              </div>
-              {isDayZero && (
-                <div style={{
-                  marginTop: 10,
-                  padding: '8px 12px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--primary-subtle)',
-                  border: '1px solid var(--primary-glow)',
-                  fontSize: 12,
-                  color: 'var(--primary)',
-                  textAlign: 'center'
-                }}>
-                  📍 Unassessed Baseline: Complete your first diagnostic quiz to calibrate your competencies.
-                </div>
-              )}
-            </div>
-            <div className="chart-container fade-in fade-in-delay-2">
-              <h3>Skill Gap Analysis</h3>
-              <div style={{ height: 300 }}>
-                <Bar data={gapBarData} options={gapBarOptions} />
-              </div>
-            </div>
+      {/* 3. Competency Radar & Gap Status */}
+      <div className="card mb-6" style={{ padding: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+              Competency Radar & Target Benchmarks
+            </h3>
+            <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '2px 0 0' }}>
+              Orange area shows your evaluated rating; dashed outline represents target proficiency for your cadre.
+            </p>
+          </div>
+          {isDayZero && (
+            <span className="tag tag-priority" style={{ fontSize: 11 }}>
+              Baseline Calibrating
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr', gap: 24, alignItems: 'center' }}>
+          {/* Radar Chart */}
+          <div style={{ height: 320, position: 'relative' }}>
+            <Radar data={radarData} options={radarOptions} />
           </div>
 
-          {/* Competency Freshness & Skill Decay Engine Widget */}
-          <div className="card mb-6 fade-in fade-in-delay-2" style={{ padding: 22, background: 'var(--bg-surface)' }}>
-            <div className="flex-between mb-3" style={{ flexWrap: 'wrap', gap: 10 }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Zap size={18} style={{ color: 'var(--primary)' }} />
-                  <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>
-                    Competency Freshness & Forgetting Curve Model
-                  </h3>
-                </div>
-                <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
-                  Unpracticed skills experience natural decay over time. Take 2-minute refreshers to maintain 100% calibration.
-                </p>
-              </div>
-              <Link href="/micro-learning" className="btn btn-outline btn-sm">
-                <Sparkles size={13} /> Launch Micro-Learning
-              </Link>
-            </div>
+          {/* Skill Breakdown List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {skills.map((s) => {
+              const current = gapData.gaps[s]?.current || 0;
+              const required = gapData.gaps[s]?.required || 60;
+              const isMet = current >= required;
+              const gap = required - current;
 
-            {/* Inactivity Simulation Slider */}
+              return (
+                <div key={s} style={{
+                  padding: '10px 14px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-light)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{s}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: isMet ? 'var(--success)' : 'var(--primary)' }}>
+                        {current}/100 <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 400 }}>req {required}</span>
+                      </span>
+                    </div>
+                    <div className="progress-bar-track" style={{ height: 6 }}>
+                      <div
+                        className="progress-bar-fill"
+                        style={{
+                          width: `${Math.min(100, current)}%`,
+                          background: isMet ? 'var(--success)' : 'var(--primary)',
+                          height: '100%'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <span className={`tag ${isMet ? 'tag-easy' : 'tag-priority'}`} style={{ fontSize: 10.5, flexShrink: 0 }}>
+                    {isMet ? 'Target Met' : `Gap: -${gap}%`}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Quick Actions Grid — 4 Large Tap-Friendly Cards */}
+      <div className="mb-6">
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          Quick Action Hub
+        </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+          {/* Card 1: Take Assessment */}
+          <Link
+            href="/quiz"
+            className="card"
+            style={{
+              padding: 20,
+              textDecoration: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease',
+              cursor: 'pointer'
+            }}
+          >
+            <div>
+              <div style={{
+                width: 42, height: 42, borderRadius: 'var(--radius-md)',
+                background: 'rgba(240, 90, 40, 0.12)', color: 'var(--primary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12
+              }}>
+                <FileQuestion size={22} />
+              </div>
+              <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                Take Assessment
+              </h4>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                Diagnostic MCQs, scenario drills, and competency tests with instant grading.
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16, color: 'var(--primary)', fontSize: 12.5, fontWeight: 600 }}>
+              <span>Browse Quizzes</span> <ArrowUpRight size={14} />
+            </div>
+          </Link>
+
+          {/* Card 2: Recommended Courses */}
+          <Link
+            href="/recommendations"
+            className="card"
+            style={{
+              padding: 20,
+              textDecoration: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease',
+              cursor: 'pointer'
+            }}
+          >
+            <div>
+              <div style={{
+                width: 42, height: 42, borderRadius: 'var(--radius-md)',
+                background: 'rgba(16, 185, 129, 0.12)', color: '#10b981',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12
+              }}>
+                <GraduationCap size={22} />
+              </div>
+              <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                Learning Hub
+              </h4>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                Personalized iGOT courses, 2-minute micro-drills, and practical labs.
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16, color: '#10b981', fontSize: 12.5, fontWeight: 600 }}>
+              <span>View Courses</span> <ArrowUpRight size={14} />
+            </div>
+          </Link>
+
+          {/* Card 3: AI Quiz Generator */}
+          <Link
+            href="/quiz-generator"
+            className="card"
+            style={{
+              padding: 20,
+              textDecoration: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease',
+              cursor: 'pointer'
+            }}
+          >
+            <div>
+              <div style={{
+                width: 42, height: 42, borderRadius: 'var(--radius-md)',
+                background: 'rgba(99, 102, 241, 0.12)', color: '#6366f1',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12
+              }}>
+                <Sparkles size={22} />
+              </div>
+              <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                Generate Quiz from PDF
+              </h4>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                Upload official circulars or survey manuals to generate assessments in seconds.
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16, color: '#6366f1', fontSize: 12.5, fontWeight: 600 }}>
+              <span>Open Generator</span> <ArrowUpRight size={14} />
+            </div>
+          </Link>
+
+          {/* Card 4: Cadre Analytics */}
+          <Link
+            href="/admin"
+            className="card"
+            style={{
+              padding: 20,
+              textDecoration: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease',
+              cursor: 'pointer'
+            }}
+          >
+            <div>
+              <div style={{
+                width: 42, height: 42, borderRadius: 'var(--radius-md)',
+                background: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12
+              }}>
+                <BarChart3 size={22} />
+              </div>
+              <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                Cadre Heatmap
+              </h4>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                Admin department-wide competency heatmaps and training demand analytics.
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16, color: '#f59e0b', fontSize: 12.5, fontWeight: 600 }}>
+              <span>View Analytics</span> <ArrowUpRight size={14} />
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* 5. Competency Freshness & Forgetting Curve (Collapsible for Clean UX) */}
+      <div className="card mb-6" style={{ padding: '16px 22px', background: 'var(--bg-surface)' }}>
+        <div
+          onClick={() => setShowDecayEngine(!showDecayEngine)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer',
+            userSelect: 'none'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Zap size={18} style={{ color: 'var(--primary)' }} />
+            <div>
+              <h4 style={{ fontSize: 14.5, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                Skill Freshness & Forgetting Curve Engine
+              </h4>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>
+                {showDecayEngine ? 'Simulating Ebbinghaus retention model' : 'Click to inspect skill retention model & live inactivity decay simulator'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          >
+            {showDecayEngine ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            <span>{showDecayEngine ? 'Hide' : 'Expand Simulator'}</span>
+          </button>
+        </div>
+
+        {showDecayEngine && (
+          <div className="fade-in" style={{ marginTop: 18, borderTop: '1px solid var(--border-light)', paddingTop: 16 }}>
+            {/* Slider */}
             <div style={{ background: 'var(--bg-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', marginBottom: 16, border: '1px solid var(--border-light)' }}>
               <div className="flex-between" style={{ fontSize: 12, marginBottom: 6 }}>
                 <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -445,108 +611,7 @@ export default function DashboardPage() {
               })}
             </div>
           </div>
-
-          {/* Overall Score */}
-          <div className="stats-row fade-in fade-in-delay-2">
-            <div className="stat-card">
-              <div className="stat-icon orange"><Brain size={22} /></div>
-              <div className="stat-content">
-                <h3>{gapData.overallScore}%</h3>
-                <p>Overall Competency</p>
-                <div className="stat-trend neutral" style={{ color: isDayZero ? 'var(--text-tertiary)' : 'var(--success)' }}>
-                  {isDayZero ? '● Baseline Pending' : '↑ Calibrated'}
-                </div>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon green"><BookOpen size={22} /></div>
-              <div className="stat-content">
-                <h3>{completedModules}</h3>
-                <p>Modules Completed</p>
-                <div className="stat-trend neutral" style={{ color: completedModules === 0 ? 'var(--text-tertiary)' : 'var(--success)' }}>
-                  {completedModules === 0 ? '● 0 completed' : `↑ ${completedModules} done`}
-                </div>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon blue"><Database size={22} /></div>
-              <div className="stat-content">
-                <h3>{quizHistory.length}</h3>
-                <p>Quizzes Taken</p>
-                <div className="stat-trend neutral" style={{ color: quizHistory.length === 0 ? 'var(--text-tertiary)' : 'var(--success)' }}>
-                  {quizHistory.length === 0 ? '● 0 taken' : `↑ ${quizHistory.length} taken`}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Current Module (Toko style) */}
-          <div className="module-section fade-in fade-in-delay-3">
-            <div className="module-header">
-              <div>
-                <span className="module-label">Module {currentModule.number}</span>
-                <h3 className="module-title">{currentModule.title}</h3>
-              </div>
-              <div className="module-progress">
-                <div className="progress-bar-track" style={{ width: 120 }}>
-                  <div className="progress-bar-fill" style={{ width: `${currentModule.progress}%` }} />
-                </div>
-                <span className="module-progress-text">{currentModule.progress}%</span>
-              </div>
-            </div>
-            <div className="lesson-list">
-              {currentModule.lessons.map((lesson, i) => {
-                const Icon = lessonIcons[lesson.icon] || BookOpen;
-                return (
-                  <Link key={i} href="/quiz" className="lesson-item" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                    <div className="lesson-icon"><Icon size={20} /></div>
-                    <div className="lesson-info">
-                      <h4>{lesson.title}</h4>
-                      <p>{lesson.desc}</p>
-                    </div>
-                    <ArrowUpRight size={16} style={{ marginLeft: 'auto', color: 'var(--text-tertiary)' }} />
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Scheduled Sidebar */}
-        <div className="scheduled-section fade-in fade-in-delay-2">
-          <div className="flex-between mb-4">
-            <h3 style={{ fontStyle: 'italic' }}>Scheduled Learning</h3>
-            <Link href="/recommendations" className="btn btn-ghost btn-sm">See all</Link>
-          </div>
-
-          <p className="scheduled-day-label">Today</p>
-          <div className="scheduled-card">
-            <h4>{scheduledItems[0].title}</h4>
-            <p>{scheduledItems[0].time}</p>
-            <div className="scheduled-card-footer">
-              <div className="avatar-group">
-                {scheduledItems[0].avatars.map((a, i) => (
-                  <div key={i} className="avatar-sm" style={{
-                    background: ['#f05a28', '#d44a1e', '#b83d18'][i]
-                  }}>{a}</div>
-                ))}
-              </div>
-              <span className="tag tag-group">● Group</span>
-            </div>
-          </div>
-
-          <p className="scheduled-day-label">Tomorrow</p>
-          {scheduledItems.slice(1).map(item => (
-            <div key={item.id} className="scheduled-card">
-              <h4>{item.title}</h4>
-              <p>{item.time}</p>
-              <div className="scheduled-card-footer">
-                <span />
-                <span className={`tag tag-${item.type}`}>● {item.type.charAt(0).toUpperCase() + item.type.slice(1)}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
     </div>
   );

@@ -359,7 +359,51 @@ export default function LoginPage({ onLogin }) {
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: 24 }}>
+          {/* Demo Mode — Instant Access */}
+          <div style={{
+            marginTop: 20,
+            padding: '16px',
+            borderRadius: 'var(--radius-lg)',
+            background: 'rgba(240, 90, 40, 0.06)',
+            border: '1px dashed rgba(240, 90, 40, 0.35)',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 10 }}>
+              Want to explore without signing in?
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                onLogin({
+                  id: 'demo-officer-001',
+                  name: 'Rajesh Kumar',
+                  email: 'demo@mospi.gov.in',
+                  role: 'Statistical Officer',
+                  department: 'Census Operations',
+                });
+              }}
+              className="btn btn-lg"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                background: 'transparent',
+                border: '2px solid var(--primary)',
+                color: 'var(--primary)',
+                fontWeight: 700,
+                fontSize: 15,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              🚀 Explore as Demo Officer
+            </button>
+            <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8 }}>
+              Full access with sample data — no account needed
+            </p>
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 20 }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
               {isSignup ? 'Already have an official account?' : "Don't have an account yet?"}{' '}
               <button

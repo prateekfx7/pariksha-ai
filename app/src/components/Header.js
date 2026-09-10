@@ -233,16 +233,6 @@ export default function Header() {
         {/* 💻 DESKTOP ONLY: Utility Actions (Guide, Theme, Notifications) */}
         <div className="header-actions-group header-desktop-only hide-mobile">
           <button
-            onClick={() => setShowGuideModal(true)}
-            className="header-guide-btn"
-            title="Open Pariksha AI Software Guide"
-            aria-label="Software Guide"
-          >
-            <HelpCircle size={15} />
-            <span>Guide</span>
-          </button>
-
-          <button
             onClick={toggleTheme}
             className="header-icon-btn"
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
@@ -426,31 +416,10 @@ export default function Header() {
                   )}
                 </Link>
 
-                {/* Guide Modal Trigger */}
-                <button
-                  onClick={() => { setShowGuideModal(true); setShowUserMenu(false); }}
-                  style={{
-                    padding: '8px 10px',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: 13,
-                    color: 'var(--primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    background: 'transparent',
-                    border: 'none',
-                    width: '100%',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                >
-                  <HelpCircle size={14} /> How to Use Software
-                </button>
-
-                {/* Open Navigation Drawer (Mobile helper) */}
-                <button
-                  onClick={() => { toggleMobileSidebar(); setShowUserMenu(false); }}
-                  className="hide-desktop"
+                {/* Achievements */}
+                <Link
+                  href="/achievements"
+                  onClick={() => setShowUserMenu(false)}
                   style={{
                     padding: '8px 10px',
                     borderRadius: 'var(--radius-sm)',
@@ -459,15 +428,29 @@ export default function Header() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    background: 'transparent',
-                    border: 'none',
-                    width: '100%',
-                    cursor: 'pointer',
-                    textAlign: 'left'
+                    width: '100%'
                   }}
                 >
-                  <Menu size={14} /> All Pages & Menu Drawer
-                </button>
+                  <Zap size={14} style={{ color: 'var(--warning)' }} /> Achievements & XP
+                </Link>
+
+                {/* Skill Evidence */}
+                <Link
+                  href="/portfolio"
+                  onClick={() => setShowUserMenu(false)}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: 13,
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    width: '100%'
+                  }}
+                >
+                  <Users size={14} /> Skill Evidence Dossier
+                </Link>
 
                 {/* Reset to Day 0 */}
                 <button
@@ -487,10 +470,10 @@ export default function Header() {
                     textAlign: 'left'
                   }}
                 >
-                  <RefreshCw size={14} /> Reset to Day 0 (Start Fresh)
+                  <RefreshCw size={14} /> Reset to Day 0
                 </button>
 
-                {/* Full Settings */}
+                {/* Settings */}
                 <Link
                   href="/settings"
                   onClick={() => setShowUserMenu(false)}
@@ -504,7 +487,7 @@ export default function Header() {
                     gap: 8,
                   }}
                 >
-                  <Users size={14} /> Full Officer Settings
+                  <Users size={14} /> Settings
                 </Link>
 
                 {/* Sign Out */}

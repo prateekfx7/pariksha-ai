@@ -36,14 +36,31 @@ export default function QuizListPage() {
 
   return (
     <div className={animateIn ? 'fade-in' : ''}>
+      {/* Quiz Hub Tab Navigation */}
+      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+        <Link href="/quiz" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Play size={16} /> Take a Quiz
+        </Link>
+        <Link href="/quiz-generator" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Sparkles size={16} /> Generate New Quiz
+        </Link>
+      </div>
+
       <div className="section-header mb-6">
         <div>
           <h1 className="section-title">Assessment & Diagnostic Quizzes</h1>
           <p className="section-subtitle">Validate your statistical competencies, close your diagnostic skill gaps, and earn iGOT-recognized XP</p>
         </div>
-        <Link href="/quiz-generator" className="btn btn-primary">
-          <BrainCircuit size={16} /> AI Quiz Generator
-        </Link>
       </div>
 
       {/* Quiz History Summary */}

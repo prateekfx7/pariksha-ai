@@ -1,25 +1,46 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, PenTool, BrainCircuit, Menu } from 'lucide-react';
-import { useApp } from '@/context/AppContext';
+import { LayoutDashboard, BookOpen, BrainCircuit, BarChart3, User } from 'lucide-react';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
-  const { toggleMobileSidebar, unreadCount } = useApp();
 
   const navTabs = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/recommendations', label: 'Courses', icon: BookOpen },
-    { href: '/quiz', label: 'Quizzes', icon: PenTool },
-    { href: '/quiz-generator', label: 'AI Gen', icon: BrainCircuit },
+    { href: '/recommendations', label: 'Learn', icon: BookOpen },
+    { href: '/quiz', label: 'Quizzes', icon: BrainCircuit },
+    { href: '/admin', label: 'Analytics', icon: BarChart3 },
+    { href: '/settings', label: 'Profile', icon: User },
   ];
+
+  const isTabActive = (href) => {
+    if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/recommendations') {
+      return pathname === '/recommendations' ||
+        pathname === '/micro-learning' ||
+        pathname === '/practical-tasks' ||
+        pathname === '/readiness';
+    }
+    if (href === '/quiz') {
+      return pathname === '/quiz' ||
+        pathname.startsWith('/quiz/') ||
+        pathname === '/quiz-generator';
+    }
+    if (href === '/settings') {
+      return pathname === '/settings' ||
+        pathname === '/achievements' ||
+        pathname === '/portfolio' ||
+        pathname === '/notifications';
+    }
+    return pathname === href || pathname.startsWith(href + '/');
+  };
 
   return (
     <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
       {navTabs.map(tab => {
         const Icon = tab.icon;
-        const isActive = pathname === tab.href || (tab.href !== '/dashboard' && pathname.startsWith(tab.href + '/'));
+        const isActive = isTabActive(tab.href);
         return (
           <Link
             key={tab.href}
@@ -34,22 +55,6 @@ export default function MobileBottomNav() {
           </Link>
         );
       })}
-
-      {/* Menu Drawer Toggle Button */}
-      <button
-        type="button"
-        onClick={toggleMobileSidebar}
-        className="mobile-nav-item"
-        aria-label="Open full menu"
-      >
-        <div className="mobile-nav-icon-wrap">
-          <Menu size={20} />
-          {unreadCount > 0 && (
-            <span className="mobile-nav-badge" />
-          )}
-        </div>
-        <span className="mobile-nav-label">Menu</span>
-      </button>
     </nav>
   );
 }

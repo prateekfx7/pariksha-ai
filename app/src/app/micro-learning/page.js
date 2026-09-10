@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Sparkles, Brain, Zap, RotateCw, CheckCircle2, ChevronRight, ChevronLeft, Award, Play, BookOpen, Layers, Target, RefreshCw } from 'lucide-react';
+import { Sparkles, Brain, Zap, RotateCw, CheckCircle2, ChevronRight, ChevronLeft, Award, Play, BookOpen, Layers, Target, RefreshCw, Terminal, TrendingUp } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { skills, sampleMicroLearning } from '@/data/mockData';
 import Link from 'next/link';
@@ -123,6 +123,42 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
 
   return (
     <div className="fade-in" style={{ maxWidth: 960, margin: '0 auto', paddingBottom: 40 }}>
+      {/* Learn Hub Tab Navigation */}
+      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+        <Link href="/recommendations" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <BookOpen size={16} /> Courses
+        </Link>
+        <Link href="/micro-learning" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Zap size={16} /> Micro-Drills
+        </Link>
+        <Link href="/practical-tasks" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Terminal size={16} /> Practical Labs
+        </Link>
+        <Link href="/readiness" style={{
+          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <TrendingUp size={16} /> Role Readiness
+        </Link>
+      </div>
+
       {/* Header */}
       <div className="section-header mb-6">
         <div>
