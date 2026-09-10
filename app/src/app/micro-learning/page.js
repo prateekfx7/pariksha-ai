@@ -6,7 +6,7 @@ import { skills, sampleMicroLearning } from '@/data/mockData';
 import Link from 'next/link';
 
 export default function MicroLearningPage() {
-  const { gapData, apiKey, addMicroLearningResult, completedMicroUnits, getSkillDecayStatus } = useApp();
+  const { gapData, apiKey, addMicroLearningResult, completedMicroUnits, getSkillDecayStatus, t, tSkill } = useApp();
 
   // Pick top gap skill by default
   const defaultSkill = gapData?.gapList?.[0]?.skill || "Survey Design";
@@ -131,7 +131,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <BookOpen size={16} /> Courses
+          <BookOpen size={16} /> {t('tab_courses', 'Courses')}
         </Link>
         <Link href="/micro-learning" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -139,7 +139,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Zap size={16} /> Micro-Drills
+          <Zap size={16} /> {t('tab_micro', 'Micro-Drills')}
         </Link>
         <Link href="/practical-tasks" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -147,7 +147,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Terminal size={16} /> Practical Labs
+          <Terminal size={16} /> {t('tab_practical', 'Practical Labs')}
         </Link>
         <Link href="/readiness" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -155,7 +155,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <TrendingUp size={16} /> Role Readiness
+          <TrendingUp size={16} /> {t('tab_readiness', 'Role Readiness')}
         </Link>
       </div>
 
@@ -164,20 +164,20 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span className="tag tag-priority" style={{ fontSize: 11 }}>
-              <Zap size={13} /> Continuous Skill Preservation
+              <Zap size={13} /> {t('continuous_skill_preservation', 'Continuous Skill Preservation')}
             </span>
             <span className="tag tag-easy" style={{ fontSize: 11 }}>
-              2-3 Min Drills
+              {t('quick_drills', '2-3 Min Drills')}
             </span>
           </div>
-          <h1 className="section-title">AI Micro-Learning Generator</h1>
+          <h1 className="section-title">{t('micro_title', 'AI Micro-Learning Generator')}</h1>
           <p className="section-subtitle">
-            Bite-sized, on-demand learning nuggets generated to reverse skill decay and bridge targeted MoSPI gaps.
+            {t('micro_subtitle', 'Bite-sized, on-demand learning nuggets generated to reverse skill decay and bridge targeted MoSPI gaps.')}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <div className="header-badge xp" style={{ fontSize: 13, padding: '6px 12px' }}>
-            <Award size={16} /> {completedMicroUnits.length} Drills Done
+            <Award size={16} /> {completedMicroUnits.length} {t('drills_done', 'Drills Done')}
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           {/* Target Skill */}
           <div style={{ flex: '1 1 240px', minWidth: 200 }}>
             <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>
-              Target Competency
+              {t('target_competency', 'Target Competency')}
             </label>
             <select
               value={selectedSkill}
@@ -202,7 +202,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                 const isTopGap = s === defaultSkill;
                 return (
                   <option key={s} value={s}>
-                    {s} {isTopGap ? '(★ Top Gap)' : ''}
+                    {tSkill(s)} {isTopGap ? `(★ ${t('gap_label', 'Top Gap')})` : ''}
                   </option>
                 );
               })}
@@ -215,19 +215,19 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
               onClick={() => { setFormat('flashcards'); loadContentForSkill(selectedSkill, 'flashcards'); }}
               className={`btn btn-sm ${format === 'flashcards' ? 'btn-primary' : 'btn-outline'}`}
             >
-              <Layers size={14} /> Flashcards (3)
+              <Layers size={14} /> {t('flashcards_tab', 'Flashcards (3)')}
             </button>
             <button
               onClick={() => { setFormat('caselet'); loadContentForSkill(selectedSkill, 'caselet'); }}
               className={`btn btn-sm ${format === 'caselet' ? 'btn-primary' : 'btn-outline'}`}
             >
-              <Brain size={14} /> Caselet Scenario
+              <Brain size={14} /> {t('caselet_tab', 'Caselet Scenario')}
             </button>
             <button
               onClick={() => { setFormat('nugget'); loadContentForSkill(selectedSkill, 'nugget'); }}
               className={`btn btn-sm ${format === 'nugget' ? 'btn-primary' : 'btn-outline'}`}
             >
-              <BookOpen size={14} /> 60-Sec Nugget
+              <BookOpen size={14} /> {t('nugget_tab', '60-Sec Nugget')}
             </button>
           </div>
 
@@ -240,11 +240,11 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           >
             {isGenerating ? (
               <>
-                <RotateCw size={14} className="spinner" /> Synthesizing...
+                <RotateCw size={14} className="spinner" /> {t('synthesizing', 'Synthesizing...')}
               </>
             ) : (
               <>
-                <Sparkles size={14} /> Regenerate with AI
+                <Sparkles size={14} /> {t('regenerate_ai', 'Regenerate with AI')}
               </>
             )}
           </button>
@@ -253,12 +253,12 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
         {/* Skill decay status banner */}
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Skill Freshness:</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('freshness_status', 'Skill Freshness')}:</span>
             <span className={`decay-badge ${decayStatus.status}`}>
-              {decayStatus.status === 'fresh' ? '🟢 Fresh' : decayStatus.status === 'fading' ? '🟡 Fading (-10%)' : '🔴 At Risk of Decay'}
+              {decayStatus.status === 'fresh' ? `🟢 ${t('fresh', 'Fresh')}` : decayStatus.status === 'fading' ? `🟡 ${t('fading', 'Fading (-10%)')}` : `🔴 ${t('at_risk', 'At Risk of Decay')}`}
             </span>
             <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-              (Completing this drill restores 100% calibration)
+              ({t('restores_calibration', 'Completing this drill restores 100% calibration')})
             </span>
           </div>
           {activeUnit?.source && (
@@ -277,10 +277,10 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
             <div className="card" style={{ padding: '32px 24px', textAlign: 'center' }}>
               <div className="flex-between mb-4" style={{ maxWidth: 580, margin: '0 auto 16px' }}>
                 <span className="tag tag-priority" style={{ fontSize: 11 }}>
-                  Card {currentCardIdx + 1} of {activeUnit.data.length}
+                  {t('card_of', 'Card')} {currentCardIdx + 1} / {activeUnit.data.length}
                 </span>
                 <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-                  Click card to flip
+                  {t('click_to_flip', 'Click card to flip')}
                 </span>
               </div>
 
@@ -290,26 +290,26 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                   {/* Front */}
                   <div className="flashcard-face flashcard-front">
                     <span className="tag tag-easy mb-3" style={{ fontSize: 11 }}>
-                      {activeUnit.data[currentCardIdx]?.tag || selectedSkill}
+                      {activeUnit.data[currentCardIdx]?.tag || tSkill(selectedSkill)}
                     </span>
                     <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', maxWidth: 440, lineHeight: 1.4 }}>
                       {activeUnit.data[currentCardIdx]?.front}
                     </h3>
                     <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 16 }}>
-                      Tap to reveal official explanation ↻
+                      {t('tap_to_reveal', 'Tap to reveal official explanation ↻')}
                     </p>
                   </div>
 
                   {/* Back */}
                   <div className="flashcard-face flashcard-back">
                     <span className="tag tag-medium mb-3" style={{ fontSize: 11 }}>
-                      Official Methodology & Rationale
+                      {t('official_methodology', 'Official Methodology & Rationale')}
                     </span>
                     <p style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6, maxWidth: 480 }}>
                       {activeUnit.data[currentCardIdx]?.back}
                     </p>
                     <p style={{ fontSize: 12, color: 'var(--primary)', marginTop: 16 }}>
-                      Tap to flip back
+                      {t('tap_to_flip_back', 'Tap to flip back')}
                     </p>
                   </div>
                 </div>
@@ -322,16 +322,16 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                   disabled={currentCardIdx === 0}
                   className="btn btn-outline btn-sm"
                 >
-                  <ChevronLeft size={16} /> Previous Card
+                  <ChevronLeft size={16} /> {t('previous_card', 'Previous Card')}
                 </button>
                 <button
                   onClick={handleNextCard}
                   className="btn btn-primary btn-sm"
                 >
                   {currentCardIdx < activeUnit.data.length - 1 ? (
-                    <>Next Card <ChevronRight size={16} /></>
+                    <>{t('next_card', 'Next Card')} <ChevronRight size={16} /></>
                   ) : (
-                    <>Complete Drill <CheckCircle2 size={16} /></>
+                    <>{t('complete_drill', 'Complete Drill')} <CheckCircle2 size={16} /></>
                   )}
                 </button>
               </div>
@@ -346,7 +346,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                   MoSPI Tactical Caselet Drill
                 </span>
                 <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-                  Decision Assessment
+                  {t('decision_assessment', 'Decision Assessment')}
                 </span>
               </div>
 
@@ -356,7 +356,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
 
               <div style={{ background: 'var(--bg-elevated)', padding: 16, borderRadius: 'var(--radius-md)', marginBottom: 20, borderLeft: '4px solid var(--accent-blue)' }}>
                 <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text-primary)', margin: 0 }}>
-                  <strong>Scenario:</strong> {activeUnit.data.scenario}
+                  <strong>{t('scenario_label', 'Scenario')}:</strong> {activeUnit.data.scenario}
                 </p>
               </div>
 
@@ -412,7 +412,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
               {isCaseletSubmitted && (
                 <div style={{ background: 'var(--bg-elevated)', padding: 16, borderRadius: 'var(--radius-md)', marginBottom: 20, borderLeft: '4px solid var(--success)' }}>
                   <h4 style={{ fontSize: 13, fontWeight: 700, color: 'var(--success)', marginBottom: 4 }}>
-                    Official Protocol Rationale:
+                    {t('official_methodology', 'Official Protocol Rationale')}:
                   </h4>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
                     {activeUnit.data.explanation}
@@ -428,7 +428,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                     disabled={selectedCaseletOption === null}
                     className="btn btn-primary"
                   >
-                    Confirm Protocol Decision
+                    {t('confirm_decision', 'Confirm Protocol Decision')}
                   </button>
                 ) : (
                   <button
@@ -436,7 +436,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                     className="btn btn-primary"
                     style={{ background: 'var(--success)' }}
                   >
-                    Complete Drill (+25 XP) <CheckCircle2 size={16} />
+                    {t('complete_drill_xp', 'Complete Drill (+25 XP)')} <CheckCircle2 size={16} />
                   </button>
                 )}
               </div>
@@ -448,7 +448,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
             <div className="card" style={{ padding: 24 }}>
               <div className="flex-between mb-3">
                 <span className="tag tag-priority" style={{ fontSize: 11 }}>
-                  ⚡ Rapid Field Brief
+                  ⚡ {t('rapid_brief', 'Rapid Field Brief')}
                 </span>
                 <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
                   ~60 Sec Read
@@ -456,7 +456,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
               </div>
 
               <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>
-                {activeUnit.data.title || `Essential Standards: ${selectedSkill}`}
+                {activeUnit.data.title || `Essential Standards: ${tSkill(selectedSkill)}`}
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
@@ -500,7 +500,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
                   onClick={finishUnit}
                   className="btn btn-primary"
                 >
-                  Mark Concept Mastered (+25 XP) <CheckCircle2 size={16} />
+                  {t('mark_mastered', 'Mark Concept Mastered (+25 XP)')} <CheckCircle2 size={16} />
                 </button>
               </div>
             </div>
@@ -524,11 +524,11 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
           </div>
 
           <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6 }}>
-            Micro-Learning Drill Completed!
+            {t('drill_completed_title', 'Micro-Learning Drill Completed!')}
           </h2>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 440, margin: '0 auto 20px', lineHeight: 1.5 }}>
-            You refreshed your competency in <strong>{selectedSkill}</strong>. Skill decay risk has been cleared, and your profile is recalibrated.
+            {t('drill_completed_desc', 'You refreshed your competency. Skill decay risk has been cleared, and your profile is recalibrated.')}
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
@@ -536,7 +536,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
               <Zap size={16} /> +25 XP Earned
             </div>
             <div className="header-badge streak" style={{ fontSize: 14, padding: '8px 16px' }}>
-              <Sparkles size={16} /> Freshness: 100%
+              <Sparkles size={16} /> {t('freshness_status', 'Skill Freshness')}: 100%
             </div>
           </div>
 
@@ -548,10 +548,10 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
               }}
               className="btn btn-outline"
             >
-              <RefreshCw size={14} /> Practice Another Drill
+              <RefreshCw size={14} /> {t('practice_another', 'Practice Another Drill')}
             </button>
             <Link href="/quiz" className="btn btn-primary">
-              <Play size={14} /> Take Full Diagnostic Assessment
+              <Play size={14} /> {t('take_full_assessment', 'Take Full Diagnostic Assessment')}
             </Link>
           </div>
         </div>
@@ -561,7 +561,7 @@ ${format === 'flashcards' ? '[{"front": "string", "back": "string", "tag": "stri
       {completedMicroUnits.length > 0 && (
         <div className="mt-8">
           <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>
-            Recent Micro-Learning History ({completedMicroUnits.length})
+            {t('recent_history', 'Recent Micro-Learning History')} ({completedMicroUnits.length})
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {completedMicroUnits.slice(0, 5).map(item => (

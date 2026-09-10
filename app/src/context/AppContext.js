@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills, samplePortfolioEvidence, demoPersonaEvidence, cadreHierarchy, samplePracticalTasks, sampleMicroLearning } from '@/data/mockData';
-import { INDIAN_LANGUAGES, getTranslation } from '@/lib/translations';
+import { INDIAN_LANGUAGES, getTranslation, translateSkill } from '@/lib/translations';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
 import {
   getProfile,
@@ -82,6 +82,10 @@ export function AppProvider({ children }) {
 
   const t = useCallback((key, fallback) => {
     return getTranslation(language, key, fallback);
+  }, [language]);
+
+  const tSkill = useCallback((skillName) => {
+    return translateSkill(skillName, language);
   }, [language]);
   const [defaultDifficulty, setDefaultDifficulty] = useState('Mixed');
   const [notifPrefs, setNotifPrefs] = useState({
@@ -739,6 +743,7 @@ export function AppProvider({ children }) {
       language,
       setLanguage,
       t,
+      tSkill,
       availableLanguages: INDIAN_LANGUAGES,
       defaultDifficulty,
       setDefaultDifficulty,

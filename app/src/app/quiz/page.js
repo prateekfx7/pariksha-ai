@@ -1,11 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Play, Clock, Award, BrainCircuit, Search, Filter, CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { Play, Clock, Award, BrainCircuit, Search, Filter, CheckCircle2, Zap, Sparkles, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 
 export default function QuizListPage() {
-  const { generatedQuizzes, quizHistory } = useApp();
+  const { generatedQuizzes, quizHistory, t, tSkill } = useApp();
   const [animateIn, setAnimateIn] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
@@ -37,29 +37,33 @@ export default function QuizListPage() {
   return (
     <div className={animateIn ? 'fade-in' : ''}>
       {/* Quiz Hub Tab Navigation */}
-      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+      <div className="card mb-6" style={{
+        padding: '4px', background: 'var(--bg-surface)',
+        display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)',
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
+      }}>
         <Link href="/quiz" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Play size={16} /> Take a Quiz
+          <Play size={15} /> {t('tab_take_quiz', 'Take a Quiz')}
         </Link>
         <Link href="/quiz-generator" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Sparkles size={16} /> Generate New Quiz
+          <Sparkles size={15} /> {t('tab_gen_quiz', 'Generate New Quiz')}
         </Link>
       </div>
 
       <div className="section-header mb-6">
         <div>
-          <h1 className="section-title">Assessment & Diagnostic Quizzes</h1>
-          <p className="section-subtitle">Validate your statistical competencies, close your diagnostic skill gaps, and earn iGOT-recognized XP</p>
+          <h1 className="section-title">{t('quiz_page_title', 'Assessment & Diagnostic Quizzes')}</h1>
+          <p className="section-subtitle">{t('quiz_page_subtitle', 'Validate your statistical competencies, close diagnostic skill gaps, and earn iGOT-recognized XP')}</p>
         </div>
       </div>
 
@@ -70,7 +74,7 @@ export default function QuizListPage() {
             <div className="stat-icon orange"><Award size={22} /></div>
             <div className="stat-content">
               <h3>{quizHistory.length}</h3>
-              <p>Quizzes Completed</p>
+              <p>{t('quiz_quizzes_completed', 'Quizzes Completed')}</p>
             </div>
           </div>
           <div className="stat-card">
@@ -96,7 +100,7 @@ export default function QuizListPage() {
           <div style={{ flex: 1, minWidth: 180, width: '100%', position: 'relative' }}>
             <input
               type="text"
-              placeholder="Filter by quiz title or topic..."
+              placeholder={t('quiz_search_placeholder', 'Search quizzes...')}
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               style={{ width: '100%' }}
@@ -108,26 +112,26 @@ export default function QuizListPage() {
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              style={{ width: 130 }}
+              style={{ fontSize: 13 }}
             >
-              <option>All</option>
-              <option>Easy</option>
-              <option>Medium</option>
-              <option>Hard</option>
+              <option value="All">{t('filter_all', 'All Difficulties')}</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
             </select>
           </div>
         </div>
 
-        {/* Skill Chips */}
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingTop: 12 }}>
+        {/* Skill Category Chips */}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingTop: 12, paddingBottom: 4 }}>
           {skillsList.map(skill => (
             <button
               key={skill}
-              className={`btn btn-sm ${selectedSkill === skill ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setSelectedSkill(skill)}
+              className={`btn btn-sm ${selectedSkill === skill ? 'btn-primary' : 'btn-outline'}`}
               style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', fontSize: 12 }}
             >
-              {skill}
+              {skill === 'All' ? t('filter_all', 'All Skills') : tSkill(skill)}
             </button>
           ))}
         </div>
@@ -164,7 +168,7 @@ export default function QuizListPage() {
                 <span className={`tag ${quiz.difficulty === 'Easy' ? 'tag-easy' : quiz.difficulty === 'Hard' ? 'tag-hard' : 'tag-medium'}`}>
                   {quiz.difficulty}
                 </span>
-                <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{quiz.questionCount} Questions</span>
+                <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{quiz.questionCount} {t('quiz_questions_count', 'Questions')}</span>
               </div>
 
               <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>
@@ -172,12 +176,12 @@ export default function QuizListPage() {
               </h4>
 
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
-                Domain: <strong style={{ color: 'var(--text-primary)' }}>{quiz.skill}</strong>
+                Domain: <strong style={{ color: 'var(--text-primary)' }}>{tSkill(quiz.skill)}</strong>
               </p>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, fontSize: 12, color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-light)', paddingTop: 10 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Clock size={14} /> ~{Math.ceil(quiz.questionCount * 1.5)} min
+                  <Clock size={14} /> ~{Math.ceil(quiz.questionCount * 1.5)} {t('quiz_duration', 'min')}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--warning)' }}>
                   <Zap size={14} /> +{quiz.questionCount * 30} XP
@@ -193,7 +197,7 @@ export default function QuizListPage() {
                   </div>
                 ) : (
                   <Link href={`/quiz/${quiz.id}`} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                    <Play size={16} /> Start Assessment
+                    <Play size={16} /> {t('quiz_start_btn', 'Start Assessment')}
                   </Link>
                 )}
               </div>
@@ -207,7 +211,7 @@ export default function QuizListPage() {
           <BrainCircuit size={48} />
           <h3>No matching assessments found</h3>
           <p>Try clearing your filters or generate a custom quiz with the AI Quiz Generator.</p>
-          <button className="btn btn-outline mt-4" onClick={() => { setSelectedSkill('All'); setSelectedDifficulty('All'); setSearchFilter(''); }}>
+          <button className="btn btn-outline mt-4" onClick={resetFilters}>
             Reset Filters
           </button>
         </div>

@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function QuizTakePage({ params }) {
   const resolvedParams = use(params);
   const quizId = resolvedParams.id;
-  const { generatedQuizzes, updateSkillAfterQuiz, addQuizResult, currentUser } = useApp();
+  const { generatedQuizzes, updateSkillAfterQuiz, addQuizResult, currentUser, t, tSkill } = useApp();
 
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -234,11 +234,11 @@ export default function QuizTakePage({ params }) {
         <div className="quiz-result">
           <div className="score-circle" style={{ borderColor: scorePercent >= 75 ? 'var(--success)' : 'var(--primary)' }}>
             <span className="score-value">{scorePercent}%</span>
-            <span className="score-label">Score</span>
+            <span className="score-label">{t('overall_score', 'Score')}</span>
           </div>
 
           <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 6 }}>
-            {scorePercent >= 80 ? '🎉 Exceptional Mastery!' : scorePercent >= 60 ? '👍 Solid Proficiency!' : '💪 Targeted Learning Required'}
+            {scorePercent >= 80 ? `🎉 ${t('exceptional_mastery', 'Exceptional Mastery!')}` : scorePercent >= 60 ? `👍 ${t('solid_proficiency', 'Solid Proficiency!')}` : `💪 ${t('targeted_learning', 'Targeted Learning Required')}`}
           </h2>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 20 }}>
@@ -264,7 +264,7 @@ export default function QuizTakePage({ params }) {
                   Official Skill Benchmark Updated!
                 </h4>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Your proficiency rating for <strong>{quiz.skill}</strong> has been calibrated. Your radar chart on the dashboard and personalized course recommendations have been refreshed.
+                  Your proficiency rating for <strong>{tSkill(quiz.skill)}</strong> has been calibrated. Your radar chart on the dashboard and personalized course recommendations have been refreshed.
                 </p>
               </div>
             </div>
@@ -273,20 +273,20 @@ export default function QuizTakePage({ params }) {
           {/* Certificate & Actions Row */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
             <button className="btn btn-primary" onClick={handlePrintCertificate}>
-              <Printer size={16} /> Print Official Certificate
+              <Printer size={16} /> {t('print_certificate', 'Print Official Certificate')}
             </button>
             <Link href="/recommendations" className="btn btn-outline">
-              <BookOpen size={16} /> Recommended Courses
+              <BookOpen size={16} /> {t('tab_courses', 'Recommended Courses')}
             </Link>
             <Link href="/dashboard" className="btn btn-ghost">
-              <Home size={16} /> Return to Dashboard
+              <Home size={16} /> {t('return_to_dashboard', 'Return to Dashboard')}
             </Link>
           </div>
 
           {/* Question Review Accordion */}
           <div style={{ textAlign: 'left' }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 14 }}>
-              Detailed Question Analysis ({score}/{totalQuestions})
+              {t('detailed_analysis', 'Detailed Question Analysis')} ({score}/{totalQuestions})
             </h3>
             {quiz.questions.map((q, idx) => {
               const ans = userAnswers[idx];
@@ -304,17 +304,17 @@ export default function QuizTakePage({ params }) {
                         Q{idx + 1}. {q.question}
                       </p>
                       <div style={{ fontSize: 13, marginBottom: 4 }}>
-                        Your answer: <span style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600 }}>
-                          {ans ? q.options[ans.selected] : 'Not answered'}
+                        {t('your_answer', 'Your answer')}: <span style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600 }}>
+                          {ans ? q.options[ans.selected] : t('not_answered', 'Not answered')}
                         </span>
                       </div>
                       {!isCorrect && (
                         <div style={{ fontSize: 13, color: 'var(--success)', fontWeight: 600, marginBottom: 4 }}>
-                          Correct answer: {q.options[q.correctAnswer]}
+                          {t('correct_answer', 'Correct answer')}: {q.options[q.correctAnswer]}
                         </div>
                       )}
                       <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 6, lineHeight: 1.5, background: 'var(--bg-elevated)', padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}>
-                        💡 <strong>Official Note:</strong> {q.explanation}
+                        💡 <strong>{t('official_note', 'Official Note')}:</strong> {q.explanation}
                       </p>
                     </div>
                   </div>
@@ -338,10 +338,10 @@ export default function QuizTakePage({ params }) {
           className="btn btn-ghost btn-sm"
           style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 10px', fontSize: 13 }}
         >
-          <ChevronLeft size={16} /> Back to Quizzes
+          <ChevronLeft size={16} /> {t('back_to_quizzes', 'Back to Quizzes')}
         </Link>
         <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontWeight: 600 }}>
-          {quiz.skill}
+          {tSkill(quiz.skill)}
         </span>
       </div>
 
@@ -350,11 +350,11 @@ export default function QuizTakePage({ params }) {
         <div className="flex-between mb-3" style={{ flexWrap: 'wrap', gap: 10 }}>
           <div>
             <span style={{ fontSize: 12, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 700 }}>
-              {quiz.skill} • {quiz.title}
+              {tSkill(quiz.skill)} • {quiz.title}
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 2, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 15, fontWeight: 700 }}>
-                Question {currentQ + 1} of {totalQuestions}
+                {t('question_of', 'Question')} {currentQ + 1} / {totalQuestions}
               </span>
               <span className={`tag ${question.difficulty === 'Easy' ? 'tag-easy' : question.difficulty === 'Hard' ? 'tag-hard' : 'tag-medium'}`}>
                 {question.difficulty}

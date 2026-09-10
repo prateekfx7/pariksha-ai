@@ -161,7 +161,7 @@ function evaluateSolutionRubric(task, solution) {
 }
 
 export default function PracticalTasksPage() {
-  const { apiKey, submitPracticalTask, completedTasks, getSkillDecayStatus } = useApp();
+  const { apiKey, submitPracticalTask, completedTasks, getSkillDecayStatus, t, tSkill } = useApp();
 
   const [activeTask, setActiveTask] = useState(samplePracticalTasks[0]);
   const [solutionInput, setSolutionInput] = useState('');
@@ -343,7 +343,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <BookOpen size={16} /> Courses
+          <BookOpen size={16} /> {t('tab_courses', 'Courses')}
         </Link>
         <Link href="/micro-learning" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -351,7 +351,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Zap size={16} /> Micro-Drills
+          <Zap size={16} /> {t('tab_micro', 'Micro-Drills')}
         </Link>
         <Link href="/practical-tasks" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -359,7 +359,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Terminal size={16} /> Practical Labs
+          <Terminal size={16} /> {t('tab_practical', 'Practical Labs')}
         </Link>
         <Link href="/readiness" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -367,7 +367,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <TrendingUp size={16} /> Role Readiness
+          <TrendingUp size={16} /> {t('tab_readiness', 'Role Readiness')}
         </Link>
       </div>
 
@@ -376,19 +376,19 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span className="tag tag-priority" style={{ fontSize: 11 }}>
-              <Terminal size={13} /> Simulation & Problem Lab
+              <Terminal size={13} /> {t('simulation_lab', 'Simulation & Problem Lab')}
             </span>
             <span className="tag tag-easy" style={{ fontSize: 11 }}>
-              Real-World Datasets
+              {t('real_world_datasets', 'Real-World Datasets')}
             </span>
           </div>
-          <h1 className="section-title">AI Practical Task Generator</h1>
+          <h1 className="section-title">{t('practical_title', 'AI Practical Task Generator')}</h1>
           <p className="section-subtitle">
-            Execute authentic MoSPI fieldwork scenarios, data cleaning challenges, and spatial adjustments with automated AI rubric grading.
+            {t('practical_subtitle', 'Execute authentic MoSPI fieldwork scenarios, data cleaning challenges, and spatial adjustments with automated AI rubric grading.')}
           </p>
         </div>
         <div className="header-badge xp" style={{ fontSize: 13, padding: '6px 12px' }}>
-          <Award size={16} /> {completedTasks.length} Tasks Evaluated
+          <Award size={16} /> {completedTasks.length} {t('tasks_evaluated', 'Tasks Evaluated')}
         </div>
       </div>
 
@@ -396,14 +396,14 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
       <div className="card mb-6" style={{ padding: '16px 20px', background: 'var(--bg-surface)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', flex: 1, minWidth: 300, paddingBottom: 4 }}>
-            {samplePracticalTasks.map((t, idx) => (
+            {samplePracticalTasks.map((tItem, idx) => (
               <button
-                key={t.id}
-                onClick={() => handleSelectTask(t)}
-                className={`btn btn-sm ${activeTask.id === t.id ? 'btn-primary' : 'btn-outline'}`}
+                key={tItem.id}
+                onClick={() => handleSelectTask(tItem)}
+                className={`btn btn-sm ${activeTask.id === tItem.id ? 'btn-primary' : 'btn-outline'}`}
                 style={{ whiteSpace: 'nowrap' }}
               >
-                Task {idx + 1}: {t.title.split(':')[0]}
+                Task {idx + 1}: {tItem.title.split(':')[0]}
               </button>
             ))}
           </div>
@@ -414,7 +414,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
               onChange={(e) => setSelectedSkillForGen(e.target.value)}
               style={{ padding: '6px 10px', fontSize: 12 }}
             >
-              {skills.map(s => <option key={s} value={s}>{s}</option>)}
+              {skills.map(s => <option key={s} value={s}>{tSkill(s)}</option>)}
             </select>
             <button
               onClick={handleGenerateCustomTask}
@@ -423,7 +423,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
               style={{ whiteSpace: 'nowrap' }}
             >
               {isGeneratingTask ? <RotateCw size={14} className="spinner" /> : <Sparkles size={14} />}
-              Generate AI Task
+              {isGeneratingTask ? t('generating_task', 'Synthesizing Task...') : t('generate_ai_task', 'Generate AI Task')}
             </button>
           </div>
         </div>
@@ -436,10 +436,10 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           <div className="card" style={{ padding: 22 }}>
             <div className="flex-between mb-3">
               <span className={`tag ${activeTask.difficulty === 'Expert' ? 'tag-hard' : 'tag-medium'}`}>
-                {activeTask.difficulty} • ~{activeTask.estimatedMinutes} Mins
+                {activeTask.difficulty} • ~{activeTask.estimatedMinutes} {t('quiz_duration', 'Mins')}
               </span>
               <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-                Skill: <strong style={{ color: 'var(--text-primary)' }}>{activeTask.skill}</strong>
+                Skill: <strong style={{ color: 'var(--text-primary)' }}>{tSkill(activeTask.skill)}</strong>
               </span>
             </div>
 
@@ -502,7 +502,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
                       className="btn btn-ghost btn-xs"
                       style={{ fontSize: 11, padding: '3px 8px' }}
                     >
-                      {copiedData ? '✓ Copied' : 'Copy Snippet'}
+                      {copiedData ? `✓ ${t('copied', 'Copied')}` : t('copy_snippet', 'Copy Snippet')}
                     </button>
                   </div>
                 </div>
@@ -549,7 +549,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
             {/* Task Prompt / Challenge Directive */}
             <div style={{ background: 'rgba(240, 90, 40, 0.08)', padding: 14, borderRadius: 'var(--radius-md)', border: '1px solid rgba(240, 90, 40, 0.25)' }}>
               <h4 style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>
-                🎯 Task Directive:
+                🎯 {t('task_directive', 'Task Directive')}:
               </h4>
               <p style={{ fontSize: 13.5, color: 'var(--text-primary)', lineHeight: 1.5, margin: 0 }}>
                 {activeTask.taskPrompt}
@@ -563,10 +563,10 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
           <div className="card" style={{ padding: 22 }}>
             <div className="flex-between mb-3">
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>
-                Officer Response Workspace
+                {t('officer_workspace', 'Officer Response Workspace')}
               </h3>
               <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-                Code / Protocol / Explanation
+                {t('code_protocol_explanation', 'Code / Protocol / Explanation')}
               </span>
             </div>
 
@@ -581,7 +581,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
 
             <div className="flex-between mt-3">
               <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
-                {solutionInput.length} chars • Evaluated against MoSPI Cadre Rubric
+                {solutionInput.length} {t('chars_evaluated', 'chars • Evaluated against MoSPI Cadre Rubric')}
               </span>
               <button
                 onClick={handleEvaluateSolution}
@@ -590,11 +590,11 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
               >
                 {isEvaluating ? (
                   <>
-                    <RotateCw size={14} className="spinner" /> Evaluating Rubric...
+                    <RotateCw size={14} className="spinner" /> {t('evaluating_rubric', 'Evaluating Rubric...')}
                   </>
                 ) : (
                   <>
-                    <Play size={14} /> Submit for AI Rubric Evaluation
+                    <Play size={14} /> {t('submit_for_eval', 'Submit for AI Rubric Evaluation')}
                   </>
                 )}
               </button>
@@ -612,7 +612,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <ShieldCheck size={20} style={{ color: evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)' }} />
                   <h3 style={{ fontSize: 16, fontWeight: 700 }}>
-                    AI Rubric Evaluation Score
+                    {t('ai_rubric_score', 'AI Rubric Evaluation Score')}
                   </h3>
                 </div>
                 <div className="header-badge xp" style={{
@@ -622,7 +622,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
                   color: evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)',
                   border: `1px solid ${evaluationResult.score >= 70 ? 'var(--success)' : 'var(--warning)'}`
                 }}>
-                  {evaluationResult.score}% {evaluationResult.score >= 70 ? '(Passed & Certified)' : '(Revision Required)'}
+                  {evaluationResult.score}% {evaluationResult.score >= 70 ? `(${t('passed_certified', 'Passed & Certified')})` : `(${t('revision_required', 'Revision Required')})`}
                 </div>
               </div>
 
@@ -630,7 +630,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '14px 0 16px' }}>
                 <div>
                   <div className="flex-between" style={{ fontSize: 12, marginBottom: 3 }}>
-                    <span>Methodological Rigor</span>
+                    <span>{t('methodological_rigor', 'Methodological Rigor')}</span>
                     <span style={{ fontWeight: 700 }}>{evaluationResult.breakdown.methodology}/{activeTask.rubric.methodologyWeight}</span>
                   </div>
                   <div className="progress-bar-track" style={{ height: 6 }}>
@@ -640,7 +640,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
 
                 <div>
                   <div className="flex-between" style={{ fontSize: 12, marginBottom: 3 }}>
-                    <span>Official Protocol Adherence</span>
+                    <span>{t('protocol_adherence', 'Official Protocol Adherence')}</span>
                     <span style={{ fontWeight: 700 }}>{evaluationResult.breakdown.protocol}/{activeTask.rubric.protocolWeight}</span>
                   </div>
                   <div className="progress-bar-track" style={{ height: 6 }}>
@@ -650,7 +650,7 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
 
                 <div>
                   <div className="flex-between" style={{ fontSize: 12, marginBottom: 3 }}>
-                    <span>Practical Completeness</span>
+                    <span>{t('practical_completeness', 'Practical Completeness')}</span>
                     <span style={{ fontWeight: 700 }}>{evaluationResult.breakdown.completeness}/{activeTask.rubric.completenessWeight}</span>
                   </div>
                   <div className="progress-bar-track" style={{ height: 6 }}>
@@ -662,14 +662,14 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
               {/* Qualitative Feedback */}
               <div style={{ background: 'var(--bg-elevated)', padding: 12, borderRadius: 'var(--radius-sm)', marginBottom: 14 }}>
                 <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                  💡 <strong>Evaluator Remarks:</strong> {evaluationResult.feedback}
+                  💡 <strong>{t('evaluator_remarks', 'Evaluator Remarks')}:</strong> {evaluationResult.feedback}
                 </p>
               </div>
 
               {/* Model Answer Key Toggle */}
               <details style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
                 <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--primary)', marginBottom: 6 }}>
-                  View Official MoSPI Model Solution Key
+                  {t('view_model_solution', 'View Official MoSPI Model Solution Key')}
                 </summary>
                 <div style={{ whiteSpace: 'pre-line', padding: 12, background: 'var(--bg-card)', borderRadius: 'var(--radius-sm)', lineHeight: 1.6, border: '1px solid var(--border-light)' }}>
                   {activeTask.modelAnswerKey}
@@ -681,11 +681,11 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
                 <span className="tag tag-priority">+75 XP Awarded</span>
                 {evaluationResult.score >= 70 ? (
                   <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600 }}>
-                    ✓ Credential Sealed in Competency Dossier (+12% {activeTask.skill})
+                    ✓ {t('credential_sealed', 'Credential Sealed in Competency Dossier')} (+12% {tSkill(activeTask.skill)})
                   </span>
                 ) : (
                   <span style={{ fontSize: 12, color: 'var(--warning)', fontWeight: 600 }}>
-                    Score &lt; 70% benchmark (70% required to seal verifiable APAR credential)
+                    {t('below_benchmark', 'Score below 70% benchmark (70% required to seal credential)')}
                   </span>
                 )}
               </div>
@@ -698,20 +698,20 @@ Evaluate rigorously against the model answer and output ONLY valid JSON:
       {completedTasks.length > 0 && (
         <div className="mt-8">
           <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>
-            Evaluated Simulation Records ({completedTasks.length})
+            {t('simulation_records', 'Evaluated Simulation Records')} ({completedTasks.length})
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {completedTasks.map(t => (
-              <div key={t.id} className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            {completedTasks.map(tItem => (
+              <div key={tItem.id} className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <CheckSquare size={20} style={{ color: 'var(--success)' }} />
                   <div>
-                    <h4 style={{ fontSize: 14, fontWeight: 700, margin: 0 }}>{t.taskTitle}</h4>
-                    <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{t.skill} • {t.date}</span>
+                    <h4 style={{ fontSize: 14, fontWeight: 700, margin: 0 }}>{tItem.taskTitle}</h4>
+                    <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{tSkill(tItem.skill)} • {tItem.date}</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span className="tag tag-easy" style={{ fontSize: 12 }}>Score: {t.score}%</span>
+                  <span className="tag tag-easy" style={{ fontSize: 12 }}>Score: {tItem.score}%</span>
                   <span className="tag tag-priority">+75 XP</span>
                 </div>
               </div>

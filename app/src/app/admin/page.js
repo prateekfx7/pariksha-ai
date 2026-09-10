@@ -16,7 +16,7 @@ function getHeatColor(value) {
 }
 
 export default function AdminAnalyticsPage() {
-  const { switchOfficer, theme } = useApp();
+  const { switchOfficer, theme, t, tSkill } = useApp();
   const [selectedDept, setSelectedDept] = useState('all');
   const [selectedCadre, setSelectedCadre] = useState('all');
   const [heatmapMetric, setHeatmapMetric] = useState('gap'); // 'gap' | 'score' | 'decay'
@@ -133,15 +133,15 @@ export default function AdminAnalyticsPage() {
     <div className={animateIn ? 'fade-in' : ''} style={{ paddingBottom: 40 }}>
       <div className="section-header mb-6">
         <div>
-          <h1 className="section-title">Department Analytics & Executive Audit</h1>
-          <p className="section-subtitle">Macro-level competency gap diagnosis across India's Official Statistical System</p>
+          <h1 className="section-title">{t('analytics_title', 'Department Analytics & Executive Audit')}</h1>
+          <p className="section-subtitle">{t('analytics_subtitle', "Macro-level competency gap diagnosis across India's Official Statistical System")}</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button className="btn btn-outline btn-sm" onClick={handleExportCSV}>
-            <Download size={15} /> Export CSV Matrix
+            <Download size={15} /> {t('export_csv', 'Export CSV Matrix')}
           </button>
           <button className="btn btn-primary btn-sm" onClick={handlePrintReport}>
-            <Printer size={15} /> Print Audit Summary
+            <Printer size={15} /> {t('print_audit', 'Print Audit Summary')}
           </button>
         </div>
       </div>
@@ -152,28 +152,28 @@ export default function AdminAnalyticsPage() {
           <div className="stat-icon orange"><Users size={22} /></div>
           <div className="stat-content">
             <h3>{totalOfficers}</h3>
-            <p>Monitored Officers</p>
+            <p>{t('monitored_officers', 'Monitored Officers')}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon green"><TrendingUp size={22} /></div>
           <div className="stat-content">
             <h3>{avgCompetency}%</h3>
-            <p>System-wide Avg Score</p>
+            <p>{t('system_avg_score', 'System-wide Avg Score')}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon blue"><Clock size={22} /></div>
           <div className="stat-content">
             <h3>{totalHours} hrs</h3>
-            <p>iGOT Training Hours</p>
+            <p>{t('training_hours', 'iGOT Training Hours')}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon purple"><Award size={22} /></div>
           <div className="stat-content">
             <h3>{totalAssessments}</h3>
-            <p>Completed Assessments</p>
+            <p>{t('completed_assessments', 'Completed Assessments')}</p>
           </div>
         </div>
       </div>
@@ -184,20 +184,20 @@ export default function AdminAnalyticsPage() {
           {/* Division Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <Filter size={15} style={{ color: 'var(--text-secondary)' }} />
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Division:</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{t('division', 'Division')}:</span>
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
               style={{ width: 190, maxWidth: '100%', padding: '6px 10px', fontSize: 12 }}
             >
-              <option value="all">All 10 Divisions</option>
+              <option value="all">{t('all_divisions', 'All 10 Divisions')}</option>
               {departments.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
 
           {/* Cadre Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Cadre:</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{t('cadre', 'Cadre')}:</span>
             <div style={{ display: 'flex', gap: 4 }}>
               {['all', 'ISS', 'SSS'].map(c => (
                 <button
@@ -206,7 +206,7 @@ export default function AdminAnalyticsPage() {
                   className={`btn btn-sm ${selectedCadre === c ? 'btn-primary' : 'btn-outline'}`}
                   style={{ fontSize: 11, padding: '4px 10px' }}
                 >
-                  {c === 'all' ? 'All Cadres' : c}
+                  {c === 'all' ? t('all_cadres', 'All Cadres') : c}
                 </button>
               ))}
             </div>
@@ -214,28 +214,28 @@ export default function AdminAnalyticsPage() {
 
           {/* Metric Switcher */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Metric:</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{t('metric', 'Metric')}:</span>
             <div style={{ display: 'flex', gap: 4 }}>
               <button
                 onClick={() => setHeatmapMetric('gap')}
                 className={`btn btn-sm ${heatmapMetric === 'gap' ? 'btn-primary' : 'btn-ghost'}`}
                 style={{ fontSize: 11, padding: '4px 10px' }}
               >
-                Deficit Gap %
+                {t('deficit_gap', 'Deficit Gap %')}
               </button>
               <button
                 onClick={() => setHeatmapMetric('score')}
                 className={`btn btn-sm ${heatmapMetric === 'score' ? 'btn-primary' : 'btn-ghost'}`}
                 style={{ fontSize: 11, padding: '4px 10px' }}
               >
-                Skill Score (0-100)
+                {t('skill_score', 'Skill Score (0-100)')}
               </button>
               <button
                 onClick={() => setHeatmapMetric('decay')}
                 className={`btn btn-sm ${heatmapMetric === 'decay' ? 'btn-primary' : 'btn-ghost'}`}
                 style={{ fontSize: 11, padding: '4px 10px' }}
               >
-                Decay Risk %
+                {t('decay_risk', 'Decay Risk %')}
               </button>
             </div>
           </div>
@@ -249,21 +249,21 @@ export default function AdminAnalyticsPage() {
           <div className="flex-between mb-4" style={{ flexWrap: 'wrap', gap: 10 }}>
             <div>
               <h3 style={{ margin: 0, fontSize: 16 }}>
-                National Competency Matrix ({heatmapMetric === 'gap' ? 'Deficit %' : heatmapMetric === 'score' ? 'Skill Proficiency' : 'Inactivity Decay Risk'})
+                {t('matrix_title', 'National Competency Matrix')} ({heatmapMetric === 'gap' ? t('deficit_gap', 'Deficit %') : heatmapMetric === 'score' ? t('skill_score', 'Skill Proficiency') : t('decay_risk', 'Decay Risk %')})
               </h3>
               <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-                Click any cell to drill down into officers & prescribe training
+                {t('click_cell_drilldown', 'Click any cell to drill down into officers & prescribe training')}
               </span>
             </div>
             <div style={{ display: 'flex', gap: 8, fontSize: 11, flexWrap: 'wrap' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(248, 113, 113, 0.8)' }} /> High Risk (&gt;40)
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(248, 113, 113, 0.8)' }} /> {t('high_risk', 'High Risk (>40)')}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(251, 191, 36, 0.7)' }} /> Moderate
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(251, 191, 36, 0.7)' }} /> {t('moderate', 'Moderate')}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(52, 211, 153, 0.5)' }} /> Healthy (&lt;20)
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(52, 211, 153, 0.5)' }} /> {t('healthy', 'Healthy (<20)')}
               </span>
             </div>
           </div>
@@ -272,10 +272,10 @@ export default function AdminAnalyticsPage() {
             <table className="heatmap-table" style={{ width: '100%', minWidth: 500 }}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: '8px 10px', fontSize: 12 }}>Division</th>
+                  <th style={{ textAlign: 'left', padding: '8px 10px', fontSize: 12 }}>{t('division', 'Division')}</th>
                   {skills.map(s => (
                     <th key={s} style={{ fontSize: 10, padding: '8px 4px', whiteSpace: 'nowrap' }} title={s}>
-                      {s.split(' ')[0]}
+                      {tSkill(s).split(' ')[0]}
                     </th>
                   ))}
                 </tr>
@@ -339,7 +339,7 @@ export default function AdminAnalyticsPage() {
 
         {/* Avg Gap Bar Chart */}
         <div className="chart-container fade-in fade-in-delay-2">
-          <h3 style={{ fontSize: 16, marginBottom: 16 }}>Average National Gap by Domain</h3>
+          <h3 style={{ fontSize: 16, marginBottom: 16 }}>{t('avg_national_gap', 'Average National Gap by Domain')}</h3>
           <div style={{ height: 320 }}>
             <Bar data={barData} options={barOptions} />
           </div>
@@ -353,15 +353,15 @@ export default function AdminAnalyticsPage() {
           <div className="flex-between mb-4">
             <h3 style={{ margin: 0, fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
               <AlertTriangle size={16} style={{ color: 'var(--error)' }} />
-              High-Risk Competency Deficits
+              {t('high_risk_deficits', 'High-Risk Competency Deficits')}
             </h3>
-            <span style={{ fontSize: 12, color: 'var(--error)', fontWeight: 600 }}>Action Required</span>
+            <span style={{ fontSize: 12, color: 'var(--error)', fontWeight: 600 }}>{t('action_required', 'Action Required')}</span>
           </div>
           <div className="table-responsive">
             <table className="data-table" style={{ minWidth: 380 }}>
               <thead>
                 <tr>
-                  <th>Department</th>
+                  <th>{t('division', 'Department')}</th>
                   <th>Skill Gap</th>
                   <th>Gap Score</th>
                 </tr>
@@ -370,10 +370,10 @@ export default function AdminAnalyticsPage() {
                 {topGaps.slice(0, 8).map((g, i) => (
                   <tr key={i}>
                     <td style={{ fontSize: 13, fontWeight: 500 }}>{g.department}</td>
-                    <td style={{ fontSize: 13 }}>{g.skill}</td>
+                    <td style={{ fontSize: 13 }}>{tSkill(g.skill)}</td>
                     <td>
                       <span className={`tag ${g.gap >= 50 ? 'tag-hard' : g.gap >= 35 ? 'tag-medium' : 'tag-easy'}`}>
-                        {g.gap}% Deficit
+                        {g.gap}% {t('deficit', 'Deficit')}
                       </span>
                     </td>
                   </tr>
@@ -387,9 +387,9 @@ export default function AdminAnalyticsPage() {
         <div className="chart-container fade-in fade-in-delay-4">
           <div className="flex-between mb-4">
             <h3 style={{ margin: 0, fontSize: 16 }}>
-              Statistical Officer Directory (Click to Inspect)
+              {t('officer_directory', 'Statistical Officer Directory')}
             </h3>
-            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{officers.length} Officers Active</span>
+            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{officers.length} {t('officers_active', 'Officers Active')}</span>
           </div>
 
           <div className="table-responsive">

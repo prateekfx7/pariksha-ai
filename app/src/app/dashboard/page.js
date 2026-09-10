@@ -24,7 +24,8 @@ export default function DashboardPage() {
     refreshSkill,
     decaySimulationDays,
     setDecaySimulationDays,
-    t
+    t,
+    tSkill
   } = useApp();
 
   const [animateIn, setAnimateIn] = useState(false);
@@ -52,16 +53,7 @@ export default function DashboardPage() {
 
   const topGapSkill = gapData?.gapList?.[0] || null;
 
-  const shortSkillMap = {
-    "Survey Design": "Survey",
-    "GIS & Spatial Analysis": "GIS & Spatial",
-    "Data Science & Analytics": "Data Science",
-    "AI & Machine Learning": "AI & ML",
-    "Statistical Methods": "Stats Methods",
-    "Data Governance": "Governance"
-  };
-
-  const radarLabels = skills.map(s => isMobile ? (shortSkillMap[s] || s) : s);
+  const radarLabels = skills.map(s => tSkill(s));
 
   const radarData = {
     labels: radarLabels,
@@ -269,7 +261,7 @@ export default function DashboardPage() {
               <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                 {isDayZero
                   ? 'Take Your 5-Minute Baseline Diagnostic Quiz'
-                  : `Target Largest Skill Deficit: ${topGapSkill?.skill || 'Statistical Methods'}`}
+                  : `${t('priority_action', 'Priority Action')}: ${tSkill(topGapSkill?.skill || 'Statistical Methods')}`}
               </h3>
               <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '3px 0 0', lineHeight: 1.4 }}>
                 {isDayZero
@@ -350,7 +342,7 @@ export default function DashboardPage() {
                 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tSkill(s)}</span>
                       <span style={{ fontSize: 11.5, fontWeight: 700, color: isMet ? 'var(--success)' : 'var(--primary)', flexShrink: 0 }}>
                         {current}/100 <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)', fontWeight: 400 }}>req {required}</span>
                       </span>
@@ -601,7 +593,7 @@ export default function DashboardPage() {
                   >
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                        <span style={{ fontSize: 12.5, fontWeight: 600 }}>{s}</span>
+                        <span style={{ fontSize: 12.5, fontWeight: 600 }}>{tSkill(s)}</span>
                         <span className={`decay-badge ${dec.status}`} style={{ fontSize: 9 }}>
                           {dec.status === 'fresh' ? 'Fresh' : `-${dec.decayPct}%`}
                         </span>

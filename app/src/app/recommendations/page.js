@@ -6,7 +6,7 @@ import { skills } from '@/data/mockData';
 import Link from 'next/link';
 
 export default function RecommendationsPage() {
-  const { recommendations, gapData, enrollCourse, enrolledCourses } = useApp();
+  const { recommendations, gapData, enrollCourse, enrolledCourses, t, tSkill } = useApp();
   const [filterSkill, setFilterSkill] = useState('all');
   const [filterType, setFilterType] = useState('all'); // all, priority, enrolled
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,49 +57,53 @@ export default function RecommendationsPage() {
       )}
 
       {/* Learn Hub Tab Navigation */}
-      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+      <div className="card mb-6" style={{
+        padding: '4px', background: 'var(--bg-surface)',
+        display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)',
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
+      }}>
         <Link href="/recommendations" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <BookOpen size={16} /> Courses
+          <BookOpen size={15} /> {t('tab_courses', 'Recommended Courses')}
         </Link>
         <Link href="/micro-learning" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Zap size={16} /> Micro-Drills
+          <Zap size={15} /> {t('tab_micro', 'Micro-Drills')}
         </Link>
         <Link href="/practical-tasks" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Terminal size={16} /> Practical Labs
+          <Terminal size={15} /> {t('tab_practical', 'Practical Labs')}
         </Link>
         <Link href="/readiness" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <TrendingUp size={16} /> Role Readiness
+          <TrendingUp size={15} /> {t('tab_readiness', 'Role Readiness')}
         </Link>
       </div>
 
       <div className="section-header mb-6">
         <div>
-          <h1 className="section-title">Personalized Learning Pathways</h1>
-          <p className="section-subtitle">iGOT Karmayogi & MoSPI courses ranked by algorithm to target your largest competency deficits</p>
+          <h1 className="section-title">{t('learn_page_title', 'Personalized iGOT Learning Pathways')}</h1>
+          <p className="section-subtitle">{t('learn_page_subtitle', 'Curated courses, 2-minute micro-drills, practical labs, and role readiness benchmarks for your statistical cadre')}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="tag tag-easy" style={{ fontSize: 12, padding: '6px 12px' }}>
-            <Check size={14} /> {enrolledCourses.length} Active Courses
+            <Check size={14} /> {enrolledCourses.length} {t('learn_enrolled', 'Enrolled')}
           </span>
         </div>
       </div>
@@ -112,14 +116,14 @@ export default function RecommendationsPage() {
               <TrendingUp size={22} />
             </div>
             <div className="stat-content" style={{ flex: 1 }}>
-              <h3 style={{ fontSize: 15 }}>{g.skill}</h3>
-              <p style={{ fontSize: 12 }}>Deficit: {g.gap} points (Benchmark {g.required})</p>
+              <h3 style={{ fontSize: 15 }}>{tSkill(g.skill)}</h3>
+              <p style={{ fontSize: 12 }}>{t('deficit', 'Deficit')}: {g.gap} points (Benchmark {g.required})</p>
               <div className="progress-bar-track" style={{ marginTop: 8, height: 6 }}>
                 <div className="progress-bar-fill" style={{ width: `${g.percentage}%` }} />
               </div>
               <div className="flex-between" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
-                <span>Current: {g.current}</span>
-                <span>{g.percentage}% Met</span>
+                <span>{t('current_score', 'Current Score')}: {g.current}</span>
+                <span>{g.percentage}% {t('target_met', 'Target Met')}</span>
               </div>
             </div>
           </div>
@@ -132,7 +136,7 @@ export default function RecommendationsPage() {
           <div style={{ flex: 1, minWidth: 200, width: '100%', position: 'relative' }}>
             <input
               type="text"
-              placeholder="Search course title, provider, or topic..."
+              placeholder={t('search_courses_placeholder', 'Search course title, provider, or topic...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{ width: '100%' }}
@@ -145,19 +149,19 @@ export default function RecommendationsPage() {
               className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilterType('all')}
             >
-              All Courses
+              {t('filter_all_courses', 'All Courses')}
             </button>
             <button
               className={`btn btn-sm ${filterType === 'priority' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilterType('priority')}
             >
-              High Priority Only
+              {t('filter_priority_only', 'High Priority Only')}
             </button>
             <button
               className={`btn btn-sm ${filterType === 'enrolled' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilterType('enrolled')}
             >
-              My Enrolled ({enrolledCourses.length})
+              {t('filter_my_enrolled', 'My Enrolled')} ({enrolledCourses.length})
             </button>
           </div>
         </div>
@@ -169,7 +173,7 @@ export default function RecommendationsPage() {
             onClick={() => setFilterSkill('all')}
             style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', fontSize: 12 }}
           >
-            All Skills
+            {t('filter_all_skills', 'All Skills')}
           </button>
           {skills.map(s => (
             <button
@@ -178,7 +182,7 @@ export default function RecommendationsPage() {
               onClick={() => setFilterSkill(s)}
               style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', fontSize: 12 }}
             >
-              {s}
+              {tSkill(s)}
             </button>
           ))}
         </div>
@@ -187,7 +191,7 @@ export default function RecommendationsPage() {
         {(filterSkill !== 'all' || filterType !== 'all' || searchQuery.trim().length > 0) && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid var(--border-light)', marginTop: 10 }}>
             <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-              Showing <strong>{filtered.length}</strong> of {recommendations.length} courses
+              {t('showing', 'Showing')} <strong>{filtered.length}</strong> / {recommendations.length} {t('tab_courses', 'Courses')}
             </span>
             <button
               onClick={() => { setFilterSkill('all'); setFilterType('all'); setSearchQuery(''); }}
@@ -197,7 +201,7 @@ export default function RecommendationsPage() {
                 display: 'inline-flex', alignItems: 'center', gap: 4, padding: 0
               }}
             >
-              <X size={13} /> Reset Filters
+              <X size={13} /> {t('reset_filters', 'Reset Filters')}
             </button>
           </div>
         )}
@@ -218,18 +222,18 @@ export default function RecommendationsPage() {
               <div className="course-card-body">
                 <h4>{course.title}</h4>
                 <p>
-                  Provider: <strong>{course.provider}</strong> • Closes gap in <strong style={{ color: 'var(--primary)' }}>{course.skill}</strong>
+                  {t('provider', 'Provider')}: <strong>{course.provider}</strong> • {t('closes_gap', 'Closes gap in')} <strong style={{ color: 'var(--primary)' }}>{tSkill(course.skill)}</strong>
                 </p>
                 <div className="course-card-meta">
                   <span className={`tag ${course.priority === 'High Priority' ? 'tag-priority' : course.priority === 'Quick Win' ? 'tag-easy' : 'tag-medium'}`}>
                     {course.priority}
                   </span>
                   <span><Clock size={13} /> {course.duration}</span>
-                  <span><BookOpen size={13} /> {course.modules} Modules</span>
+                  <span><BookOpen size={13} /> {course.modules} {t('modules', 'Modules')}</span>
                   <span><BarChart2 size={13} /> {course.level}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Award size={13} />
-                    Fit:
+                    {t('fit', 'Fit')}:
                     <span className="relevance-bar">
                       <span className="relevance-bar-fill" style={{ width: `${course.relevance}%` }} />
                     </span>
@@ -240,15 +244,15 @@ export default function RecommendationsPage() {
 
               <div className="course-card-actions" onClick={(e) => e.stopPropagation()}>
                 <button className="btn btn-ghost btn-sm" onClick={() => setSelectedCourse(course)}>
-                  Syllabus
+                  {t('syllabus', 'Syllabus')}
                 </button>
                 {isEnrolled ? (
                   <span className="btn btn-sm" style={{ background: 'var(--success-bg)', color: 'var(--success)', border: '1px solid var(--success)', cursor: 'default' }}>
-                    <CheckCircle2 size={14} /> Enrolled
+                    <CheckCircle2 size={14} /> {t('learn_enrolled', 'Enrolled')}
                   </span>
                 ) : (
                   <button className="btn btn-primary btn-sm" onClick={() => handleEnroll(course)}>
-                    Enroll Now <ArrowUpRight size={14} />
+                    {t('learn_enroll_btn', 'Enroll Now')} <ArrowUpRight size={14} />
                   </button>
                 )}
               </div>
@@ -263,7 +267,7 @@ export default function RecommendationsPage() {
           <h3>No matching courses found</h3>
           <p>Try resetting filters to explore other modules in the statistical curriculum.</p>
           <button className="btn btn-outline mt-4" onClick={() => { setFilterSkill('all'); setFilterType('all'); setSearchQuery(''); }}>
-            Reset Filters
+            {t('reset_filters', 'Reset Filters')}
           </button>
         </div>
       )}
@@ -279,7 +283,7 @@ export default function RecommendationsPage() {
                 </span>
                 <h2 style={{ fontSize: 20, fontWeight: 800 }}>{selectedCourse.title}</h2>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                  Offered by <strong>{selectedCourse.provider}</strong> • Aligned with {selectedCourse.skill}
+                  {t('provider', 'Offered by')} <strong>{selectedCourse.provider}</strong> • {t('closes_gap', 'Aligned with')} {tSkill(selectedCourse.skill)}
                 </p>
               </div>
               <button onClick={() => setSelectedCourse(null)} style={{ color: 'var(--text-tertiary)', padding: 4 }}>
@@ -291,25 +295,25 @@ export default function RecommendationsPage() {
               <div className="stat-card" style={{ padding: 12 }}>
                 <div className="stat-content">
                   <h3 style={{ fontSize: 16 }}>{selectedCourse.duration}</h3>
-                  <p style={{ fontSize: 11 }}>Estimated Time</p>
+                  <p style={{ fontSize: 11 }}>{t('estimated_time', 'Estimated Time')}</p>
                 </div>
               </div>
               <div className="stat-card" style={{ padding: 12 }}>
                 <div className="stat-content">
-                  <h3 style={{ fontSize: 16 }}>{selectedCourse.modules} Modules</h3>
-                  <p style={{ fontSize: 11 }}>Interactive Content</p>
+                  <h3 style={{ fontSize: 16 }}>{selectedCourse.modules} {t('modules', 'Modules')}</h3>
+                  <p style={{ fontSize: 11 }}>{t('interactive_content', 'Interactive Content')}</p>
                 </div>
               </div>
               <div className="stat-card" style={{ padding: 12 }}>
                 <div className="stat-content">
                   <h3 style={{ fontSize: 16 }}>{selectedCourse.relevance}%</h3>
-                  <p style={{ fontSize: 11 }}>Gap Match</p>
+                  <p style={{ fontSize: 11 }}>{t('gap_match', 'Gap Match')}</p>
                 </div>
               </div>
             </div>
 
             <div className="card mb-4" style={{ background: 'var(--bg-elevated)', padding: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>Curriculum & Syllabus Highlights</h4>
+              <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>{t('curriculum_highlights', 'Curriculum Highlights')}</h4>
               <ul style={{ fontSize: 13, color: 'var(--text-secondary)', paddingLeft: 18, lineHeight: 1.8 }}>
                 <li>Theoretical Foundations & Statistical Standards in Indian Governance</li>
                 <li>Data Collection Protocols, Validation Rules, and Non-Sampling Error Controls</li>
@@ -320,12 +324,12 @@ export default function RecommendationsPage() {
 
             <div className="flex-between mt-6 pt-4" style={{ borderTop: '1px solid var(--border-light)', flexWrap: 'wrap', gap: 10 }}>
               <Link href="/quiz" className="btn btn-outline btn-sm">
-                <Play size={14} /> Take Diagnostic Quiz
+                <Play size={14} /> {t('take_quiz_btn', 'Take Diagnostic Quiz')}
               </Link>
 
               {enrolledCourses.includes(selectedCourse.id) ? (
                 <span className="btn btn-sm" style={{ background: 'var(--success-bg)', color: 'var(--success)', border: '1px solid var(--success)' }}>
-                  <CheckCircle2 size={14} /> Already Enrolled
+                  <CheckCircle2 size={14} /> {t('already_enrolled', 'Already Enrolled')}
                 </span>
               ) : (
                 <button
@@ -335,7 +339,7 @@ export default function RecommendationsPage() {
                     setSelectedCourse(null);
                   }}
                 >
-                  Confirm Enrollment <ArrowUpRight size={14} />
+                  {t('confirm_enrollment', 'Confirm Enrollment')} <ArrowUpRight size={14} />
                 </button>
               )}
             </div>

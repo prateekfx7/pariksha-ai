@@ -4,7 +4,7 @@ import { MessageSquare, Send, ThumbsUp, Tag, User, Sparkles, Filter, CheckCircle
 import { useApp } from '@/context/AppContext';
 
 export default function CollaborationPage() {
-  const { currentUser, collaborationMessages, addCollaborationMessage } = useApp();
+  const { currentUser, collaborationMessages, addCollaborationMessage, t, tSkill } = useApp();
   const [newPost, setNewPost] = useState('');
   const [selectedTag, setSelectedTag] = useState('All');
   const [likes, setLikes] = useState({});
@@ -85,8 +85,8 @@ export default function CollaborationPage() {
     <div className="fade-in">
       <div className="section-header mb-6">
         <div>
-          <h1 className="section-title">Peer Discussion & Community Hub</h1>
-          <p className="section-subtitle">Connect with 300+ statistical officers across MoSPI, NSSO, and state directorates</p>
+          <h1 className="section-title">{t('community_title', 'Peer Discussion & Community Hub')}</h1>
+          <p className="section-subtitle">{t('community_subtitle', 'Connect with 300+ statistical officers across MoSPI, NSSO, and state directorates')}</p>
         </div>
       </div>
 
@@ -99,7 +99,7 @@ export default function CollaborationPage() {
           <form onSubmit={handlePost} style={{ flex: 1 }}>
             <textarea
               rows={3}
-              placeholder={`Share an insight, question, or study tip as ${currentUser.name}...`}
+              placeholder={`${t('share_insight_placeholder', 'Share an insight, question, or study tip as')} ${currentUser.name}...`}
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
               style={{ width: '100%', resize: 'vertical', marginBottom: 12 }}
@@ -107,16 +107,16 @@ export default function CollaborationPage() {
             <div className="flex-between" style={{ flexWrap: 'wrap', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span className="tag tag-priority" style={{ fontSize: 11 }}>
-                  Posting as: {currentUser.role}
+                  {t('posting_as', 'Posting as')}: {currentUser.role}
                 </span>
                 {postedSuccess && (
                   <span style={{ color: 'var(--success)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <CheckCircle2 size={14} /> Shared with community!
+                    <CheckCircle2 size={14} /> {t('shared_with_community', 'Shared with community!')}
                   </span>
                 )}
               </div>
               <button type="submit" className="btn btn-primary btn-sm" disabled={!newPost.trim()}>
-                <Send size={14} /> Share Post
+                <Send size={14} /> {t('share_post', 'Share Post')}
               </button>
             </div>
           </form>
@@ -132,7 +132,7 @@ export default function CollaborationPage() {
             onClick={() => setSelectedTag(tag)}
             style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap' }}
           >
-            {tag}
+            {tag === 'All' ? t('filter_all', 'All') : tSkill(tag)}
           </button>
         ))}
       </div>

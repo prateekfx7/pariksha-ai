@@ -10,7 +10,7 @@ import Link from 'next/link';
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 export default function NextRoleReadinessPage() {
-  const { currentUser, userSkills, theme, targetRole, setTargetRole } = useApp();
+  const { currentUser, userSkills, theme, targetRole, setTargetRole, t, tSkill } = useApp();
 
   const isLight = theme === 'light';
   const textColor = isLight ? '#0f172a' : '#f5f0eb';
@@ -146,7 +146,7 @@ export default function NextRoleReadinessPage() {
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <BookOpen size={16} /> Courses
+          <BookOpen size={16} /> {t('tab_courses', 'Courses')}
         </Link>
         <Link href="/micro-learning" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -154,7 +154,7 @@ export default function NextRoleReadinessPage() {
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Zap size={16} /> Micro-Drills
+          <Zap size={16} /> {t('tab_micro', 'Micro-Drills')}
         </Link>
         <Link href="/practical-tasks" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -162,7 +162,7 @@ export default function NextRoleReadinessPage() {
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Terminal size={16} /> Practical Labs
+          <Terminal size={16} /> {t('tab_practical', 'Practical Labs')}
         </Link>
         <Link href="/readiness" style={{
           flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
@@ -170,7 +170,7 @@ export default function NextRoleReadinessPage() {
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <TrendingUp size={16} /> Role Readiness
+          <TrendingUp size={16} /> {t('tab_readiness', 'Role Readiness')}
         </Link>
       </div>
 
@@ -179,20 +179,20 @@ export default function NextRoleReadinessPage() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span className="tag tag-priority" style={{ fontSize: 11 }}>
-              <TrendingUp size={13} /> Career Cadre Progression
+              <TrendingUp size={13} /> {t('career_progression', 'Career Cadre Progression')}
             </span>
             <span className="tag tag-easy" style={{ fontSize: 11 }}>
-              MoSPI SSS & ISS Guidelines
+              {t('mospi_guidelines', 'MoSPI SSS & ISS Guidelines')}
             </span>
           </div>
-          <h1 className="section-title">Next-Role Readiness Predictor</h1>
+          <h1 className="section-title">{t('readiness_title', 'Next-Role Readiness Predictor')}</h1>
           <p className="section-subtitle">
-            Algorithmic promotion readiness forecasting comparing your calibrated competencies against target cadre prerequisites.
+            {t('readiness_subtitle', 'Algorithmic promotion readiness forecasting comparing your calibrated competencies against target cadre prerequisites.')}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handlePrintDossier} className="btn btn-outline btn-sm">
-            <Printer size={14} /> Print Promotion Dossier
+            <Printer size={14} /> {t('print_dossier', 'Print Promotion Dossier')}
           </button>
         </div>
       </div>
@@ -200,7 +200,7 @@ export default function NextRoleReadinessPage() {
       {/* Cadre Career Progression Track Bar */}
       <div className="card mb-6" style={{ padding: '16px 20px', background: 'var(--bg-surface)' }}>
         <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: 10, letterSpacing: '0.5px' }}>
-          Official Statistical Cadre Ladder:
+          {t('cadre_ladder', 'Official Statistical Cadre Ladder')}:
         </p>
         <div className="cadre-path-bar">
           {cadreHierarchy.map((item, idx) => {
@@ -258,7 +258,7 @@ export default function NextRoleReadinessPage() {
         {/* Left: Animated Readiness Gauge & Status */}
         <div className="card" style={{ padding: 24, textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <span className="tag tag-priority mb-3" style={{ alignSelf: 'center', fontSize: 11 }}>
-            Target: {targetRole}
+            {t('target_met', 'Target')}: {targetRole}
           </span>
 
           {/* Conic-gradient Circle Gauge */}
@@ -270,26 +270,26 @@ export default function NextRoleReadinessPage() {
               {readinessScore}%
             </span>
             <span style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, fontWeight: 600 }}>
-              Promotion Ready
+              {t('promotion_ready', 'Promotion Ready')}
             </span>
           </div>
 
           <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>
-            {readinessScore >= 85 ? '🎉 Eligible for Cadre Board Review' : readinessScore >= 60 ? '⚡ In Promotion Acceleration Zone' : '📚 Core Competency Building Phase'}
+            {readinessScore >= 85 ? `🎉 ${t('board_review_eligible', 'Eligible for Cadre Board Review')}` : readinessScore >= 60 ? `⚡ ${t('acceleration_zone', 'In Promotion Acceleration Zone')}` : `📚 ${t('core_building_phase', 'Core Competency Building Phase')}`}
           </h3>
 
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 380, margin: '0 auto 16px', lineHeight: 1.5 }}>
             {readinessScore >= 85
               ? `You satisfy the required competency benchmarks across official MoSPI standards for ${targetRole}.`
-              : `You meet ${metCount} of 6 cadre prerequisites. Closing remaining gaps in ${skillComparisons[0]?.skill} will boost eligibility.`}
+              : `You meet ${metCount} of 6 cadre prerequisites. Closing remaining gaps in ${tSkill(skillComparisons[0]?.skill)} will boost eligibility.`}
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
             <div className="header-badge" style={{ fontSize: 12 }}>
-              <CheckCircle2 size={14} style={{ color: 'var(--success)' }} /> {metCount} Benchmarks Met
+              <CheckCircle2 size={14} style={{ color: 'var(--success)' }} /> {metCount} {t('benchmarks_met', 'Benchmarks Met')}
             </div>
             <div className="header-badge" style={{ fontSize: 12 }}>
-              <AlertTriangle size={14} style={{ color: 'var(--warning)' }} /> {unmetCount} Gaps Remaining
+              <AlertTriangle size={14} style={{ color: 'var(--warning)' }} /> {unmetCount} {t('gaps_remaining', 'Gaps Remaining')}
             </div>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function NextRoleReadinessPage() {
         <div className="card" style={{ padding: 20 }}>
           <div className="flex-between mb-2">
             <h3 style={{ fontSize: 15, fontWeight: 700 }}>
-              Competency Overlay: Current vs Target
+              {t('competency_overlay', 'Competency Overlay: Current vs Target')}
             </h3>
             <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>6-Axis MoSPI Radar</span>
           </div>
@@ -313,7 +313,7 @@ export default function NextRoleReadinessPage() {
         <div className="flex-between mb-4">
           <div>
             <h3 style={{ fontSize: 17, fontWeight: 800 }}>
-              Cadre Benchmark Gap Elimination Roadmap
+              {t('gap_roadmap', 'Cadre Benchmark Gap Elimination Roadmap')}
             </h3>
             <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
               Step-by-step action plan to reach 100% readiness for {targetRole}
@@ -344,27 +344,27 @@ export default function NextRoleReadinessPage() {
               <div style={{ flex: '1 1 240px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <h4 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>
-                    {item.skill}
+                    {tSkill(item.skill)}
                   </h4>
                   {item.isMet ? (
                     <span className="tag tag-easy" style={{ fontSize: 11 }}>
-                      ✓ Benchmark Met
+                      ✓ {t('benchmark_met', 'Benchmark Met')}
                     </span>
                   ) : (
                     <span className="tag tag-priority" style={{ fontSize: 11 }}>
-                      Deficit: -{item.deficit}%
+                      {t('deficit', 'Deficit')}: -{item.deficit}%
                     </span>
                   )}
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: 0 }}>
-                  Current Score: <strong>{item.current}%</strong> • Required for {targetRole}: <strong>{item.target}%</strong>
+                  {t('current_score', 'Current Score')}: <strong>{item.current}%</strong> • {t('required_for', 'Required for')} {targetRole}: <strong>{item.target}%</strong>
                 </p>
               </div>
 
               {/* Progress Bar */}
               <div style={{ flex: '1 1 200px', minWidth: 160 }}>
                 <div className="flex-between" style={{ fontSize: 12, marginBottom: 4 }}>
-                  <span>Cadre Fulfillment</span>
+                  <span>{t('cadre_fulfillment', 'Cadre Fulfillment')}</span>
                   <span style={{ fontWeight: 700 }}>{Math.min(100, item.pct)}%</span>
                 </div>
                 <div className="progress-bar-track" style={{ height: 8 }}>
@@ -383,15 +383,15 @@ export default function NextRoleReadinessPage() {
                 {!item.isMet ? (
                   <>
                     <Link href="/micro-learning" className="btn btn-outline btn-sm">
-                      <Zap size={13} /> Micro-Drill
+                      <Zap size={13} /> {t('tab_micro', 'Micro-Drill')}
                     </Link>
                     <Link href="/quiz" className="btn btn-primary btn-sm">
-                      <Play size={13} /> Take Quiz
+                      <Play size={13} /> {t('tab_take_quiz', 'Take Quiz')}
                     </Link>
                   </>
                 ) : (
                   <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <CheckCircle2 size={16} /> Ready
+                    <CheckCircle2 size={16} /> {t('ready', 'Ready')}
                   </span>
                 )}
               </div>

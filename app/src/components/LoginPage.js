@@ -1,10 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { Eye, EyeOff, Zap, ArrowRight, UserPlus, LogIn, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Zap, ArrowRight, UserPlus, LogIn, CheckCircle2, ShieldCheck, Globe } from 'lucide-react';
 import { signInWithSupabase, signUpWithSupabase } from '@/lib/supabaseService';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
+import { useApp } from '@/context/AppContext';
 
 export default function LoginPage({ onLogin }) {
+  const { t, language, setLanguage, availableLanguages } = useApp();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -168,15 +170,7 @@ export default function LoginPage({ onLogin }) {
             color: '#ffffff',
             zIndex: 1
           }}>
-            Diagnose the Gap.<br />
-            <span style={{
-              background: 'linear-gradient(135deg, #ff7a4d, #f05a28)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              color: 'var(--primary-light)'
-            }}>
-              Personalize the Path.
-            </span>
+            {t('login_heading', 'Diagnose the Gap. Personalize the Path.')}
           </h1>
 
           <p style={{
@@ -186,16 +180,15 @@ export default function LoginPage({ onLogin }) {
             marginBottom: 26,
             zIndex: 1
           }}>
-            AI-powered competency assessment for India's Official Statistical System.
-            Score skills, recommend courses, and generate quizzes — all on top of iGOT Karmayogi.
+            {t('login_subheading', "AI-powered competency assessment for India's Official Statistical System. Score skills, recommend courses, and generate quizzes — all on top of iGOT Karmayogi.")}
           </p>
 
           <div className="hide-mobile" style={{ display: 'flex', flexDirection: 'column', gap: 12, zIndex: 1 }}>
             {[
-              'Competency Gap Analysis with Radar Charts',
-              'AI-Generated MCQs from any PDF/PPT',
-              'Personalized iGOT Course Recommendations',
-              'Department-wide Analytics Dashboard',
+              t('login_feature_1', 'Competency Gap Analysis with Radar Charts'),
+              t('login_feature_2', 'AI-Generated MCQs from any PDF/PPT'),
+              t('login_feature_3', 'Personalized iGOT Course Recommendations'),
+              t('login_feature_4', 'Department-wide Analytics Dashboard'),
             ].map((feature, i) => (
               <div key={i} style={{
                 display: 'flex', alignItems: 'center', gap: 10,
@@ -236,30 +229,60 @@ export default function LoginPage({ onLogin }) {
           flexDirection: 'column',
           justifyContent: 'center',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-              {isSignup ? 'Create Account' : 'Welcome Back'}
-            </h2>
-            {isSupabaseConfigured && (
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 5,
-                fontSize: 11,
-                fontWeight: 600,
-                padding: '3px 8px',
-                borderRadius: 999,
-                background: 'rgba(16, 185, 129, 0.12)',
-                color: '#10b981',
-                border: '1px solid rgba(16, 185, 129, 0.25)'
-              }}>
-                <ShieldCheck size={12} /> Supabase Auth
-              </span>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              {isSupabaseConfigured && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '3px 8px',
+                  borderRadius: 999,
+                  background: 'rgba(16, 185, 129, 0.12)',
+                  color: '#10b981',
+                  border: '1px solid rgba(16, 185, 129, 0.25)'
+                }}>
+                  <ShieldCheck size={12} /> Supabase Auth
+                </span>
+              )}
+            </div>
+
+            {/* Quick Language Selector right on Login */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Globe size={14} style={{ color: 'var(--primary)' }} />
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border)',
+                  cursor: 'pointer',
+                  maxWidth: 160
+                }}
+                aria-label="Select Language"
+              >
+                {(availableLanguages || []).map(l => (
+                  <option key={l.code} value={l.code}>
+                    {l.nativeName} ({l.name})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
+          <h2 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+            {isSignup ? t('login_create_account', 'Create Account') : t('login_welcome_back', 'Welcome Back')}
+          </h2>
+
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24 }}>
-            {isSignup ? 'Join Pariksha AI with your official credentials' : 'Sign in to access your competency dashboard'}
+            {isSignup ? t('login_signup_sub', 'Join Pariksha AI with your official credentials') : t('login_signin_sub', 'Sign in to access your competency dashboard')}
           </p>
 
           {successMsg && (
@@ -283,7 +306,7 @@ export default function LoginPage({ onLogin }) {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {isSignup && (
               <div>
-                <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Full Name</label>
+                <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>{t('login_full_name', 'Full Name')}</label>
                 <input
                   type="text"
                   placeholder="Rajesh Kumar Sharma"
@@ -295,7 +318,7 @@ export default function LoginPage({ onLogin }) {
             )}
 
             <div>
-              <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Email Address</label>
+              <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>{t('login_email', 'Email Address')}</label>
               <input
                 type="email"
                 placeholder="officer@mospi.gov.in"
@@ -307,7 +330,7 @@ export default function LoginPage({ onLogin }) {
             </div>
 
             <div>
-              <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Password</label>
+              <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>{t('login_password', 'Password')}</label>
               <div style={{ position: 'relative' }}>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -332,7 +355,7 @@ export default function LoginPage({ onLogin }) {
 
             {isSignup && (
               <div>
-                <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Department</label>
+                <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>{t('login_department', 'Department')}</label>
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
@@ -354,7 +377,7 @@ export default function LoginPage({ onLogin }) {
               {loading ? (
                 <><span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> {isSignup ? 'Creating Account...' : 'Authenticating...'}</>
               ) : (
-                <>{isSignup ? <><UserPlus size={18} /> Create Account with Supabase</> : <><LogIn size={18} /> Sign In with Supabase</>}</>
+                <>{isSignup ? <><UserPlus size={18} /> {t('login_signup_btn', 'Create Account with Supabase')}</> : <><LogIn size={18} /> {t('login_signin_btn', 'Sign In with Supabase')}</>}</>
               )}
             </button>
           </form>
@@ -369,7 +392,7 @@ export default function LoginPage({ onLogin }) {
             textAlign: 'center',
           }}>
             <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 10 }}>
-              Want to explore without signing in?
+              {t('login_demo_prompt', 'Want to explore without signing in?')}
             </p>
             <button
               type="button"
@@ -396,21 +419,21 @@ export default function LoginPage({ onLogin }) {
                 gap: 8,
               }}
             >
-              🚀 Explore as Demo Officer
+              {t('login_explore_demo', '🚀 Explore as Demo Officer')}
             </button>
             <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8 }}>
-              Full access with sample data — no account needed
+              {t('login_demo_sub', 'Full access with sample data — no account needed')}
             </p>
           </div>
 
           <div style={{ textAlign: 'center', marginTop: 20 }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-              {isSignup ? 'Already have an official account?' : "Don't have an account yet?"}{' '}
+              {isSignup ? t('login_have_account', 'Already have an official account?') : t('login_no_account', "Don't have an account yet?")}{' '}
               <button
                 onClick={() => { setIsSignup(!isSignup); setError(''); setSuccessMsg(''); }}
                 style={{ color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: 14 }}
               >
-                {isSignup ? 'Sign In' : 'Create Account'}
+                {isSignup ? t('login_signin_btn', 'Sign In') : t('login_create_account', 'Create Account')}
               </button>
             </p>
           </div>
@@ -419,3 +442,4 @@ export default function LoginPage({ onLogin }) {
     </div>
   );
 }
+

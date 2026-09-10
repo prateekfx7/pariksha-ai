@@ -23,7 +23,7 @@ function SettingsContent() {
     resetToZero, setShowGuideModal,
     quizHistory, enrolledCourses, gapData,
     portfolioItems, addPortfolioItem, verifyPortfolioItem,
-    availableLanguages, t
+    availableLanguages, t, tSkill
   } = useApp();
 
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -306,10 +306,10 @@ function SettingsContent() {
             <div className="flex-between mb-3">
               <div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <User size={18} /> Active Officer Persona (Multi-User Simulation)
+                  <User size={18} /> {t('officer_persona_title', 'Active Officer Persona (Multi-User Simulation)')}
                 </h3>
                 <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '2px 0 0' }}>
-                  Switch between statistical cadres to see how radar charts, diagnostic gaps, and recommendations dynamically adapt:
+                  {t('officer_persona_sub', 'Switch between statistical cadres to see how radar charts, diagnostic gaps, and recommendations dynamically adapt:')}
                 </p>
               </div>
             </div>
@@ -434,9 +434,9 @@ function SettingsContent() {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <span className="tag tag-priority" style={{ fontSize: 11 }}>
-                    <ShieldCheck size={13} /> Official APAR Competency Dossier
+                    <ShieldCheck size={13} /> {t('apar_dossier', 'Official APAR Competency Dossier')}
                   </span>
-                  <span className="tag tag-easy" style={{ fontSize: 11 }}>Verifiable Credentials</span>
+                  <span className="tag tag-easy" style={{ fontSize: 11 }}>{t('verifiable_cred', 'Verifiable Credentials')}</span>
                 </div>
                 <h3 style={{ fontSize: 18, fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
                   {currentUser.name}
@@ -447,13 +447,13 @@ function SettingsContent() {
 
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 12 }}>
                   <div>
-                    <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Verified Seals</span>
+                    <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>{t('verified_seals', 'Verified Seals')}</span>
                     <p style={{ fontSize: 13, fontWeight: 700, margin: '2px 0 0', color: 'var(--success)' }}>
-                      {verifiedCount} of {(portfolioItems || []).length} Verified
+                      {verifiedCount} of {(portfolioItems || []).length} {t('verified', 'Verified')}
                     </p>
                   </div>
                   <div>
-                    <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Integrity Hash</span>
+                    <span style={{ fontSize: 10.5, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>{t('integrity_hash', 'Integrity Hash')}</span>
                     <p style={{ fontSize: 12, margin: '2px 0 0' }}>
                       <span className="hash-pill">0x7c9a41...e82b</span>
                     </p>
@@ -463,10 +463,10 @@ function SettingsContent() {
 
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => setShowLogModal(true)} className="btn btn-primary btn-sm">
-                  <Plus size={15} /> Log Evidence Artifact
+                  <Plus size={15} /> {t('log_artifact', 'Log Evidence Artifact')}
                 </button>
                 <button onClick={() => window.print()} className="btn btn-outline btn-sm">
-                  <Printer size={14} /> Export Dossier
+                  <Printer size={14} /> {t('export_dossier', 'Export Dossier')}
                 </button>
               </div>
             </div>
@@ -483,7 +483,7 @@ function SettingsContent() {
                     className={`btn btn-sm ${selectedCompetency === skill ? 'btn-primary' : 'btn-outline'}`}
                     style={{ borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', fontSize: 11.5, padding: '4px 10px' }}
                   >
-                    {skill.split(' ').slice(0, 2).join(' ')}
+                    {skill === 'All' ? t('filter_all', 'All') : tSkill(skill).split(' ').slice(0, 2).join(' ')}
                   </button>
                 ))}
               </div>
@@ -496,7 +496,7 @@ function SettingsContent() {
                     className={`btn btn-sm ${selectedStatus === status ? 'btn-secondary' : 'btn-ghost'}`}
                     style={{ fontSize: 11.5, padding: '4px 8px' }}
                   >
-                    {status}
+                    {status === 'All' ? t('filter_all', 'All') : status === 'Verified' ? t('verified', 'Verified') : t('pending', 'Pending')}
                   </button>
                 ))}
               </div>
@@ -764,7 +764,7 @@ function SettingsContent() {
                 className="btn btn-outline btn-sm"
                 style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
-                <BookOpen size={14} /> Open Software Guide
+                <BookOpen size={14} /> {t('guide', 'Open Software Guide')}
               </button>
               <button
                 onClick={() => {
@@ -775,7 +775,7 @@ function SettingsContent() {
                 className="btn btn-secondary btn-sm"
                 style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--warning)', borderColor: 'var(--warning)' }}
               >
-                <RefreshCw size={14} /> Reset Platform to Day 0
+                <RefreshCw size={14} /> {t('reset_day0', 'Reset Platform to Day 0')}
               </button>
             </div>
           </div>

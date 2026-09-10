@@ -32,7 +32,7 @@ Topology rules: Enumeration block boundaries must not self-intersect and must pe
 ];
 
 export default function QuizGeneratorPage() {
-  const { generatedQuizzes, addGeneratedQuiz, apiKey } = useApp();
+  const { generatedQuizzes, addGeneratedQuiz, apiKey, t, tSkill } = useApp();
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -312,27 +312,27 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
       {/* Quiz Hub Tab Navigation */}
       <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
         <Link href="/quiz" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Play size={16} /> Take a Quiz
+          <Play size={15} /> {t('tab_take_quiz', 'Take a Quiz')}
         </Link>
         <Link href="/quiz-generator" style={{
-          flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Sparkles size={16} /> Generate New Quiz
+          <Sparkles size={15} /> {t('tab_gen_quiz', 'Generate New Quiz')}
         </Link>
       </div>
 
       <div className="section-header mb-6">
         <div>
-          <h1 className="section-title">AI Quiz Generator</h1>
-          <p className="section-subtitle">Auto-generate validated competency assessments from training manuals, PDFs, or PPTs</p>
+          <h1 className="section-title">{t('gen_page_title', 'AI Assessment Generator')}</h1>
+          <p className="section-subtitle">{t('gen_page_subtitle', 'Auto-generate validated competency assessments from training manuals, PDFs, or PPTs')}</p>
         </div>
       </div>
 
@@ -342,7 +342,7 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
           {/* Presets Bar */}
           <div className="card mb-4" style={{ padding: 14, background: 'var(--bg-surface)' }}>
             <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: 8 }}>
-              ⚡ Quick Load Official MoSPI Samples
+              {t('gen_quick_load', '⚡ Quick Load Official MoSPI Samples')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {samplePresets.map((preset, i) => (
@@ -364,13 +364,13 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
               className={`btn btn-sm ${useTextInput ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setUseTextInput(true)}
             >
-              <FileText size={14} /> Paste Text / Syllabus
+              <FileText size={14} /> {t('gen_paste_text', 'Paste Text / Syllabus')}
             </button>
             <button
               className={`btn btn-sm ${!useTextInput ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setUseTextInput(false)}
             >
-              <Upload size={14} /> Upload File (PDF/PPT)
+              <Upload size={14} /> {t('gen_upload_file', 'Upload File (PDF/PPT)')}
             </button>
           </div>
 
@@ -383,8 +383,8 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload size={40} style={{ color: 'var(--primary)' }} />
-              <h3 style={{ fontSize: 16, marginTop: 8 }}>{file ? file.name : 'Drop your file here or click to browse'}</h3>
-              <p style={{ fontSize: 13 }}>{file ? `${(file.size / 1024).toFixed(1)} KB • Ready for AI extraction` : 'Supports PDF, PPT, PPTX, TXT, DOCX'}</p>
+              <h3 style={{ fontSize: 16, marginTop: 8 }}>{file ? file.name : t('gen_drop_title', 'Drop your file here or click to browse')}</h3>
+              <p style={{ fontSize: 13 }}>{file ? `${(file.size / 1024).toFixed(1)} KB • Ready for AI extraction` : t('gen_drop_sub', 'Supports PDF, PPT, PPTX, TXT, DOCX')}</p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -424,24 +424,24 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
           <div className="card mt-4" style={{ padding: 18 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 14 }}>
               <div>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>Target Competency</label>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_target_comp', 'Target Competency')}</label>
                 <select
                   value={selectedSkill}
                   onChange={(e) => setSelectedSkill(e.target.value)}
                   style={{ width: '100%' }}
                 >
-                  <option>Survey Design</option>
-                  <option>Data Science & Analytics</option>
-                  <option>Official Statistics</option>
-                  <option>Economic Statistics</option>
-                  <option>Agricultural Statistics</option>
-                  <option>GIS & Spatial Analysis</option>
-                  <option>Data Quality & Auditing</option>
+                  <option value="Survey Design">{tSkill('Survey Design')}</option>
+                  <option value="Data Science & Analytics">{tSkill('Data Science & Analytics')}</option>
+                  <option value="Official Statistics">{tSkill('Official Statistics')}</option>
+                  <option value="Economic Statistics">{tSkill('Economic Statistics')}</option>
+                  <option value="Agricultural Statistics">{tSkill('Agricultural Statistics')}</option>
+                  <option value="GIS & Spatial Analysis">{tSkill('GIS & Spatial Analysis')}</option>
+                  <option value="Data Quality & Auditing">{tSkill('Data Quality & Auditing')}</option>
                 </select>
               </div>
 
               <div>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>Difficulty Level</label>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_difficulty_label', 'Difficulty Level')}</label>
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
@@ -457,7 +457,7 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
 
             <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 120px' }}>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>Question Count</label>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_num_questions', 'Question Count')}</label>
                 <select
                   value={questionCount}
                   onChange={(e) => setQuestionCount(Number(e.target.value))}
@@ -483,8 +483,8 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
                   </>
                 ) : (
                   <>
-                    <Sparkles size={18} />
-                    Generate AI Quiz
+                    <Sparkles size={16} />
+                    {t('gen_btn_generate', 'Generate Assessment from Document')}
                   </>
                 )}
               </button>
@@ -503,9 +503,9 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
         <div className="fade-in fade-in-delay-2">
           <div className="flex-between mb-4">
             <h3 style={{ fontSize: 16, fontWeight: 700 }}>
-              Generated Quizzes ({generatedQuizzes.length})
+              {t('gen_generated_quizzes', 'Generated Quizzes')} ({generatedQuizzes.length})
             </h3>
-            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Auto-synced to Assessment Bank</span>
+            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{t('gen_auto_synced', 'Auto-synced to Assessment Bank')}</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 580, overflowY: 'auto', paddingRight: 4 }}>
@@ -519,18 +519,18 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
                 </div>
 
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 14 }}>
-                  {quiz.skill} • {quiz.questionCount} Questions • {quiz.generatedBy || 'AI Engine'}
+                  {tSkill(quiz.skill)} • {quiz.questionCount} Questions • {quiz.generatedBy || 'AI Engine'}
                 </p>
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <Link href={`/quiz/${quiz.id}`} className="btn btn-primary btn-sm">
-                    <Play size={14} /> Start Quiz
+                    <Play size={14} /> {t('btn_start_quiz', 'Start Quiz')}
                   </Link>
                   <button className="btn btn-outline btn-sm" onClick={() => setPreviewQuiz(quiz)}>
-                    <Eye size={14} /> Preview
+                    <Eye size={14} /> {t('btn_preview', 'Preview')}
                   </button>
                   <button className="btn btn-ghost btn-sm" onClick={() => handlePrintQuiz(quiz)} title="Print / Export PDF">
-                    <Printer size={14} /> Print
+                    <Printer size={14} /> {t('btn_print', 'Print')}
                   </button>
                   <button className="btn btn-ghost btn-sm" onClick={() => handleDownloadJSON(quiz)} title="Download JSON">
                     <Download size={14} /> JSON
@@ -550,7 +550,7 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800 }}>{previewQuiz.title}</h2>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                  {previewQuiz.skill} • {previewQuiz.difficulty} • {previewQuiz.questionCount} Questions
+                  {tSkill(previewQuiz.skill)} • {previewQuiz.difficulty} • {previewQuiz.questionCount} Questions
                 </p>
               </div>
               <button onClick={() => setPreviewQuiz(null)} style={{ color: 'var(--text-tertiary)', padding: 4 }}>
@@ -592,19 +592,20 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
             <div className="flex-between mt-6 pt-4" style={{ borderTop: '1px solid var(--border-light)', flexWrap: 'wrap', gap: 10 }}>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button className="btn btn-outline btn-sm" onClick={() => handlePrintQuiz(previewQuiz)}>
-                  <Printer size={14} /> Print / Export PDF
+                  <Printer size={14} /> {t('btn_print', 'Print / Export PDF')}
                 </button>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleDownloadJSON(previewQuiz)}>
-                  <Download size={14} /> Download JSON
+                  <Download size={14} /> {t('btn_download_json', 'Download JSON')}
                 </button>
               </div>
               <Link href={`/quiz/${previewQuiz.id}`} className="btn btn-primary btn-sm">
-                <Play size={14} /> Take This Quiz Now
+                <Play size={14} /> {t('btn_take_quiz_now', 'Take This Quiz Now')}
               </Link>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
