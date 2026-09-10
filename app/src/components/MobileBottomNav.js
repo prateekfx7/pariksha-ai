@@ -2,16 +2,18 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, BookOpen, BrainCircuit, BarChart3, User } from 'lucide-react';
+import { useApp } from '@/context/AppContext';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { t } = useApp();
 
   const navTabs = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/recommendations', label: 'Learn', icon: BookOpen },
-    { href: '/quiz', label: 'Quizzes', icon: BrainCircuit },
-    { href: '/admin', label: 'Analytics', icon: BarChart3 },
-    { href: '/settings', label: 'Profile', icon: User },
+    { href: '/dashboard', label: t('nav_dashboard', 'Dashboard'), icon: LayoutDashboard },
+    { href: '/recommendations', label: t('nav_learn', 'Learn'), icon: BookOpen },
+    { href: '/quiz', label: t('nav_quizzes', 'Quizzes'), icon: BrainCircuit },
+    { href: '/admin', label: t('nav_analytics', 'Analytics'), icon: BarChart3 },
+    { href: '/settings', label: t('nav_profile', 'Profile'), icon: User },
   ];
 
   const isTabActive = (href) => {
@@ -48,10 +50,18 @@ export default function MobileBottomNav() {
             className={`mobile-nav-item ${isActive ? 'active' : ''}`}
           >
             <div className="mobile-nav-icon-wrap">
-              <Icon size={20} />
+              <Icon size={19} />
               {isActive && <span className="mobile-nav-indicator" />}
             </div>
-            <span className="mobile-nav-label">{tab.label}</span>
+            <span className="mobile-nav-label" style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '100%',
+              fontSize: '10px'
+            }}>
+              {tab.label}
+            </span>
           </Link>
         );
       })}

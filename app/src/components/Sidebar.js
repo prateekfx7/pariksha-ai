@@ -3,21 +3,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, BrainCircuit,
-  BarChart3, MessageSquare, X, Zap
+  BarChart3, MessageSquare, X, Zap, Settings as SettingsIcon
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-const mainNavItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/recommendations', label: 'Learn', icon: BookOpen },
-  { href: '/quiz', label: 'Quizzes', icon: BrainCircuit },
-  { href: '/admin', label: 'Analytics', icon: BarChart3 },
-  { href: '/collaboration', label: 'Community', icon: MessageSquare },
-];
-
 export default function Sidebar() {
   const pathname = usePathname();
-  const { mobileSidebarOpen, toggleMobileSidebar } = useApp();
+  const { mobileSidebarOpen, toggleMobileSidebar, t } = useApp();
+
+  const mainNavItems = [
+    { href: '/dashboard', label: t('nav_dashboard', 'Dashboard'), icon: LayoutDashboard },
+    { href: '/recommendations', label: t('nav_learn', 'Learn'), icon: BookOpen },
+    { href: '/quiz', label: t('nav_quizzes', 'Quizzes'), icon: BrainCircuit },
+    { href: '/admin', label: t('nav_analytics', 'Analytics'), icon: BarChart3 },
+    { href: '/collaboration', label: t('nav_community', 'Community'), icon: MessageSquare },
+  ];
 
   const handleNavClick = () => {
     if (mobileSidebarOpen) toggleMobileSidebar();
@@ -118,6 +118,12 @@ export default function Sidebar() {
           <Zap size={24} style={{ marginBottom: 4 }} />
           <p>iGOT Karmayogi Synced</p>
           <span>MoSPI Official Framework</span>
+        </div>
+        <div className="sidebar-secondary-links" style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 10 }}>
+          <Link href="/settings" className="nav-item" onClick={handleNavClick} style={{ padding: '8px 12px', fontSize: 13 }}>
+            <SettingsIcon size={16} />
+            {t('nav_settings', 'Settings')}
+          </Link>
         </div>
       </div>
     </aside>

@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { officers, initialOfficer, initialUserSkills, currentUserSkills, calculateGapScores, getRecommendations, sampleQuizzes, skills, samplePortfolioEvidence, demoPersonaEvidence, cadreHierarchy, samplePracticalTasks, sampleMicroLearning } from '@/data/mockData';
+import { INDIAN_LANGUAGES, getTranslation } from '@/lib/translations';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
 import {
   getProfile,
@@ -61,7 +62,27 @@ export function AppProvider({ children }) {
     { id: 1, text: "Welcome to Pariksha AI! Take your first assessment to establish your competency baseline.", time: "Just now", read: false },
   ]);
   const [apiKey, setApiKey] = useState(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguageState] = useState('en');
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('pariksha_language');
+      if (savedLang) {
+        setLanguageState(savedLang);
+      }
+    } catch (e) {}
+  }, []);
+
+  const setLanguage = useCallback((newLang) => {
+    setLanguageState(newLang);
+    try {
+      localStorage.setItem('pariksha_language', newLang);
+    } catch (e) {}
+  }, []);
+
+  const t = useCallback((key, fallback) => {
+    return getTranslation(language, key, fallback);
+  }, [language]);
   const [defaultDifficulty, setDefaultDifficulty] = useState('Mixed');
   const [notifPrefs, setNotifPrefs] = useState({
     'Course recommendations': true,
@@ -717,6 +738,8 @@ export function AppProvider({ children }) {
       setApiKey,
       language,
       setLanguage,
+      t,
+      availableLanguages: INDIAN_LANGUAGES,
       defaultDifficulty,
       setDefaultDifficulty,
       notifPrefs,

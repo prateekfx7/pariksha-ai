@@ -22,7 +22,8 @@ function SettingsContent() {
     theme, toggleTheme, setThemeMode,
     resetToZero, setShowGuideModal,
     quizHistory, enrolledCourses, gapData,
-    portfolioItems, addPortfolioItem, verifyPortfolioItem
+    portfolioItems, addPortfolioItem, verifyPortfolioItem,
+    availableLanguages, t
   } = useApp();
 
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -154,12 +155,16 @@ function SettingsContent() {
   return (
     <div className="fade-in" style={{ maxWidth: 960, margin: '0 auto', paddingBottom: 40 }}>
       {/* 4-Tab Navigation Bar */}
-      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+      <div className="card mb-6" style={{
+        padding: '4px', background: 'var(--bg-surface)',
+        display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)',
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
+      }}>
         <button
           onClick={() => setActiveTab('profile')}
           style={{
-            flex: 1, padding: '12px 14px', borderRadius: 'var(--radius-md)',
-            textAlign: 'center', fontWeight: activeTab === 'profile' ? 700 : 600, fontSize: 13.5,
+            flex: 1, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+            textAlign: 'center', fontWeight: activeTab === 'profile' ? 700 : 600, fontSize: 13,
             border: 'none', cursor: 'pointer',
             background: activeTab === 'profile' ? 'var(--primary)' : 'transparent',
             color: activeTab === 'profile' ? '#fff' : 'var(--text-secondary)',
@@ -167,14 +172,14 @@ function SettingsContent() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
           }}
         >
-          <User size={16} /> Officer Profile
+          <User size={15} /> {t('tab_profile', 'Officer Profile')}
         </button>
 
         <button
           onClick={() => setActiveTab('achievements')}
           style={{
-            flex: 1, padding: '12px 14px', borderRadius: 'var(--radius-md)',
-            textAlign: 'center', fontWeight: activeTab === 'achievements' ? 700 : 600, fontSize: 13.5,
+            flex: 1, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+            textAlign: 'center', fontWeight: activeTab === 'achievements' ? 700 : 600, fontSize: 13,
             border: 'none', cursor: 'pointer',
             background: activeTab === 'achievements' ? 'var(--primary)' : 'transparent',
             color: activeTab === 'achievements' ? '#fff' : 'var(--text-secondary)',
@@ -182,14 +187,14 @@ function SettingsContent() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
           }}
         >
-          <Trophy size={16} /> Achievements ({unlockedCount})
+          <Trophy size={15} /> {t('tab_achievements', 'Achievements')} ({unlockedCount})
         </button>
 
         <button
           onClick={() => setActiveTab('evidence')}
           style={{
-            flex: 1, padding: '12px 14px', borderRadius: 'var(--radius-md)',
-            textAlign: 'center', fontWeight: activeTab === 'evidence' ? 700 : 600, fontSize: 13.5,
+            flex: 1, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+            textAlign: 'center', fontWeight: activeTab === 'evidence' ? 700 : 600, fontSize: 13,
             border: 'none', cursor: 'pointer',
             background: activeTab === 'evidence' ? 'var(--primary)' : 'transparent',
             color: activeTab === 'evidence' ? '#fff' : 'var(--text-secondary)',
@@ -197,14 +202,14 @@ function SettingsContent() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
           }}
         >
-          <ShieldCheck size={16} /> Skill Evidence ({portfolioItems?.length || 0})
+          <ShieldCheck size={15} /> {t('tab_evidence', 'Skill Evidence')} ({portfolioItems?.length || 0})
         </button>
 
         <button
           onClick={() => setActiveTab('settings')}
           style={{
-            flex: 1, padding: '12px 14px', borderRadius: 'var(--radius-md)',
-            textAlign: 'center', fontWeight: activeTab === 'settings' ? 700 : 600, fontSize: 13.5,
+            flex: 1, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+            textAlign: 'center', fontWeight: activeTab === 'settings' ? 700 : 600, fontSize: 13,
             border: 'none', cursor: 'pointer',
             background: activeTab === 'settings' ? 'var(--primary)' : 'transparent',
             color: activeTab === 'settings' ? '#fff' : 'var(--text-secondary)',
@@ -212,7 +217,7 @@ function SettingsContent() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
           }}
         >
-          <Palette size={16} /> Preferences & AI
+          <Palette size={15} /> {t('tab_settings', 'Preferences & AI')}
         </button>
       </div>
 
@@ -714,15 +719,18 @@ function SettingsContent() {
               {/* Language */}
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                  Language / भाषा
+                  {t('language_select', 'Language')} / भाषा (22 Indian Languages + En)
                 </label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-sm)', fontSize: 13 }}
                 >
-                  <option value="en">English</option>
-                  <option value="hi">हिंदी (Hindi)</option>
+                  {(availableLanguages || []).map(l => (
+                    <option key={l.code} value={l.code}>
+                      {l.nativeName} ({l.name}) — {l.script}
+                    </option>
+                  ))}
                 </select>
               </div>
 
