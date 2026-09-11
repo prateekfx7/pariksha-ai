@@ -114,17 +114,35 @@ export default function Sidebar() {
       <div className="sidebar-spacer" />
 
       <div className="sidebar-footer">
-        <div className="sidebar-upgrade">
-          <Zap size={24} style={{ marginBottom: 4 }} />
-          <p>iGOT Karmayogi Synced</p>
-          <span>MoSPI Official Framework</span>
-        </div>
-        <div className="sidebar-secondary-links" style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 10 }}>
-          <Link href="/settings" className="nav-item" onClick={handleNavClick} style={{ padding: '8px 12px', fontSize: 13 }}>
-            <SettingsIcon size={16} />
-            {t('nav_settings', 'Settings')}
-          </Link>
-        </div>
+        <Link
+          href="/settings"
+          className={`nav-item ${pathname === '/settings' ? 'active' : ''}`}
+          onClick={handleNavClick}
+          style={{ padding: '9px 12px', fontSize: 13.5 }}
+        >
+          <SettingsIcon size={17} />
+          {t('nav_settings', 'Settings')}
+        </Link>
+
+        <Link
+          href="/portfolio"
+          className="sidebar-sync-card"
+          onClick={handleNavClick}
+          title="MoSPI Official Competency Framework & iGOT Karmayogi Synced"
+        >
+          <div className="sidebar-sync-icon">
+            <Zap size={16} />
+          </div>
+          <div className="sidebar-sync-info">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+              <span className="sidebar-sync-title">iGOT Karmayogi</span>
+              <span className="sidebar-sync-badge">
+                <span className="sidebar-sync-dot" /> Synced
+              </span>
+            </div>
+            <span className="sidebar-sync-sub">MoSPI Official Framework</span>
+          </div>
+        </Link>
       </div>
     </aside>
   );
