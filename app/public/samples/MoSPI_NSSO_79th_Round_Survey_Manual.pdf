@@ -1,0 +1,85 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1666 >>
+stream
+BT
+/F1 16 Tf
+50 745 Td
+(Government of India - Ministry of Statistics & Programme Implementation) Tj
+0 -22 Td
+/F1 12 Tf
+(National Sample Survey 79th Round: Operational Field Guidelines) Tj
+0 -16 Td
+/F2 9.5 Tf
+(Official Circular No. MoSPI/NSSO/SDRD/2023-79-B | Target Cadre: ISS / SSS Officers) Tj
+ET
+50 695 m 562 695 l 1.5 w 0.94 0.35 0.16 RG S
+BT
+50 675 Td
+/F1 11 Tf
+0 -20 Td
+(1. Multi-Stage Stratified Sampling Architecture) Tj
+/F2 9.5 Tf
+0 -15 Td
+(A stratified two-stage design is mandated across all 36 States and Union Territories.) Tj
+0 -15 Td
+(Rural Sector: First Stage Units (FSUs) are 2011 Census Enumeration Villages.) Tj
+0 -15 Td
+(Urban Sector: FSUs are Urban Frame Survey (UFS) 2017-22 blocks demarcated by FOD.) Tj
+0 -15 Td
+(Ultimate Stage Units (USUs) are systematically chosen households with equal probability.) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(2. Neyman Optimum Sample Allocation Strategy) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Sample sizes across strata are allocated via Neyman formula: n_h = n * (N_h * S_h) / sum(N_i * S_i).) Tj
+0 -15 Td
+(Variance is minimized under fixed survey budget by sampling high-dispersion strata more heavily.) Tj
+0 -15 Td
+(Zero non-response bias: Mandatory callback protocols required prior to household substitution.) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(3. Statistical Data Quality & Audit Controls) Tj
+/F2 9.5 Tf
+0 -15 Td
+(CAPI tablet validation script verifies UPSS employment codes against weekly activity (CWS).) Tj
+0 -15 Td
+(Outlier screening flags casual wage entries exceeding 4 sigma standard deviations from district median.) Tj
+0 -15 Td
+(Automated geo-hash cryptographic stamp validates on-field surveyor presence.) Tj
+0 -8 Td
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001969 00000 n 
+0000002044 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2114
+%%EOF

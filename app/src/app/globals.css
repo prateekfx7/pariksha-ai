@@ -1962,35 +1962,108 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ─── Quiz Components ─── */
-.upload-zone {
-  border: 2px dashed var(--border);
+/* ─── Quiz & Assessment Generator MVP Components ─── */
+.upload-zone-mvp {
+  border: 2px dashed rgba(240, 90, 40, 0.4);
   border-radius: var(--radius-xl);
-  padding: 48px;
+  padding: 40px 24px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  background: var(--bg-card);
+  background: radial-gradient(circle at top, rgba(240, 90, 40, 0.08) 0%, var(--bg-card) 70%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
-.upload-zone:hover, .upload-zone.dragover {
+.upload-zone-mvp:hover,
+.upload-zone-mvp.dragover {
   border-color: var(--primary);
-  background: var(--primary-subtle);
+  background: radial-gradient(circle at top, rgba(240, 90, 40, 0.15) 0%, var(--bg-card) 75%);
+  box-shadow: 0 0 30px var(--primary-glow), inset 0 0 20px rgba(240, 90, 40, 0.08);
+  transform: translateY(-2px);
 }
 
-.upload-zone svg {
+.upload-zone-icon-box {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(240, 90, 40, 0.18) 0%, rgba(240, 90, 40, 0.06) 100%);
+  border: 1px solid rgba(240, 90, 40, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
   color: var(--primary);
-  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(240, 90, 40, 0.2);
+  transition: transform var(--transition-fast);
 }
 
-.upload-zone h3 {
-  font-size: 18px;
+.upload-zone-mvp:hover .upload-zone-icon-box {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.upload-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--primary-subtle);
+  color: var(--primary);
+  border: 1px solid rgba(240, 90, 40, 0.25);
+  margin-bottom: 12px;
+}
+
+.upload-format-chips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.upload-format-chip {
+  font-size: 11px;
   font-weight: 600;
-  margin-bottom: 8px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
 }
 
-.upload-zone p {
-  color: var(--text-secondary);
-  font-size: 14px;
+/* File Pre-Flight Inspection Card */
+.upload-preflight-card {
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(240, 90, 40, 0.15);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.sample-pdf-download-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all var(--transition-fast);
+}
+
+.sample-pdf-download-card:hover {
+  border-color: var(--primary);
+  background: var(--bg-surface);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .mcq-card {

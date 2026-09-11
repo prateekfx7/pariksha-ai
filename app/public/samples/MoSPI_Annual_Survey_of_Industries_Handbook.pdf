@@ -1,0 +1,81 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1544 >>
+stream
+BT
+/F1 16 Tf
+50 745 Td
+(Government of India - MoSPI Industrial Statistics Wing (ISW)) Tj
+0 -22 Td
+/F1 12 Tf
+(Annual Survey of Industries (ASI): Schedule A-J Verification Manual) Tj
+0 -16 Td
+/F2 9.5 Tf
+(Official Bulletin MoSPI/ISW/ASI-2023-MANUAL | Target Cadre: Statistical Investigators) Tj
+ET
+50 695 m 562 695 l 1.5 w 0.94 0.35 0.16 RG S
+BT
+50 675 Td
+/F1 11 Tf
+0 -20 Td
+(1. Factory Frame Eligibility and Sampling Thresholds) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Census Sector comprises all registered factories employing 100 or more workers with electricity.) Tj
+0 -15 Td
+(Sample Sector covers the remaining factory universe sampled with probability proportional to size.) Tj
+0 -15 Td
+(Data collection covers Block A (identification), Block C (fixed capital), and Block H (inputs/fuels).) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(2. Depreciation, Net Capital Formation, and Output Audit) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Net Value Added (NVA) is calculated as Gross Value Added (GVA) minus Depreciation.) Tj
+0 -15 Td
+(Reported negative GVA must be audited for excessive fuel inputs, inventory writedowns, or shutdown phases.) Tj
+0 -15 Td
+(Contractual labor payments in Block E must conform to minimum wage gazette notifications.) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(3. Microdata Masking and SDC Disclosure Governance) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Under the National Data Governance Framework (NDGFP), enterprise identifiers must be cryptographically hashed.) Tj
+0 -15 Td
+(K-anonymity constraint (k >= 3) ensures no 4-digit NIC cell discloses proprietary factory output.) Tj
+0 -8 Td
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001847 00000 n 
+0000001922 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1992
+%%EOF

@@ -1,0 +1,81 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1584 >>
+stream
+BT
+/F1 16 Tf
+50 745 Td
+(Government of India - National Statistical Office (NSO)) Tj
+0 -22 Td
+/F1 12 Tf
+(Compilation Guidelines for Gross Value Added (GVA) & GDP (Base Year 2011-12)) Tj
+0 -16 Td
+/F2 9.5 Tf
+(Official Technical Circular MoSPI/NAD/2024-GDP-01 | Target Cadre: Economic Statisticians) Tj
+ET
+50 695 m 562 695 l 1.5 w 0.94 0.35 0.16 RG S
+BT
+50 675 Td
+/F1 11 Tf
+0 -20 Td
+(1. Gross Value Added (GVA) at Basic Prices Accounting Identity) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Gross Value Added (GVA) at basic prices is defined strictly as Gross Output minus Intermediate Consumption.) Tj
+0 -15 Td
+(Basic Price represents the amount receivable by the producer excluding taxes on products, plus subsidies.) Tj
+0 -15 Td
+(GDP at Market Prices is derived as: GDP = GVA at basic prices + Product Taxes - Product Subsidies.) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(2. Double Deflation & Constant Price Estimation) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Real GVA measurement requires double deflation: gross output and intermediate inputs deflated independently.) Tj
+0 -15 Td
+(Wholesale Price Index (WPI) and Consumer Price Index (CPI) components serve as price deflators.) Tj
+0 -15 Td
+(Single indicators or single extrapolation can introduce substantial systematic bias during price shocks.) Tj
+0 -8 Td
+/F1 11 Tf
+0 -20 Td
+(3. Supply and Use Tables (SUT) Reconciliation) Tj
+/F2 9.5 Tf
+0 -15 Td
+(Balancing product supply (domestic output + imports) against total uses (intermediate + final demand).) Tj
+0 -15 Td
+(Statistical discrepancies between production and expenditure approaches must not exceed +/- 1.5%.) Tj
+0 -8 Td
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001887 00000 n 
+0000001962 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2032
+%%EOF

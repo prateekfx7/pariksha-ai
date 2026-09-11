@@ -31,6 +31,54 @@ Topology rules: Enumeration block boundaries must not self-intersect and must pe
   }
 ];
 
+const sampleMoSPIPdfs = [
+  {
+    id: 'nsso-79',
+    title: 'NSSO 79th Round: Household Survey Operational Manual',
+    fileName: 'MoSPI_NSSO_79th_Round_Survey_Manual.pdf',
+    downloadUrl: '/samples/MoSPI_NSSO_79th_Round_Survey_Manual.pdf',
+    size: '2.3 KB',
+    cadre: 'ISS / SSS Cadre',
+    skill: 'Survey Design',
+    highlight: 'Stratified Two-Stage Design, Neyman Optimum Allocation & CAPI Validation',
+    extractedText: `National Sample Survey 79th Round (July 2022 - June 2023) Operational Field Guidelines.
+Ministry of Statistics & Programme Implementation (MoSPI), Government of India.
+1. Multi-Stage Stratified Sampling Architecture: A stratified two-stage design is mandated across all 36 States and Union Territories. Rural First Stage Units (FSUs) are 2011 Census Enumeration Villages. Urban FSUs are Urban Frame Survey (UFS) 2017-22 blocks demarcated by FOD. Ultimate Stage Units (USUs) are systematically chosen households with equal probability.
+2. Neyman Optimum Sample Allocation Strategy: Sample sizes across strata are allocated via Neyman formula: n_h = n * (N_h * S_h) / sum(N_i * S_i). Variance is minimized under fixed survey budget by sampling high-dispersion strata more heavily. Zero non-response bias: Mandatory callback protocols required prior to household substitution.
+3. Statistical Data Quality & Audit Controls: CAPI tablet validation script verifies UPSS employment codes against weekly activity (CWS). Outlier screening flags casual wage entries exceeding 4 sigma standard deviations from district median. Automated geo-hash cryptographic stamp validates on-field surveyor presence.`
+  },
+  {
+    id: 'gdp-compendium',
+    title: 'National Accounts GVA & GDP Compilation Guidelines',
+    fileName: 'MoSPI_National_Accounts_GDP_Compendium.pdf',
+    downloadUrl: '/samples/MoSPI_National_Accounts_GDP_Compendium.pdf',
+    size: '2.2 KB',
+    cadre: 'Economic Statistics Cadre',
+    skill: 'Official Statistics',
+    highlight: 'GVA at Basic Prices, Double Deflation Method & SUT Balancing',
+    extractedText: `Compilation Guidelines for Gross Value Added (GVA) & GDP (Base Year 2011-12 Revision).
+National Statistical Office (NSO), MoSPI, Government of India.
+1. Gross Value Added (GVA) at Basic Prices Accounting Identity: Gross Value Added (GVA) at basic prices is defined strictly as Gross Output minus Intermediate Consumption. Basic Price represents the amount receivable by the producer excluding taxes on products, plus subsidies. GDP at Market Prices is derived as: GDP = GVA at basic prices + Product Taxes - Product Subsidies.
+2. Double Deflation & Constant Price Estimation: Real GVA measurement requires double deflation: gross output and intermediate inputs deflated independently. Wholesale Price Index (WPI) and Consumer Price Index (CPI) components serve as price deflators. Single indicators or single extrapolation can introduce substantial systematic bias during price shocks.
+3. Supply and Use Tables (SUT) Reconciliation: Balancing product supply (domestic output + imports) against total uses (intermediate + final demand). Statistical discrepancies between production and expenditure approaches must not exceed +/- 1.5%.`
+  },
+  {
+    id: 'asi-manual',
+    title: 'Annual Survey of Industries (ASI): Factory Verification Manual',
+    fileName: 'MoSPI_Annual_Survey_of_Industries_Handbook.pdf',
+    downloadUrl: '/samples/MoSPI_Annual_Survey_of_Industries_Handbook.pdf',
+    size: '2.2 KB',
+    cadre: 'Industrial Statistics Wing',
+    skill: 'Data Quality & Auditing',
+    highlight: 'Census vs Sample Sector Thresholds, NVA Audits & k-Anonymity SDC',
+    extractedText: `Annual Survey of Industries (ASI): Schedule A-J Verification and Microdata Auditing Manual.
+MoSPI Industrial Statistics Wing (ISW), Government of India.
+1. Factory Frame Eligibility and Sampling Thresholds: Census Sector comprises all registered factories employing 100 or more workers with electricity. Sample Sector covers the remaining factory universe sampled with probability proportional to size. Data collection covers Block A (identification), Block C (fixed capital), and Block H (inputs/fuels).
+2. Depreciation, Net Capital Formation, and Output Audit: Net Value Added (NVA) is calculated as Gross Value Added (GVA) minus Depreciation. Reported negative GVA must be audited for excessive fuel inputs, inventory writedowns, or shutdown phases. Contractual labor payments in Block E must conform to minimum wage gazette notifications.
+3. Microdata Masking and SDC Disclosure Governance: Under the National Data Governance Framework (NDGFP), enterprise identifiers must be cryptographically hashed. K-anonymity constraint (k >= 3) ensures no 4-digit NIC cell discloses proprietary factory output.`
+  }
+];
+
 export default function QuizGeneratorPage() {
   const { generatedQuizzes, addGeneratedQuiz, apiKey, t, tSkill } = useApp();
   const [file, setFile] = useState(null);
@@ -40,7 +88,7 @@ export default function QuizGeneratorPage() {
   const [questionCount, setQuestionCount] = useState(5);
   const [selectedSkill, setSelectedSkill] = useState('Survey Design');
   const [textInput, setTextInput] = useState('');
-  const [useTextInput, setUseTextInput] = useState(true);
+  const [useTextInput, setUseTextInput] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [previewQuiz, setPreviewQuiz] = useState(null);
   const [generationSource, setGenerationSource] = useState(null);
@@ -83,6 +131,19 @@ export default function QuizGeneratorPage() {
     setSelectedSkill(preset.skill);
     setUseTextInput(true);
     setFile(null);
+  };
+
+  const handleLoadSamplePdf = (sample) => {
+    setFile({
+      name: sample.fileName,
+      size: 2350,
+      type: 'application/pdf',
+      isSample: true,
+      sampleInfo: sample
+    });
+    setSelectedSkill(sample.skill);
+    setTextInput(sample.extractedText);
+    setUseTextInput(false);
   };
 
   // Call Gemini API or use rich domain generator
@@ -339,69 +400,249 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
       <div className="grid-2 mb-8">
         {/* Left Column: Input & Controls */}
         <div className="fade-in fade-in-delay-1">
-          {/* Presets Bar */}
-          <div className="card mb-4" style={{ padding: 14, background: 'var(--bg-surface)' }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginBottom: 8 }}>
-              {t('gen_quick_load', '⚡ Quick Load Official MoSPI Samples')}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {samplePresets.map((preset, i) => (
-                <button
-                  key={i}
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => loadPreset(preset)}
-                  style={{ justifyContent: 'flex-start', textAlign: 'left', fontSize: 13, padding: '6px 10px', background: 'var(--bg-card)' }}
-                >
-                  <BookOpen size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{preset.name}</span>
-                </button>
+          {/* 🌟 CORE AI MVP SPOTLIGHT BANNER */}
+          <div className="card mb-5" style={{
+            padding: '16px 18px',
+            background: 'linear-gradient(135deg, rgba(240, 90, 40, 0.12) 0%, rgba(20, 24, 33, 0.6) 100%)',
+            border: '1.5px solid var(--primary)',
+            boxShadow: '0 8px 24px var(--primary-glow)',
+            borderRadius: 'var(--radius-xl)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'var(--primary)', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, boxShadow: '0 4px 12px rgba(240, 90, 40, 0.35)'
+              }}>
+                <Sparkles size={20} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    Core AI MVP: MoSPI Circular & PDF Assessment Engine
+                  </span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, padding: '2px 7px',
+                    borderRadius: 4, background: 'var(--primary)', color: '#fff', textTransform: 'uppercase'
+                  }}>
+                    Flagship
+                  </span>
+                </div>
+                <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
+                  Upload any official MoSPI handbook, gazette circular, or training PPT. The AI extracts complex sampling formulas, national account identities, and generates psychometrically calibrated MCQs mapped to ISS/SSS cadres.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 📥 OFFICIAL MoSPI SAMPLE PDFs FOR TESTING */}
+          <div className="card mb-5" style={{ padding: 16, background: 'var(--bg-surface)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
+                  📄 Authentic MoSPI Test PDFs
+                </p>
+                <p style={{ fontSize: 11.5, color: 'var(--text-tertiary)', margin: '2px 0 0' }}>
+                  Download to test local file upload, or click &ldquo;⚡ 1-Click Load&rdquo; to test immediately:
+                </p>
+              </div>
+              <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 600 }}>
+                3 MoSPI Samples Ready
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {sampleMoSPIPdfs.map((sample) => (
+                <div key={sample.id} className="sample-pdf-download-card">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 8,
+                      background: 'rgba(239, 68, 68, 0.12)', color: '#ef4444',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      fontWeight: 800, fontSize: 10, border: '1px solid rgba(239, 68, 68, 0.25)'
+                    }}>
+                      PDF
+                    </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {sample.title}
+                      </p>
+                      <p style={{ fontSize: 11, color: 'var(--text-tertiary)', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {sample.cadre} • {sample.highlight}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <a
+                      href={sample.downloadUrl}
+                      download={sample.fileName}
+                      className="btn btn-outline btn-sm"
+                      title={`Download ${sample.fileName} to your computer`}
+                      style={{ padding: '5px 9px', fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    >
+                      <Download size={13} />
+                      <span>Download</span>
+                    </a>
+                    <button
+                      onClick={() => handleLoadSamplePdf(sample)}
+                      className="btn btn-primary btn-sm"
+                      title="Load into AI Generator with 1 click"
+                      style={{ padding: '5px 10px', fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    >
+                      <Sparkles size={13} />
+                      <span>⚡ 1-Click Load</span>
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
-            <button
-              className={`btn btn-sm ${useTextInput ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setUseTextInput(true)}
-            >
-              <FileText size={14} /> {t('gen_paste_text', 'Paste Text / Syllabus')}
-            </button>
+          {/* Mode Switcher */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
             <button
               className={`btn btn-sm ${!useTextInput ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setUseTextInput(false)}
+              style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              <Upload size={14} /> {t('gen_upload_file', 'Upload File (PDF/PPT)')}
+              <Upload size={14} /> {t('gen_upload_file', 'Upload File (PDF/PPT) - MVP')}
+            </button>
+            <button
+              className={`btn btn-sm ${useTextInput ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setUseTextInput(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <FileText size={14} /> {t('gen_paste_text', 'Paste Raw Text / Syllabus')}
             </button>
           </div>
 
           {!useTextInput ? (
-            <div
-              className={`upload-zone ${dragOver ? 'dragover' : ''}`}
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload size={40} style={{ color: 'var(--primary)' }} />
-              <h3 style={{ fontSize: 16, marginTop: 8 }}>{file ? file.name : t('gen_drop_title', 'Drop your file here or click to browse')}</h3>
-              <p style={{ fontSize: 13 }}>{file ? `${(file.size / 1024).toFixed(1)} KB • Ready for AI extraction` : t('gen_drop_sub', 'Supports PDF, PPT, PPTX, TXT, DOCX')}</p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx"
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-              />
-              {file && (
-                <button
-                  className="btn btn-ghost btn-sm mt-4"
-                  onClick={(e) => { e.stopPropagation(); setFile(null); setTextInput(''); }}
+            <div>
+              {!file ? (
+                /* Primary Elevated Upload Dropzone */
+                <div
+                  className={`upload-zone-mvp ${dragOver ? 'dragover' : ''}`}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <Trash2 size={14} /> Remove File
-                </button>
+                  <div className="upload-zone-icon-box">
+                    <Upload size={34} />
+                  </div>
+                  <span className="upload-badge-pill">
+                    ⭐ Core MVP Engine
+                  </span>
+                  <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 6px', color: 'var(--text-primary)' }}>
+                    Drop your MoSPI Circular or PDF here
+                  </h3>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 16px' }}>
+                    or click to browse from your device. AI extracts statistical methodology automatically.
+                  </p>
+                  
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    style={{ padding: '8px 18px', fontSize: 13, pointerEvents: 'none' }}
+                  >
+                    <Upload size={14} /> Browse Official Document
+                  </button>
+
+                  <div className="upload-format-chips">
+                    <span className="upload-format-chip">📕 PDF (Official Circulars)</span>
+                    <span className="upload-format-chip">📊 PPT / PPTX (Training Decks)</span>
+                    <span className="upload-format-chip">📝 DOCX / TXT / JSON</span>
+                    <span className="upload-format-chip">🔒 Encrypted & Confidential</span>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx"
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+              ) : (
+                /* Pre-Flight Inspection Card When File Loaded */
+                <div className="upload-preflight-card">
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{
+                        width: 44, height: 44, borderRadius: 12,
+                        background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(240, 90, 40, 0.2) 100%)',
+                        color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontWeight: 900, fontSize: 12, border: '1px solid rgba(239, 68, 68, 0.35)', flexShrink: 0
+                      }}>
+                        PDF
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <h4 style={{ fontSize: 15, fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                            {file.name}
+                          </h4>
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                            padding: '2px 7px', borderRadius: 4, background: 'rgba(34, 197, 94, 0.15)',
+                            color: '#4ade80', fontSize: 10.5, fontWeight: 700, border: '1px solid rgba(34, 197, 94, 0.3)'
+                          }}>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80' }} />
+                            Ready for AI Extraction
+                          </span>
+                        </div>
+                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: '2px 0 0' }}>
+                          {(file.size / 1024).toFixed(1)} KB • Target: {tSkill(selectedSkill)} • High-Fidelity MoSPI Document
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => { setFile(null); setTextInput(''); }}
+                      style={{ color: 'var(--text-tertiary)', padding: 6 }}
+                      title="Remove file"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  {/* Extracted Text Preview */}
+                  <div style={{
+                    padding: '10px 12px', borderRadius: 8, background: 'var(--bg-card)',
+                    border: '1px solid var(--border-light)', fontSize: 12, color: 'var(--text-secondary)',
+                    lineHeight: 1.5, maxHeight: 90, overflowY: 'auto'
+                  }}>
+                    <span style={{ fontWeight: 700, color: 'var(--primary)', marginRight: 6 }}>Extracted Text Snippet:</span>
+                    {textInput.slice(0, 240)}...
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, flexWrap: 'wrap', gap: 8 }}>
+                    <button
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ fontSize: 12 }}
+                    >
+                      <Upload size={13} /> Change File
+                    </button>
+                    <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                      🔒 Zero data leakage • Stays in MoSPI sandbox
+                    </span>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx"
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
+                  />
+                </div>
               )}
             </div>
           ) : (
+            /* Raw Text Mode */
             <div>
               <textarea
                 value={textInput}
