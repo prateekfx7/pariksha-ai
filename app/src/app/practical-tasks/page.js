@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Terminal, CheckCircle2, Play, AlertCircle, Award, Sparkles, RotateCw, FileCode, CheckSquare, ArrowRight, ShieldCheck, ChevronRight, BookOpen, Zap, TrendingUp } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { samplePracticalTasks, skills } from '@/data/mockData';
@@ -173,6 +173,21 @@ export default function PracticalTasksPage() {
   // Custom AI generation state
   const [isGeneratingTask, setIsGeneratingTask] = useState(false);
   const [selectedSkillForGen, setSelectedSkillForGen] = useState("Data Science & Analytics");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const taskId = params.get('id');
+      if (taskId) {
+        const found = samplePracticalTasks.find(t => t.id === taskId);
+        if (found) {
+          setActiveTask(found);
+          setSolutionInput('');
+          setEvaluationResult(null);
+        }
+      }
+    }
+  }, []);
 
   const handleSelectTask = (task) => {
     setActiveTask(task);

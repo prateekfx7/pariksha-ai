@@ -1,24 +1,50 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Check, Sun, Moon, Bell, RefreshCw, Users, LogOut, Zap, Flame, X, Globe, Sparkles } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import {
+  Search, ChevronDown, Check, Sun, Moon, Bell, RefreshCw, Users, LogOut,
+  Zap, Flame, X, Globe, Sparkles, BookOpen, FileText, CheckCircle2,
+  Award, Terminal, Layers, ArrowRight, CornerDownLeft
+} from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { courses, skills } from '@/data/mockData';
+import {
+  courses, skills, sampleQuizzes, samplePracticalTasks,
+  sampleMicroLearning, cadreHierarchy
+} from '@/data/mockData';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const searchableItems = [
-  { label: 'Dashboard', href: '/dashboard', type: 'Page' },
-  { label: 'Recommendations', href: '/recommendations', type: 'Page' },
-  { label: 'Quiz Generator', href: '/quiz-generator', type: 'Page' },
-  { label: 'Take Quiz', href: '/quiz', type: 'Page' },
-  { label: 'Admin Analytics', href: '/admin', type: 'Page' },
-  { label: 'Discussion Hub', href: '/collaboration', type: 'Page' },
-  { label: 'Settings', href: '/settings', type: 'Page' },
-  { label: 'Notifications', href: '/notifications', type: 'Page' },
-  { label: 'Achievements', href: '/achievements', type: 'Page' },
-  ...courses.map(c => ({ label: c.title, href: '/recommendations', type: 'Course' })),
-  ...skills.map(s => ({ label: s, href: '/dashboard', type: 'Skill' })),
-];
+function HighlightMatch({ text, query }) {
+  if (!query || !query.trim() || typeof text !== 'string') return <span>{text}</span>;
+  const terms = query.trim().split(/\s+/).filter(Boolean);
+  if (terms.length === 0) return <span>{text}</span>;
+  const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  const parts = text.split(regex);
+  return (
+    <span>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="search-highlight">{part}</mark>
+        ) : (
+          part
+        )
+      )}
+    </span>
+  );
+}
+
+const getItemIcon = (type) => {
+  switch (type) {
+    case 'Page': return <FileText size={15} />;
+    case 'Course': return <BookOpen size={15} />;
+    case 'Quiz': return <CheckCircle2 size={15} />;
+    case 'Practical Lab': return <Terminal size={15} />;
+    case 'Cadre': return <Award size={15} />;
+    case 'Skill': return <Zap size={15} />;
+    case 'Micro-Drill': return <Sparkles size={15} />;
+    default: return <Search size={15} />;
+  }
+};
 
 export default function Header() {
   const {
@@ -30,6 +56,8 @@ export default function Header() {
   } = useApp();
 
   const [showSearch, setShowSearch] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [langSearch, setLangSearch] = useState('');
@@ -37,6 +65,7 @@ export default function Header() {
 
   const searchRef = useRef(null);
   const inputRef = useRef(null);
+  const mobileInputRef = useRef(null);
   const userMenuRef = useRef(null);
   const langMenuRef = useRef(null);
   const router = useRouter();
@@ -49,19 +78,127 @@ export default function Header() {
     return l.name.toLowerCase().includes(q) || l.nativeName.toLowerCase().includes(q) || l.code.toLowerCase().includes(q);
   });
 
+  // Comprehensive Search Data Index
+  const searchableItems = useMemo(() => {
+    return [
+      // Core Platform Routes
+      { label: 'Dashboard', desc: 'MoSPI operational KPI overview & active competencies', href: '/dashboard', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Learn Hub & Courses', desc: 'Curated official statistical curriculum and courses', href: '/recommendations', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Micro-Learning', desc: '3D Flashcards, 60-second knowledge nuggets & caselets', href: '/micro-learning', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Practical Simulation Lab', desc: 'Authentic MoSPI dataset auditing & rubric evaluation', href: '/practical-tasks', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Role Readiness & Cadres', desc: '7th CPC Cadre progression ladder & competency gaps', href: '/readiness', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Quizzes & Practice', desc: 'Psychometric MCQ assessments with detailed rationales', href: '/quiz', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'AI Quiz Generator', desc: 'Generate psychometric MCQs from MoSPI circulars or text', href: '/quiz-generator', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Admin Analytics & Decay Heatmap', desc: 'Division competency tracking & Ebbinghaus skill decay', href: '/admin', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Discussion Hub & Community', desc: 'MoSPI officer peer knowledge exchange & insights', href: '/collaboration', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Skill Evidence Dossier', desc: 'MoSPI Competency Passport & verified work portfolio', href: '/portfolio', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Achievements & Badges', desc: 'Officer milestones, streak, and competency badges', href: '/achievements', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Settings & Preferences', desc: 'Profile persona, Gemini API Key, and 23 languages', href: '/settings', type: 'Page', badgeClass: 'search-badge-page' },
+      { label: 'Official Notifications', desc: 'MoSPI circulars, training notices, and exam alerts', href: '/notifications', type: 'Page', badgeClass: 'search-badge-page' },
+
+      // Courses
+      ...(courses || []).map(c => ({
+        label: c.title,
+        desc: `${c.provider || 'iGOT Karmayogi'} • ${c.skill} • ${c.duration || 'Self-Paced'}`,
+        href: `/recommendations?q=${encodeURIComponent(c.title)}`,
+        type: 'Course',
+        badgeClass: 'search-badge-course'
+      })),
+
+      // Quizzes
+      ...(sampleQuizzes || []).map(q => ({
+        label: q.title,
+        desc: `${q.skill} • ${q.difficulty} • ${(q.questions && q.questions.length) || q.questionCount || 5} Questions`,
+        href: `/quiz/${q.id}`,
+        type: 'Quiz',
+        badgeClass: 'search-badge-quiz'
+      })),
+
+      // Practical Tasks
+      ...(samplePracticalTasks || []).map(t => ({
+        label: t.title,
+        desc: `${t.division || 'MoSPI'} • ${t.cadre || 'ISS/SSS'} • ${t.estimatedMinutes || 8} min Lab`,
+        href: `/practical-tasks?id=${t.id}`,
+        type: 'Practical Lab',
+        badgeClass: 'search-badge-lab'
+      })),
+
+      // MoSPI Cadre Roles
+      ...(cadreHierarchy || []).map(c => ({
+        label: c.role,
+        desc: `${c.cadre} • Pay Level ${c.level} • ${c.payScale}`,
+        href: '/readiness',
+        type: 'Cadre',
+        badgeClass: 'search-badge-cadre'
+      })),
+
+      // Core Skills
+      ...(skills || []).map(s => ({
+        label: s,
+        desc: 'MoSPI Core Statistical Competency Domain',
+        href: '/dashboard',
+        type: 'Skill',
+        badgeClass: 'search-badge-skill'
+      })),
+
+      // Micro-Learning Drills
+      ...Object.entries(sampleMicroLearning || {}).flatMap(([skillName, data]) =>
+        (data.flashcards || []).map(f => ({
+          label: f.front,
+          desc: `Micro-Drill • ${skillName} • ${f.tag || 'Concept'}`,
+          href: '/micro-learning',
+          type: 'Micro-Drill',
+          badgeClass: 'search-badge-drill'
+        }))
+      )
+    ];
+  }, []);
+
+  // Filter Search Results
   useEffect(() => {
     if (searchQuery && searchQuery.trim().length > 0) {
-      const q = searchQuery.toLowerCase();
-      const filtered = searchableItems.filter(item =>
-        item.label.toLowerCase().includes(q)
-      ).slice(0, 8);
+      const q = searchQuery.toLowerCase().trim();
+      const terms = q.split(/\s+/).filter(Boolean);
+      const filtered = searchableItems.filter(item => {
+        const target = `${item.label} ${item.desc || ''} ${item.type}`.toLowerCase();
+        return terms.every(term => target.includes(term));
+      }).slice(0, 10);
       setResults(filtered);
+      setSelectedIndex(0);
       setShowSearch(true);
     } else {
       setResults([]);
+      setSelectedIndex(0);
       setShowSearch(false);
     }
-  }, [searchQuery]);
+  }, [searchQuery, searchableItems]);
+
+  const handleResultClick = useCallback((href) => {
+    setSearchQuery('');
+    setShowSearch(false);
+    setShowMobileSearch(false);
+    router.push(href);
+  }, [router, setSearchQuery]);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev < results.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev > 0 ? prev - 1 : Math.max(0, results.length - 1)));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (results.length > 0 && selectedIndex >= 0 && selectedIndex < results.length) {
+        handleResultClick(results[selectedIndex].href);
+      }
+    } else if (e.key === 'Escape') {
+      setShowSearch(false);
+      setShowMobileSearch(false);
+      inputRef.current?.blur();
+      mobileInputRef.current?.blur();
+    }
+  };
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -76,15 +213,17 @@ export default function Header() {
       }
     };
 
-    const handleKeyDown = (e) => {
+    const handleGlobalKeyDown = (e) => {
       const tag = document.activeElement?.tagName;
       const isEditing = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable;
       if ((e.key === '/' && !isEditing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
         e.preventDefault();
         inputRef.current?.focus();
+        inputRef.current?.select();
       }
       if (e.key === 'Escape') {
         setShowSearch(false);
+        setShowMobileSearch(false);
         setShowLangMenu(false);
         setShowUserMenu(false);
         inputRef.current?.blur();
@@ -92,18 +231,12 @@ export default function Header() {
     };
 
     document.addEventListener('mousedown', handleClick);
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleGlobalKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClick);
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
     };
   }, []);
-
-  const handleResultClick = (href) => {
-    setSearchQuery('');
-    setShowSearch(false);
-    router.push(href);
-  };
 
   return (
     <header className="header">
@@ -155,16 +288,11 @@ export default function Header() {
           <input
             ref={inputRef}
             type="text"
-            placeholder={t('search_placeholder', 'Search courses, skills, quizzes...')}
+            placeholder={t('search_placeholder', 'Search courses, skills, quizzes, cadres, labs...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => { if (searchQuery && searchQuery.trim().length > 0) setShowSearch(true); }}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setShowSearch(false);
-                inputRef.current?.blur();
-              }
-            }}
+            onKeyDown={handleSearchKeyDown}
             style={{
               border: 'none',
               outline: 'none',
@@ -186,56 +314,100 @@ export default function Header() {
           {searchQuery && (
             <button
               onClick={() => { setSearchQuery(''); inputRef.current?.focus(); }}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                padding: '0 4px',
-                color: 'var(--text-tertiary)',
-                display: 'flex',
-                alignItems: 'center',
-                flexShrink: 0
-              }}
+              className="search-clear-btn"
+              title="Clear search"
+              aria-label="Clear search"
             >
               <X size={14} />
             </button>
           )}
-          <kbd className="header-search-kbd hide-mobile" style={{ flexShrink: 0 }}>/</kbd>
+          <span
+            className="search-kbd-tag hide-mobile"
+            title="Press / or ⌘K to search"
+            onClick={() => inputRef.current?.focus()}
+          >
+            <kbd>/</kbd>
+          </span>
 
           {/* Search Results Dropdown */}
           {showSearch && results.length > 0 && (
-            <div className="search-dropdown">
+            <div className="search-results-dropdown">
               <div className="search-dropdown-header">
                 <span>Quick Results</span>
                 <span className="search-count">{results.length} found</span>
               </div>
-              {results.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="search-result-item"
-                  onClick={() => handleResultClick(item.href)}
-                >
-                  <div className="search-result-icon">
-                    <Search size={13} />
+              <div className="search-dropdown-list">
+                {results.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className={`search-result-item ${selectedIndex === idx ? 'selected' : ''}`}
+                    onClick={() => handleResultClick(item.href)}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                  >
+                    <div className="search-result-icon">
+                      {getItemIcon(item.type)}
+                    </div>
+                    <div className="search-result-info">
+                      <span className="search-result-label">
+                        <HighlightMatch text={item.label} query={searchQuery} />
+                      </span>
+                      {item.desc && (
+                        <span className="search-result-desc">{item.desc}</span>
+                      )}
+                    </div>
+                    <span className={`search-result-badge ${item.badgeClass || ''}`}>
+                      {item.type}
+                    </span>
+                    <ArrowRight size={13} className="search-result-arrow" />
                   </div>
-                  <div className="search-result-info">
-                    <span className="search-result-label">{item.label}</span>
-                    <span className="search-result-type">{item.type}</span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="search-footer-shortcuts hide-mobile">
+                <span>Navigate <kbd>↑</kbd> <kbd>↓</kbd></span>
+                <span>Select <kbd>↵</kbd></span>
+                <span>Close <kbd>Esc</kbd></span>
+              </div>
             </div>
           )}
 
           {showSearch && searchQuery && results.length === 0 && (
             <div className="search-no-results">
-              No results found for &ldquo;{searchQuery}&rdquo;
+              <p style={{ margin: '0 0 4px', fontWeight: 600 }}>No results found</p>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-tertiary)' }}>
+                No matches for &ldquo;{searchQuery}&rdquo;. Try searching for a course, skill, quiz, or MoSPI cadre.
+              </p>
             </div>
           )}
         </div>
 
         {/* Header Right Controls */}
         <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* 📱 Mobile Search Trigger Button */}
+          <button
+            onClick={() => {
+              setShowMobileSearch(true);
+              setTimeout(() => mobileInputRef.current?.focus(), 80);
+            }}
+            className="header-icon-btn hide-desktop"
+            title={t('search', 'Search')}
+            aria-label="Search"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              width: 32,
+              height: 32,
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid var(--border)',
+              background: 'var(--bg-surface)',
+              cursor: 'pointer',
+              color: 'var(--text-primary)'
+            }}
+          >
+            <Search size={15} />
+          </button>
+
           {/* 🌐 Indian Languages Selector (Visible on ALL devices) */}
           <div ref={langMenuRef} style={{ position: 'relative' }}>
             <button
@@ -581,6 +753,93 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* 📱 Mobile Search Overlay Modal */}
+      {showMobileSearch && (
+        <div
+          className="mobile-search-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowMobileSearch(false);
+          }}
+        >
+          <div className="mobile-search-dialog">
+            <div className="mobile-search-bar">
+              <Search size={16} className="header-search-icon" style={{ flexShrink: 0 }} />
+              <input
+                ref={mobileInputRef}
+                type="text"
+                autoFocus
+                placeholder={t('search_placeholder', 'Search courses, skills, quizzes, cadres, labs...')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                className="mobile-search-input"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(''); mobileInputRef.current?.focus(); }}
+                  className="search-clear-btn"
+                  title="Clear"
+                  aria-label="Clear"
+                >
+                  <X size={15} />
+                </button>
+              )}
+              <button
+                onClick={() => setShowMobileSearch(false)}
+                className="mobile-search-close-btn"
+                aria-label="Cancel"
+              >
+                {t('cancel', 'Cancel')}
+              </button>
+            </div>
+
+            {/* Results in mobile modal */}
+            {searchQuery.trim().length > 0 && (
+              <div className="mobile-search-results">
+                {results.length > 0 ? (
+                  <>
+                    <div className="search-dropdown-header">
+                      <span>Quick Results</span>
+                      <span className="search-count">{results.length} found</span>
+                    </div>
+                    {results.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`search-result-item ${selectedIndex === idx ? 'selected' : ''}`}
+                        onClick={() => handleResultClick(item.href)}
+                      >
+                        <div className="search-result-icon">
+                          {getItemIcon(item.type)}
+                        </div>
+                        <div className="search-result-info">
+                          <span className="search-result-label">
+                            <HighlightMatch text={item.label} query={searchQuery} />
+                          </span>
+                          {item.desc && (
+                            <span className="search-result-desc">{item.desc}</span>
+                          )}
+                        </div>
+                        <span className={`search-result-badge ${item.badgeClass || ''}`}>
+                          {item.type}
+                        </span>
+                        <ArrowRight size={13} className="search-result-arrow" />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="search-no-results-inline">
+                    <p style={{ margin: '0 0 4px', fontWeight: 600 }}>No results found</p>
+                    <p style={{ margin: 0, fontSize: 12, color: 'var(--text-tertiary)' }}>
+                      No matches for &ldquo;{searchQuery}&rdquo;
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

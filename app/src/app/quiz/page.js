@@ -11,7 +11,14 @@ export default function QuizListPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [searchFilter, setSearchFilter] = useState('');
 
-  useEffect(() => { setAnimateIn(true); }, []);
+  useEffect(() => {
+    setAnimateIn(true);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('search') || params.get('q');
+      if (q) setSearchFilter(q);
+    }
+  }, []);
 
   const skillsList = ['All', 'Survey Design', 'Data Science & Analytics', 'Official Statistics', 'Economic Statistics', 'GIS & Spatial Analysis'];
 

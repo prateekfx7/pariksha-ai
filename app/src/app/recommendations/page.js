@@ -14,7 +14,14 @@ export default function RecommendationsPage() {
   const [enrollToast, setEnrollToast] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
-  useEffect(() => { setAnimateIn(true); }, []);
+  useEffect(() => {
+    setAnimateIn(true);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q') || params.get('search');
+      if (q) setSearchQuery(q);
+    }
+  }, []);
 
   const topGaps = gapData.gapList.slice(0, 3);
 
