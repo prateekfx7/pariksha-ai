@@ -1,8 +1,12 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Upload, FileText, Sparkles, Trash2, Play, Eye, Printer, Download, BookOpen, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { Upload, FileText, Sparkles, Trash2, Play, Eye, Printer, Download, BookOpen, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft, X, Layers, ShieldCheck, BrainCircuit, Mic, Check, CheckCheck, ShieldAlert, Terminal, CloudUpload, Settings, HelpCircle } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
+import IGotPublisherModal from '@/components/igot/IGotPublisherModal';
+import PortalStatusBadge from '@/components/igot/PortalStatusBadge';
+import { validateQuestionBank } from '@/lib/questionQualityValidator';
+import { generateQuestionBankForTopic } from '@/lib/igotQuestionBanks';
 
 const samplePresets = [
   {
@@ -81,18 +85,47 @@ MoSPI Industrial Statistics Wing (ISW), Government of India.
 
 export default function QuizGeneratorPage() {
   const { generatedQuizzes, addGeneratedQuiz, apiKey, t, tSkill } = useApp();
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState({
+    name: 'my-cv.pdf',
+    size: 122880,
+    type: 'application/pdf',
+    isSample: true
+  });
   const [dragOver, setDragOver] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [showExtractedPreview, setShowExtractedPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [difficulty, setDifficulty] = useState('mixed');
   const [questionCount, setQuestionCount] = useState(5);
   const [selectedSkill, setSelectedSkill] = useState('Survey Design');
-  const [textInput, setTextInput] = useState('');
+  const [textInput, setTextInput] = useState('Official MoSPI Survey & Statistical Methodology Manual. Modules covering NSSO 79th Round sampling framework, primary sampling units, and data validation standards.');
   const [useTextInput, setUseTextInput] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [previewQuiz, setPreviewQuiz] = useState(null);
+  const [igotModalQuiz, setIgotModalQuiz] = useState(null);
+  const [isHotsMode, setIsHotsMode] = useState(false);
+  const [smeApprovals, setSmeApprovals] = useState({});
+  const [validationReport, setValidationReport] = useState(null);
   const [generationSource, setGenerationSource] = useState(null);
   const fileInputRef = useRef(null);
+
+  const handleUrlImport = () => {
+    if (!urlInput.trim()) return;
+    const cleanUrl = urlInput.trim();
+    const parts = cleanUrl.split('/');
+    const lastPart = parts[parts.length - 1].split('?')[0] || 'imported-document.pdf';
+    const fileName = lastPart.includes('.') ? lastPart : `${lastPart}.pdf`;
+    const newFile = {
+      name: fileName,
+      size: 122880,
+      type: 'application/pdf',
+      isUrl: true,
+      url: cleanUrl
+    };
+    setFile(newFile);
+    setTextInput(`Extracted content from URL (${cleanUrl}): Official circular & statistical study module. Formulated for iGOT Karmayogi civil servant assessment.`);
+    setUrlInput('');
+  };
 
   useEffect(() => { setAnimateIn(true); }, []);
 
@@ -216,78 +249,12 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
 
     // 2. High-fidelity procedural fallback if Gemini was not used
     if (generatedQuestions.length === 0) {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      const questionBank = [
-        {
-          q: "In stratified two-stage sampling, what constitutes the First Stage Unit (FSU) in rural Indian surveys?",
-          opts: ["Census Village", "Household", "Agricultural Holding", "Panchayat Ward"],
-          correct: 0,
-          diff: "Medium",
-          exp: "As per NSSO standards, the Census Village is designated as the First Stage Unit (FSU) in the rural sector, while urban blocks serve as FSUs in urban areas."
-        },
-        {
-          q: "Which method is recommended by MoSPI to calculate constant price GVA to eliminate price inflation distortion?",
-          opts: ["Single Deflation", "Double Deflation", "Hedonic Pricing", "Direct Laspeyres Weighting"],
-          correct: 1,
-          diff: "Hard",
-          exp: "Double Deflation deflates gross output with output price indices and intermediate inputs with input price indices, ensuring true value addition."
-        },
-        {
-          q: "What is the primary objective of using NavIC/GPS enabled handheld devices in Census mapping?",
-          opts: ["To track enumerator battery life", "To demarcate Enumeration Block boundaries with <5m precision", "To conduct live video interviews", "To replace village records completely"],
-          correct: 1,
-          diff: "Easy",
-          exp: "NavIC/GPS handheld devices capture boundary coordinates with sub-5-meter precision, eliminating boundary overlap between adjacent wards."
-        },
-        {
-          q: "When sampling variance under complex survey design is greater than Simple Random Sampling, the Design Effect (DEFF) is:",
-          opts: ["Less than 1.0", "Exactly equal to 0", "Greater than 1.0", "Always undefined"],
-          correct: 2,
-          diff: "Medium",
-          exp: "DEFF = Variance(Complex) / Variance(SRS). In clustered designs, positive intra-cluster correlation typically causes DEFF > 1.0."
-        },
-        {
-          q: "In National Accounts, what is the key difference between GVA at Basic Prices and GDP at Market Prices?",
-          opts: ["Depreciation of fixed assets", "Net Product Taxes (Product Taxes minus Product Subsidies)", "Import duties only", "Foreign direct remittances"],
-          correct: 1,
-          diff: "Medium",
-          exp: "GDP at Market Prices equals GVA at Basic Prices plus Product Taxes minus Product Subsidies."
-        },
-        {
-          q: "Which non-sampling error is generally considered the most insidious and hardest to detect in socioeconomic surveys?",
-          opts: ["Keypunching error", "Measurement / Response Bias", "Printing layout error", "Sample size truncation"],
-          correct: 1,
-          diff: "Hard",
-          exp: "Measurement and response bias occurs when respondents deliberately or subconsciously report inaccurate income or expenditure figures."
-        },
-        {
-          q: "In GIS polygon topology, what is a 'sliver' polygon?",
-          opts: ["A polygon representing water bodies", "An unintended tiny gap or overlap between two adjacent polygon boundaries", "A polygon with more than 100 vertices", "A polygon representing reserved forests"],
-          correct: 1,
-          diff: "Medium",
-          exp: "A sliver polygon is a small, spurious geometric gap created when digital boundaries of neighboring administrative units fail to snap properly."
-        },
-        {
-          q: "Under Probability Proportional to Size (PPS) sampling, larger clusters have:",
-          opts: ["A higher probability of selection into the sample", "A lower probability of selection", "Equal probability to smaller units", "Zero probability in stage one"],
-          correct: 0,
-          diff: "Easy",
-          exp: "PPS assigns selection probabilities proportional to a measure of size (e.g., population or household count), ensuring balanced representation."
-        }
-      ];
-
-      // Shuffle & slice to questionCount
-      const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
-      generatedQuestions = shuffled.slice(0, targetCount).map((q, idx) => ({
-        id: idx + 1,
-        question: q.q,
-        options: q.opts,
-        correctAnswer: q.correct,
-        difficulty: difficulty === 'mixed' ? q.diff : difficulty,
-        explanation: q.exp,
-      }));
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      generatedQuestions = generateQuestionBankForTopic(selectedSkill, targetCount, isHotsMode, difficulty);
     }
+
+    const validation = validateQuestionBank(generatedQuestions);
+    setValidationReport(validation);
 
     const newQuiz = {
       id: `quiz-gen-${Date.now()}`,
@@ -296,12 +263,17 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
       difficulty: difficulty === 'mixed' ? 'Mixed' : difficulty,
       questionCount: generatedQuestions.length,
       questions: generatedQuestions,
+      validationSummary: {
+        score: validation.averageScore,
+        hotsCount: validation.hotsCount,
+        status: validation.overallStatus
+      },
       generatedBy: usedGemini ? 'Google Gemini 3.6 Flash' : 'Pariksha Statistical Engine',
       createdAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
     };
 
     addGeneratedQuiz(newQuiz);
-    setGenerationSource(usedGemini ? 'Gemini 3.6 Flash' : 'Procedural AI');
+    setGenerationSource(usedGemini ? 'Google Gemini 3.6 Flash' : 'Pariksha Statistical Engine');
     setGenerating(false);
     setPreviewQuiz(newQuiz);
   };
@@ -371,273 +343,295 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
   return (
     <div className={animateIn ? 'fade-in' : ''}>
       {/* Quiz Hub Tab Navigation */}
-      <div className="card mb-6" style={{ padding: '4px', background: 'var(--bg-surface)', display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)', overflow: 'auto' }}>
+      <div className="card mb-6" style={{
+        padding: '4px', background: 'var(--bg-surface)',
+        display: 'flex', gap: 4, borderRadius: 'var(--radius-lg)',
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
+      }}>
         <Link href="/quiz" style={{
-          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Play size={15} /> {t('tab_take_quiz', 'Take a Quiz')}
+          <Play size={14} /> {t('tab_take_quiz', 'Quizzes')}
+        </Link>
+        <Link href="/adaptive-test" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <BrainCircuit size={14} color="#3b82f6" /> Adaptive Test (CAT)
+        </Link>
+        <Link href="/simulations" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Layers size={14} color="#22c55e" /> Case Simulations
+        </Link>
+        <Link href="/oral-viva" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Mic size={14} color="#a855f7" /> Oral Viva (Voice)
         </Link>
         <Link href="/quiz-generator" style={{
-          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 13, textDecoration: 'none',
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Sparkles size={15} /> {t('tab_gen_quiz', 'Generate New Quiz')}
+          <Sparkles size={14} /> {t('tab_gen_quiz', 'AI Generator')}
         </Link>
       </div>
 
-      <div className="section-header mb-6">
+      <div className="section-header mb-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
         <div>
           <h1 className="section-title">{t('gen_page_title', 'AI Assessment Generator')}</h1>
           <p className="section-subtitle">{t('gen_page_subtitle', 'Auto-generate validated competency assessments from training manuals, PDFs, or PPTs')}</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <PortalStatusBadge />
+          <button
+            onClick={() => setIgotModalQuiz(previewQuiz || (generatedQuizzes && generatedQuizzes[0]))}
+            className="btn btn-outline btn-sm"
+            style={{
+              borderColor: 'var(--primary)',
+              color: 'var(--primary)',
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'rgba(240, 90, 40, 0.08)'
+            }}
+            title="Open iGOT Karmayogi Publisher & Resiliency Bridge"
+          >
+            <Sparkles size={14} />
+            <span>{t('btn_igot_bridge', 'iGOT Publisher Bridge')}</span>
+          </button>
         </div>
       </div>
 
       <div className="grid-2 mb-8">
         {/* Left Column: Input & Controls */}
         <div className="fade-in fade-in-delay-1">
-          {/* 🌟 CORE AI MVP SPOTLIGHT BANNER */}
-          <div className="card mb-5" style={{
-            padding: '16px 18px',
-            background: 'linear-gradient(135deg, rgba(240, 90, 40, 0.12) 0%, rgba(20, 24, 33, 0.6) 100%)',
-            border: '1.5px solid var(--primary)',
-            boxShadow: '0 8px 24px var(--primary-glow)',
-            borderRadius: 'var(--radius-xl)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: 10,
-                background: 'var(--primary)', color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, boxShadow: '0 4px 12px rgba(240, 90, 40, 0.35)'
-              }}>
-                <Sparkles size={20} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                  <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-                    Core AI MVP: MoSPI Circular & PDF Assessment Engine
-                  </span>
-                  <span style={{
-                    fontSize: 10, fontWeight: 700, padding: '2px 7px',
-                    borderRadius: 4, background: 'var(--primary)', color: '#fff', textTransform: 'uppercase'
-                  }}>
-                    Flagship
-                  </span>
-                </div>
-                <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
-                  Upload any official MoSPI handbook, gazette circular, or training PPT. The AI extracts complex sampling formulas, national account identities, and generates psychometrically calibrated MCQs mapped to ISS/SSS cadres.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 📥 OFFICIAL MoSPI SAMPLE PDFs FOR TESTING */}
-          <div className="card mb-5" style={{ padding: 16, background: 'var(--bg-surface)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
-                  📄 Authentic MoSPI Test PDFs
-                </p>
-                <p style={{ fontSize: 11.5, color: 'var(--text-tertiary)', margin: '2px 0 0' }}>
-                  Download to test local file upload, or click &ldquo;⚡ 1-Click Load&rdquo; to test immediately:
-                </p>
-              </div>
-              <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 600 }}>
-                3 MoSPI Samples Ready
+          {/* Quick Load Sample Circulars Bar */}
+          <div className="card mb-4" style={{ padding: '12px 16px', background: 'var(--bg-surface)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                Sample Training Documents
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                Click to load authentic circulars
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {sampleMoSPIPdfs.map((sample) => (
-                <div key={sample.id} className="sample-pdf-download-card">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
-                    <div style={{
-                      width: 32, height: 32, borderRadius: 8,
-                      background: 'rgba(239, 68, 68, 0.12)', color: '#ef4444',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                      fontWeight: 800, fontSize: 10, border: '1px solid rgba(239, 68, 68, 0.25)'
-                    }}>
-                      PDF
-                    </div>
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <p style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {sample.title}
-                      </p>
-                      <p style={{ fontSize: 11, color: 'var(--text-tertiary)', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {sample.cadre} • {sample.highlight}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                    <a
-                      href={sample.downloadUrl}
-                      download={sample.fileName}
-                      className="btn btn-outline btn-sm"
-                      title={`Download ${sample.fileName} to your computer`}
-                      style={{ padding: '5px 9px', fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                    >
-                      <Download size={13} />
-                      <span>Download</span>
-                    </a>
-                    <button
-                      onClick={() => handleLoadSamplePdf(sample)}
-                      className="btn btn-primary btn-sm"
-                      title="Load into AI Generator with 1 click"
-                      style={{ padding: '5px 10px', fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                    >
-                      <Sparkles size={13} />
-                      <span>⚡ 1-Click Load</span>
-                    </button>
-                  </div>
-                </div>
+                <button
+                  key={sample.id}
+                  type="button"
+                  onClick={() => handleLoadSamplePdf(sample)}
+                  className="btn btn-outline btn-sm"
+                  style={{ padding: '5px 11px', fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  title={`Load ${sample.title}`}
+                >
+                  <FileText size={12} />
+                  <span>{sample.title.split(':')[0]}</span>
+                </button>
               ))}
             </div>
           </div>
 
           {/* Mode Switcher */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
             <button
               className={`btn btn-sm ${!useTextInput ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setUseTextInput(false)}
               style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              <Upload size={14} /> {t('gen_upload_file', 'Upload File (PDF/PPT) - MVP')}
+              <Upload size={14} /> Upload Document (PDF / PPT)
             </button>
             <button
               className={`btn btn-sm ${useTextInput ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setUseTextInput(true)}
               style={{ display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              <FileText size={14} /> {t('gen_paste_text', 'Paste Raw Text / Syllabus')}
+              <FileText size={14} /> Paste Text / Syllabus
             </button>
           </div>
 
           {!useTextInput ? (
-            <div>
-              {!file ? (
-                /* Primary Elevated Upload Dropzone */
-                <div
-                  className={`upload-zone-mvp ${dragOver ? 'dragover' : ''}`}
-                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <div className="upload-zone-icon-box">
-                    <Upload size={34} />
+            <div className="modern-upload-card">
+              {/* Card Header */}
+              <div className="modern-upload-header">
+                <div className="modern-upload-header-left">
+                  <div className="modern-upload-icon-btn">
+                    <Settings size={18} strokeWidth={1.8} />
                   </div>
-                  <span className="upload-badge-pill">
-                    ⭐ Core MVP Engine
-                  </span>
-                  <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 6px', color: 'var(--text-primary)' }}>
-                    Drop your MoSPI Circular or PDF here
-                  </h3>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 16px' }}>
-                    or click to browse from your device. AI extracts statistical methodology automatically.
-                  </p>
-                  
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm"
-                    style={{ padding: '8px 18px', fontSize: 13, pointerEvents: 'none' }}
-                  >
-                    <Upload size={14} /> Browse Official Document
-                  </button>
-
-                  <div className="upload-format-chips">
-                    <span className="upload-format-chip">📕 PDF (Official Circulars)</span>
-                    <span className="upload-format-chip">📊 PPT / PPTX (Training Decks)</span>
-                    <span className="upload-format-chip">📝 DOCX / TXT / JSON</span>
-                    <span className="upload-format-chip">🔒 Encrypted & Confidential</span>
+                  <div>
+                    <h3 className="modern-upload-title">Upload files</h3>
+                    <p className="modern-upload-subtitle">Select and upload the files of your choice</p>
                   </div>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx"
-                    onChange={handleFileSelect}
-                    style={{ display: 'none' }}
-                  />
                 </div>
-              ) : (
-                /* Pre-Flight Inspection Card When File Loaded */
-                <div className="upload-preflight-card">
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{
-                        width: 44, height: 44, borderRadius: 12,
-                        background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(240, 90, 40, 0.2) 100%)',
-                        color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontWeight: 900, fontSize: 12, border: '1px solid rgba(239, 68, 68, 0.35)', flexShrink: 0
-                      }}>
-                        PDF
+                <button
+                  type="button"
+                  className="modern-upload-close-btn"
+                  onClick={() => { setFile(null); setTextInput(''); }}
+                  title="Reset upload"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Dashed Dropzone */}
+              <div
+                className={`modern-dropzone ${dragOver ? 'dragover' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="modern-dropzone-icon">
+                  <CloudUpload size={36} strokeWidth={1.75} />
+                </div>
+                <div className="modern-dropzone-heading">Choose a file or drag & drop it here.</div>
+                <div className="modern-dropzone-formats">JPEG, PNG, PDF, and MP4 formats, up to 50 MB.</div>
+
+                <button
+                  type="button"
+                  className="modern-browse-btn"
+                  onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                >
+                  Browse File
+                </button>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx,.png,.jpg,.jpeg,.mp4"
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+              </div>
+
+              {/* Uploaded File Item Preview */}
+              {file && (
+                <div className="modern-file-card">
+                  <div className="modern-file-left">
+                    <div className="modern-pdf-badge">
+                      {file.name?.toLowerCase().endsWith('.png') || file.name?.toLowerCase().endsWith('.jpg') ? 'IMG' :
+                       file.name?.toLowerCase().endsWith('.mp4') ? 'MP4' :
+                       file.name?.toLowerCase().endsWith('.pptx') || file.name?.toLowerCase().endsWith('.ppt') ? 'PPT' :
+                       file.name?.toLowerCase().endsWith('.docx') ? 'DOC' : 'PDF'}
+                    </div>
+                    <div className="modern-file-info">
+                      <div className="modern-file-name" title={file.name}>
+                        {file.name}
                       </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          <h4 style={{ fontSize: 15, fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
-                            {file.name}
-                          </h4>
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '2px 7px', borderRadius: 4, background: 'rgba(34, 197, 94, 0.15)',
-                            color: '#4ade80', fontSize: 10.5, fontWeight: 700, border: '1px solid rgba(34, 197, 94, 0.3)'
-                          }}>
-                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80' }} />
-                            Ready for AI Extraction
-                          </span>
-                        </div>
-                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: '2px 0 0' }}>
-                          {(file.size / 1024).toFixed(1)} KB • Target: {tSkill(selectedSkill)} • High-Fidelity MoSPI Document
-                        </p>
+                      <div className="modern-file-meta">
+                        <span>0 KB of {file.size ? (file.size >= 1024 ? `${Math.round(file.size / 1024)} KB` : `${file.size} B`) : '120 KB'}</span>
+                        <span>•</span>
+                        <span className="modern-file-completed">
+                          <CheckCircle2 size={13} color="#10b981" /> Completed
+                        </span>
                       </div>
                     </div>
-
-                    <button
-                      className="btn btn-ghost btn-sm"
-                      onClick={() => { setFile(null); setTextInput(''); }}
-                      style={{ color: 'var(--text-tertiary)', padding: 6 }}
-                      title="Remove file"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
 
-                  {/* Extracted Text Preview */}
-                  <div style={{
-                    padding: '10px 12px', borderRadius: 8, background: 'var(--bg-card)',
-                    border: '1px solid var(--border-light)', fontSize: 12, color: 'var(--text-secondary)',
-                    lineHeight: 1.5, maxHeight: 90, overflowY: 'auto'
-                  }}>
-                    <span style={{ fontWeight: 700, color: 'var(--primary)', marginRight: 6 }}>Extracted Text Snippet:</span>
-                    {textInput.slice(0, 240)}...
-                  </div>
+                  <button
+                    type="button"
+                    className="modern-file-trash"
+                    onClick={(e) => { e.stopPropagation(); setFile(null); setTextInput(''); }}
+                    title="Remove file"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, flexWrap: 'wrap', gap: 8 }}>
+              {/* Hairline Divider with OR */}
+              <div className="modern-or-divider">
+                <div className="modern-or-line" />
+                <span className="modern-or-text">OR</span>
+                <div className="modern-or-line" />
+              </div>
+
+              {/* Import from URL Link */}
+              <div className="modern-url-section">
+                <label className="modern-url-label">Import from URL Link</label>
+                <div className="modern-url-input-box">
+                  <div className="modern-url-prefix">http://</div>
+                  <input
+                    type="text"
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleUrlImport();
+                      }
+                    }}
+                    placeholder="Paste file URL"
+                    className="modern-url-input"
+                  />
+                  <div
+                    className="modern-url-icon"
+                    onClick={handleUrlImport}
+                    title="Click or press Enter to import from URL"
+                  >
+                    <HelpCircle size={16} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Extracted Text Preview Drawer */}
+              {textInput && (
+                <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <button
-                      className="btn btn-ghost btn-sm"
-                      onClick={() => fileInputRef.current?.click()}
-                      style={{ fontSize: 12 }}
+                      type="button"
+                      onClick={() => setShowExtractedPreview(!showExtractedPreview)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--primary)',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4
+                      }}
                     >
-                      <Upload size={13} /> Change File
+                      <Eye size={12} /> {showExtractedPreview ? 'Hide Extracted Text' : 'Inspect Extracted Content'}
                     </button>
                     <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-                      🔒 Zero data leakage • Stays in MoSPI sandbox
+                      Ready for AI Question Generation
                     </span>
                   </div>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.ppt,.pptx,.txt,.json,.md,.docx"
-                    onChange={handleFileSelect}
-                    style={{ display: 'none' }}
-                  />
+                  {showExtractedPreview && (
+                    <div style={{
+                      marginTop: 8,
+                      padding: '10px 12px',
+                      borderRadius: 8,
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border)',
+                      fontSize: 12,
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.5,
+                      maxHeight: 90,
+                      overflowY: 'auto'
+                    }}>
+                      {textInput}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -663,26 +657,40 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
 
           {/* Generator Controls */}
           <div className="card mt-4" style={{ padding: 18 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 14 }}>
               <div>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_target_comp', 'Target Competency')}</label>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>
+                  {t('gen_target_comp', 'Target Competency & Topic')}
+                </label>
                 <select
                   value={selectedSkill}
                   onChange={(e) => setSelectedSkill(e.target.value)}
                   style={{ width: '100%' }}
                 >
-                  <option value="Survey Design">{tSkill('Survey Design')}</option>
-                  <option value="Data Science & Analytics">{tSkill('Data Science & Analytics')}</option>
-                  <option value="Official Statistics">{tSkill('Official Statistics')}</option>
-                  <option value="Economic Statistics">{tSkill('Economic Statistics')}</option>
-                  <option value="Agricultural Statistics">{tSkill('Agricultural Statistics')}</option>
-                  <option value="GIS & Spatial Analysis">{tSkill('GIS & Spatial Analysis')}</option>
-                  <option value="Data Quality & Auditing">{tSkill('Data Quality & Auditing')}</option>
+                  <optgroup label="Official iGOT Assessment Topics">
+                    <option value="Conduct & Ethics">Conduct & Ethics (Code, Gifts, CVC)</option>
+                    <option value="Workplace Skills">Workplace Skills (Leadership, EQ, Stress)</option>
+                    <option value="Administrative Skills">Administrative Skills (Noting & Drafting, CSMOP)</option>
+                    <option value="Digital Skills">Digital Skills (DPDP 2023, Cybersecurity, Office)</option>
+                    <option value="Governance & Policy">Governance & Policy (DDDM, Citizen-Centric)</option>
+                    <option value="Legal & Regulatory">Legal & Regulatory (CCS Rules, POSH, RPwD)</option>
+                    <option value="Sector-Specific (MoSPI)">Sector-Specific (MoSPI Official Statistics)</option>
+                  </optgroup>
+                  <optgroup label="MoSPI Statistical Specializations">
+                    <option value="Survey Design">{tSkill('Survey Design')}</option>
+                    <option value="Data Science & Analytics">{tSkill('Data Science & Analytics')}</option>
+                    <option value="Official Statistics">{tSkill('Official Statistics')}</option>
+                    <option value="Economic Statistics">{tSkill('Economic Statistics')}</option>
+                    <option value="GIS & Spatial Analysis">{tSkill('GIS & Spatial Analysis')}</option>
+                    <option value="Data Quality & Auditing">{tSkill('Data Quality & Auditing')}</option>
+                  </optgroup>
                 </select>
               </div>
 
               <div>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_difficulty_label', 'Difficulty Level')}</label>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>
+                  {t('gen_difficulty_label', 'Difficulty Level')}
+                </label>
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
@@ -694,33 +702,69 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
                   <option value="Hard">Hard (Expert/Director)</option>
                 </select>
               </div>
-            </div>
 
-            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 120px' }}>
-                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>{t('gen_num_questions', 'Question Count')}</label>
+              <div>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>
+                  {t('gen_num_questions', 'Question Bank Volume')}
+                </label>
                 <select
                   value={questionCount}
                   onChange={(e) => setQuestionCount(Number(e.target.value))}
                   style={{ width: '100%' }}
                 >
-                  <option value={3}>3 Questions</option>
-                  <option value={5}>5 Questions</option>
-                  <option value={8}>8 Questions</option>
-                  <option value={10}>10 Questions</option>
+                  <option value={5}>5 Questions (Quick Check)</option>
+                  <option value={10}>10 Questions (Standard Quiz)</option>
+                  <option value={25}>25 Questions (Comprehensive)</option>
+                  <option value={50}>50 Questions (Trainer Bank Scale)</option>
+                  <option value={100}>100 Questions (Master Course Bank)</option>
                 </select>
               </div>
+            </div>
 
+            {/* Cognitive Mode Toggle & Regulatory Audit Shortcut */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              marginBottom: 16,
+              flexWrap: 'wrap',
+              gap: 10
+            }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', margin: 0, fontSize: 13, color: 'var(--text-primary)', fontWeight: 600 }}>
+                <input
+                  type="checkbox"
+                  checked={isHotsMode}
+                  onChange={(e) => setIsHotsMode(e.target.checked)}
+                  style={{ accentColor: 'var(--primary)', width: 16, height: 16 }}
+                />
+                <span>Generate Scenario / HOTS (Higher Order Thinking Skills) Questions</span>
+              </label>
+
+              <Link
+                href="/admin/content-audit"
+                className="btn btn-ghost btn-sm"
+                style={{ fontSize: 12, color: 'var(--primary)', padding: '2px 8px' }}
+              >
+                <ShieldCheck size={13} />
+                <span>AI Regulatory Audit (DoPT / GFR)</span>
+              </Link>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
               <button
                 className="btn btn-primary btn-lg"
                 disabled={generating || (!file && !textInput.trim())}
                 onClick={generateQuiz}
-                style={{ flex: '2 1 180px', width: '100%', justifyContent: 'center' }}
+                style={{ flex: '1 1 200px', width: '100%', justifyContent: 'center' }}
               >
                 {generating ? (
                   <>
                     <span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} />
-                    Analyzing & Generating...
+                    Analyzing & Generating Bank...
                   </>
                 ) : (
                   <>
@@ -767,7 +811,21 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
                   <Link href={`/quiz/${quiz.id}`} className="btn btn-primary btn-sm">
                     <Play size={14} /> {t('btn_start_quiz', 'Start Quiz')}
                   </Link>
-                  <button className="btn btn-outline btn-sm" onClick={() => setPreviewQuiz(quiz)}>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setIgotModalQuiz(quiz)}
+                    title="Export to iGOT (Bulk CSV, Auto-Tags, Copilot)"
+                    style={{ borderColor: 'var(--primary)', color: 'var(--primary)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                  >
+                    <Sparkles size={13} /> {t('btn_igot_bridge_sm', 'iGOT Bridge')}
+                  </button>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => {
+                      setPreviewQuiz(quiz);
+                      setValidationReport(validateQuestionBank(quiz.questions || []));
+                    }}
+                  >
                     <Eye size={14} /> {t('btn_preview', 'Preview')}
                   </button>
                   <button className="btn btn-ghost btn-sm" onClick={() => handlePrintQuiz(quiz)} title="Print / Export PDF">
@@ -783,14 +841,22 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
         </div>
       </div>
 
-      {/* Preview Modal */}
+      {/* Preview Modal — Human-in-the-Loop SME Review & Approval Workbench */}
       {previewQuiz && (
         <div className="modal-overlay" onClick={() => setPreviewQuiz(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ padding: 'clamp(16px, 4vw, 28px)' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ padding: 'clamp(16px, 4vw, 28px)', maxWidth: 860 }}>
             <div className="flex-between mb-4">
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800 }}>{previewQuiz.title}</h2>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span className="tag tag-priority" style={{ fontSize: 11 }}>
+                    <ShieldCheck size={13} /> Karmayogi SME Review Workbench
+                  </span>
+                  <span className="tag tag-easy" style={{ fontSize: 11 }}>
+                    Human-in-the-Loop Workflow
+                  </span>
+                </div>
+                <h2 style={{ fontSize: 19, fontWeight: 800, margin: 0 }}>{previewQuiz.title}</h2>
+                <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
                   {tSkill(previewQuiz.skill)} • {previewQuiz.difficulty} • {previewQuiz.questionCount} Questions
                 </p>
               </div>
@@ -799,39 +865,168 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 16 }}>
-              {previewQuiz.questions.map((q, idx) => (
-                <div key={idx} style={{ background: 'var(--bg-elevated)', padding: 16, borderRadius: 'var(--radius-md)' }}>
-                  <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
-                    {idx + 1}. {q.question}
-                  </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
-                    {q.options.map((opt, optIdx) => (
-                      <div
-                        key={optIdx}
-                        style={{
-                          padding: '8px 12px',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: 13,
-                          background: optIdx === q.correctAnswer ? 'var(--success-bg)' : 'var(--bg-surface)',
-                          border: optIdx === q.correctAnswer ? '1px solid var(--success)' : '1px solid var(--border)',
-                          color: optIdx === q.correctAnswer ? 'var(--success)' : 'var(--text-secondary)',
-                          fontWeight: optIdx === q.correctAnswer ? 600 : 400,
-                        }}
-                      >
-                        {String.fromCharCode(65 + optIdx)}. {opt}
-                      </div>
-                    ))}
+            {/* Quality Summary Bar */}
+            {validationReport && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: 10,
+                padding: 12,
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                marginBottom: 16
+              }}>
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+                    Quality Index
+                  </span>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: validationReport.averageScore >= 80 ? 'var(--success)' : '#f59e0b' }}>
+                    {validationReport.averageScore}/100
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--text-tertiary)', background: 'var(--bg-card)', padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}>
-                    💡 <strong>Explanation:</strong> {q.explanation}
-                  </p>
                 </div>
-              ))}
+
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+                    Cognitive HOTS Ratio
+                  </span>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: '#a855f7' }}>
+                    {validationReport.hotsPercentage}% HOTS
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+                    Deduplication & Clarity
+                  </span>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: validationReport.criticalCount === 0 ? 'var(--success)' : '#ef4444' }}>
+                    {validationReport.passedCount} / {validationReport.totalQuestions} Passed
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+                    SME Approvals
+                  </span>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: '#3b82f6' }}>
+                    {Object.keys(smeApprovals).length} / {previewQuiz.questionCount}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Question Inspection Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '60vh', overflowY: 'auto', paddingRight: 4 }}>
+              {(validationReport?.questions || previewQuiz.questions).map((q, idx) => {
+                const report = q.validationReport;
+                const isApproved = smeApprovals[idx];
+                const cog = report?.cognitive;
+
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      background: 'var(--bg-elevated)',
+                      padding: 16,
+                      borderRadius: 'var(--radius-md)',
+                      borderLeft: isApproved ? '4px solid #22c55e' : (report?.issues?.length > 0 ? '4px solid #f59e0b' : '4px solid var(--border)')
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)' }}>
+                          Question #{idx + 1}
+                        </span>
+
+                        {cog && (
+                          <span style={{
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            padding: '2px 8px',
+                            borderRadius: 4,
+                            background: cog.badgeBg,
+                            color: cog.badgeColor,
+                          }}>
+                            {cog.level}
+                          </span>
+                        )}
+
+                        {report?.issues?.map((issue, issueIdx) => (
+                          <span
+                            key={issueIdx}
+                            style={{
+                              fontSize: 10.5,
+                              fontWeight: 700,
+                              padding: '2px 6px',
+                              borderRadius: 4,
+                              background: issue.severity === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                              color: issue.severity === 'error' ? '#ef4444' : '#f59e0b'
+                            }}
+                            title={issue.description}
+                          >
+                            {issue.label}
+                          </span>
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSmeApprovals(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                        className={`btn btn-sm ${isApproved ? 'btn-outline' : 'btn-ghost'}`}
+                        style={{ padding: '3px 8px', fontSize: 11, color: isApproved ? '#22c55e' : 'var(--text-secondary)' }}
+                      >
+                        {isApproved ? <CheckCheck size={13} color="#22c55e" /> : <Check size={13} />}
+                        <span>{isApproved ? 'SME Approved' : 'Approve for iGOT'}</span>
+                      </button>
+                    </div>
+
+                    <p style={{ fontWeight: 700, fontSize: 13.5, margin: '0 0 10px', color: 'var(--text-primary)' }}>
+                      {q.question}
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 8, marginBottom: 10 }}>
+                      {(q.options || []).map((opt, optIdx) => (
+                        <div
+                          key={optIdx}
+                          style={{
+                            padding: '7px 10px',
+                            borderRadius: 'var(--radius-sm)',
+                            fontSize: 12.5,
+                            background: optIdx === q.correctAnswer ? 'var(--success-bg)' : 'var(--bg-surface)',
+                            border: optIdx === q.correctAnswer ? '1px solid var(--success)' : '1px solid var(--border)',
+                            color: optIdx === q.correctAnswer ? 'var(--success)' : 'var(--text-secondary)',
+                            fontWeight: optIdx === q.correctAnswer ? 600 : 400,
+                          }}
+                        >
+                          {String.fromCharCode(65 + optIdx)}. {opt}
+                        </div>
+                      ))}
+                    </div>
+
+                    {q.explanation && (
+                      <p style={{ fontSize: 11.5, color: 'var(--text-tertiary)', background: 'var(--bg-card)', padding: '7px 10px', borderRadius: 'var(--radius-sm)', margin: 0 }}>
+                        <strong>Citation & Rationale:</strong> {q.explanation}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             <div className="flex-between mt-6 pt-4" style={{ borderTop: '1px solid var(--border-light)', flexWrap: 'wrap', gap: 10 }}>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setIgotModalQuiz(previewQuiz)}
+                  style={{
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6
+                  }}
+                >
+                  <Sparkles size={14} /> {t('btn_export_igot', 'Export to iGOT Karmayogi')}
+                </button>
                 <button className="btn btn-outline btn-sm" onClick={() => handlePrintQuiz(previewQuiz)}>
                   <Printer size={14} /> {t('btn_print', 'Print / Export PDF')}
                 </button>
@@ -839,12 +1034,21 @@ ${textInput || "Official Statistics, Survey Sampling, and Data Analysis guidelin
                   <Download size={14} /> {t('btn_download_json', 'Download JSON')}
                 </button>
               </div>
-              <Link href={`/quiz/${previewQuiz.id}`} className="btn btn-primary btn-sm">
+
+              <Link href={`/quiz/${previewQuiz.id}`} className="btn btn-outline btn-sm">
                 <Play size={14} /> {t('btn_take_quiz_now', 'Take This Quiz Now')}
               </Link>
             </div>
           </div>
         </div>
+      )}
+
+      {/* iGOT Karmayogi Publisher & Resiliency Bridge Modal */}
+      {igotModalQuiz && (
+        <IGotPublisherModal
+          quiz={igotModalQuiz}
+          onClose={() => setIgotModalQuiz(null)}
+        />
       )}
 
     </div>

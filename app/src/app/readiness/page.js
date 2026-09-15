@@ -60,16 +60,37 @@ export default function NextRoleReadinessPage() {
       });
     });
 
-    comps.sort((a, b) => b.deficit - a.deficit);
-    const score = Math.round((totalAchieved / totalTarget) * 100);
-
+    const score = totalTarget > 0 ? Math.round((totalAchieved / totalTarget) * 100) : 0;
     return {
       readinessScore: score,
-      skillComparisons: comps,
+      skillComparisons: comps.sort((a, b) => b.deficit - a.deficit),
       metCount: met,
       unmetCount: skills.length - met
     };
   }, [userSkills, targetRequirements]);
+
+  // What-If Simulation State for Career Progression
+  const [simulatedBoosts, setSimulatedBoosts] = useState({
+    'Survey Design': 0,
+    'Official Statistics': 0,
+    'GIS & Spatial Analysis': 0,
+    'Data Science & Analytics': 0,
+    'AI & Machine Learning': 0,
+    'Statistical Methods': 0,
+    'Data Governance': 0
+  });
+
+  const simulatedReadinessScore = useMemo(() => {
+    let totalTarget = 0;
+    let totalAchieved = 0;
+    skills.forEach(skill => {
+      const boostedCurrent = Math.min(100, (userSkills[skill] || 0) + (simulatedBoosts[skill] || 0));
+      const targetReq = targetRequirements[skill] || 60;
+      totalTarget += targetReq;
+      totalAchieved += Math.min(targetReq, boostedCurrent);
+    });
+    return totalTarget > 0 ? Math.round((totalAchieved / totalTarget) * 100) : 0;
+  }, [userSkills, simulatedBoosts, targetRequirements]);
 
   // Dual Radar data comparing Current Skills vs Target Role Requirements
   const radarData = {
@@ -397,6 +418,136 @@ export default function NextRoleReadinessPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* 🚀 FRAC Cadre Career Progression & What-If Promotion Simulator */}
+      <div className="card mb-6" style={{
+        padding: 24,
+        background: 'linear-gradient(135deg, rgba(240, 90, 40, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%)',
+        border: '1.5px solid var(--border)',
+        borderRadius: 'var(--radius-xl)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <span style={{
+                fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 4,
+                background: 'var(--primary)', color: '#fff', textTransform: 'uppercase'
+              }}>
+                Mission Karmayogi FRAC
+              </span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)' }}>
+                Departmental Promotion Committee (DPC) Simulator
+              </span>
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: 'var(--text-primary)' }}>
+              Cadre Progression & &ldquo;What-If&rdquo; Upskilling Simulator
+            </h3>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
+              Simulate skill enhancements to see immediate jumps in promotion eligibility from SSS to ISS cadres.
+            </p>
+          </div>
+
+          {/* Live Comparison Gauge */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 14,
+            padding: '10px 18px', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border)'
+          }}>
+            <div>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Baseline</span>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{readinessScore}%</div>
+            </div>
+            <ArrowRight size={16} color="var(--primary)" />
+            <div>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Simulated</span>
+              <div style={{ fontSize: 22, fontWeight: 900, color: simulatedReadinessScore >= 85 ? '#22c55e' : 'var(--primary)' }}>
+                {simulatedReadinessScore}%
+              </div>
+            </div>
+            {simulatedReadinessScore > readinessScore && (
+              <span style={{
+                fontSize: 11, fontWeight: 800, padding: '3px 8px', borderRadius: 6,
+                background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', border: '1px solid rgba(34, 197, 94, 0.3)'
+              }}>
+                +{simulatedReadinessScore - readinessScore}% Gain!
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* DPC Eligibility Status Bar */}
+        <div style={{
+          padding: '12px 16px', borderRadius: 8, marginBottom: 20,
+          background: simulatedReadinessScore >= 85 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+          border: `1px solid ${simulatedReadinessScore >= 85 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {simulatedReadinessScore >= 85 ? <CheckCircle2 size={18} color="#22c55e" /> : <AlertTriangle size={18} color="#f59e0b" />}
+            <span style={{ fontSize: 13, fontWeight: 700, color: simulatedReadinessScore >= 85 ? '#22c55e' : '#f59e0b' }}>
+              {simulatedReadinessScore >= 85
+                ? `✓ Meets 85% DPC Benchmark for Promotion to ${targetRole}!`
+                : `Requires +${85 - simulatedReadinessScore}% more competency fulfillment to reach the 85% DPC benchmark.`}
+            </span>
+          </div>
+          <button
+            onClick={() => setSimulatedBoosts({
+              'Survey Design': 0, 'Official Statistics': 0, 'GIS & Spatial Analysis': 0,
+              'Data Science & Analytics': 0, 'AI & Machine Learning': 0, 'Statistical Methods': 0, 'Data Governance': 0
+            })}
+            className="btn btn-ghost btn-sm"
+            style={{ fontSize: 11, padding: '2px 8px' }}
+          >
+            Reset Sliders
+          </button>
+        </div>
+
+        {/* What-If Sliders Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginBottom: 20 }}>
+          {skills.map(skill => {
+            const current = userSkills[skill] || 0;
+            const boost = simulatedBoosts[skill] || 0;
+            const total = Math.min(100, current + boost);
+            const req = targetRequirements[skill] || 60;
+
+            return (
+              <div key={skill} style={{
+                padding: '12px 14px', borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-card)', border: '1px solid var(--border-light)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {tSkill(skill)}
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 800, color: boost > 0 ? 'var(--primary)' : 'var(--text-tertiary)' }}>
+                    {total}% {boost > 0 && `(+${boost}%)`} / req {req}%
+                  </span>
+                </div>
+
+                <input
+                  type="range"
+                  min="0"
+                  max="40"
+                  step="5"
+                  value={boost}
+                  onChange={(e) => setSimulatedBoosts(prev => ({
+                    ...prev,
+                    [skill]: parseInt(e.target.value)
+                  }))}
+                  style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Action Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <Link href="/recommendations" className="btn btn-primary btn-sm" style={{ padding: '8px 18px', fontWeight: 700 }}>
+            <Sparkles size={14} /> Generate Targeted iGOT Upskilling Plan
+          </Link>
         </div>
       </div>
     </div>

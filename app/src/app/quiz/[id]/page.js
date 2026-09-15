@@ -18,8 +18,41 @@ export default function QuizTakePage({ params }) {
   const [secondsRemaining, setSecondsRemaining] = useState(600); // 10 minutes default
   const [timerActive, setTimerActive] = useState(true);
   const [earnedXP, setEarnedXP] = useState(0);
+  const [sessionRestored, setSessionRestored] = useState(false);
+  const [submissionToken, setSubmissionToken] = useState(null);
 
   const quiz = generatedQuizzes.find(q => q.id === quizId);
+
+  // Restore session checkpoint on initial load (Problem #2 Fix)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`pariksha_checkpoint_${quizId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.userAnswers && Object.keys(parsed.userAnswers).length > 0) {
+          setUserAnswers(parsed.userAnswers);
+          if (typeof parsed.currentQ === 'number') {
+            setCurrentQ(parsed.currentQ);
+          }
+          setSessionRestored(true);
+        }
+      }
+    } catch(e) {}
+  }, [quizId]);
+
+  // Auto-save checkpoint on answer update (Problem #2 & #3 Fix)
+  useEffect(() => {
+    if (quizCompleted) return;
+    try {
+      if (Object.keys(userAnswers).length > 0) {
+        localStorage.setItem(`pariksha_checkpoint_${quizId}`, JSON.stringify({
+          currentQ,
+          userAnswers,
+          timestamp: Date.now()
+        }));
+      }
+    } catch(e) {}
+  }, [userAnswers, currentQ, quizId, quizCompleted]);
 
   // Timer countdown
   useEffect(() => {
@@ -148,6 +181,28 @@ export default function QuizTakePage({ params }) {
       answers: answersList,
       completedAt: new Date().toISOString(),
     });
+
+    // Generate persistent certificate and clear checkpoint (Problem #2, #3, #4)
+    const certToken = `IN-IGOT-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    setSubmissionToken(certToken);
+
+    try {
+      localStorage.removeItem(`pariksha_checkpoint_${quizId}`);
+      const certRecord = {
+        id: certToken,
+        quizId: quiz.id,
+        title: quiz.title,
+        skill: quiz.skill,
+        recipient: currentUser?.name || 'Statistical Officer',
+        role: currentUser?.role || 'Junior Statistical Officer',
+        cadre: currentUser?.cadre || 'SSS',
+        scorePercent,
+        completedAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+        verificationCode: `DoPT-OM-29082025-${certToken}`
+      };
+      const existing = JSON.parse(localStorage.getItem('pariksha_certificate_vault') || '[]');
+      localStorage.setItem('pariksha_certificate_vault', JSON.stringify([certRecord, ...existing.filter(c => c.quizId !== quiz.id)]));
+    } catch(e) {}
 
     setQuizCompleted(true);
   };
@@ -314,7 +369,7 @@ export default function QuizTakePage({ params }) {
                         </div>
                       )}
                       <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 6, lineHeight: 1.5, background: 'var(--bg-elevated)', padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}>
-                        💡 <strong>{t('official_note', 'Official Note')}:</strong> {q.explanation}
+                        <strong>{t('official_note', 'Official Note')}:</strong> {q.explanation}
                       </p>
                     </div>
                   </div>
@@ -344,6 +399,36 @@ export default function QuizTakePage({ params }) {
           {tSkill(quiz.skill)}
         </span>
       </div>
+
+      {/* Session Checkpoint Restored Banner (Problem #2 Fix) */}
+      {sessionRestored && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 14px',
+          borderRadius: 'var(--radius-md)',
+          background: 'rgba(34, 197, 94, 0.1)',
+          border: '1px solid rgba(34, 197, 94, 0.3)',
+          marginBottom: 14,
+          fontSize: 12.5,
+          color: 'var(--text-primary)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <CheckCircle2 size={16} color="#22c55e" />
+            <span>
+              <strong>Session Restored from Checkpoint:</strong> Resumed at Question {currentQ + 1} with {answeredCount} saved answers. Zero draft loss active.
+            </span>
+          </div>
+          <button
+            onClick={() => setSessionRestored(false)}
+            className="btn btn-ghost btn-sm"
+            style={{ padding: '2px 6px', fontSize: 11 }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Top Bar: Progress, Timer, and Metadata */}
       <div className="card mb-6" style={{ padding: '16px 20px', background: 'var(--bg-surface)' }}>

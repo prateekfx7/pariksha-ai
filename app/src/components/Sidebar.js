@@ -3,16 +3,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, BookOpen, BrainCircuit,
-  BarChart3, MessageSquare, X, Zap, Settings as SettingsIcon
+  BarChart3, MessageSquare, X, Zap, Settings as SettingsIcon, Users
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { mobileSidebarOpen, toggleMobileSidebar, t } = useApp();
+  const { mobileSidebarOpen, toggleMobileSidebar, t, portalRole } = useApp();
 
   const mainNavItems = [
     { href: '/dashboard', label: t('nav_dashboard', 'Dashboard'), icon: LayoutDashboard },
+    ...(portalRole === 'trainer' ? [
+      { href: '/trainer-dashboard', label: 'Trainer & SME', icon: Users, isTrainer: true }
+    ] : []),
     { href: '/recommendations', label: t('nav_learn', 'Learn'), icon: BookOpen },
     { href: '/quiz', label: t('nav_quizzes', 'Quizzes'), icon: BrainCircuit },
     { href: '/admin', label: t('nav_analytics', 'Analytics'), icon: BarChart3 },
@@ -26,6 +29,7 @@ export default function Sidebar() {
   // Determine if a nav item is active, including sub-routes
   const isNavActive = (href) => {
     if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/trainer-dashboard') return pathname === '/trainer-dashboard';
     if (href === '/recommendations') {
       return pathname === '/recommendations' ||
         pathname === '/micro-learning' ||
@@ -35,7 +39,10 @@ export default function Sidebar() {
     if (href === '/quiz') {
       return pathname === '/quiz' ||
         pathname.startsWith('/quiz/') ||
-        pathname === '/quiz-generator';
+        pathname === '/quiz-generator' ||
+        pathname === '/adaptive-test' ||
+        pathname === '/simulations' ||
+        pathname === '/oral-viva';
     }
     return pathname === href || pathname.startsWith(href + '/');
   };
@@ -105,7 +112,20 @@ export default function Sidebar() {
           return (
             <Link key={item.href} href={item.href} className={`nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
               <Icon />
-              {item.label}
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {item.isTrainer && (
+                <span style={{
+                  fontSize: 9,
+                  fontWeight: 800,
+                  padding: '1px 5px',
+                  borderRadius: 4,
+                  background: 'rgba(139, 92, 246, 0.18)',
+                  color: '#8b5cf6',
+                  letterSpacing: '0.04em'
+                }}>
+                  CBC
+                </span>
+              )}
             </Link>
           );
         })}

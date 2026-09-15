@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   Search, ChevronDown, Check, Sun, Moon, Bell, RefreshCw, Users, LogOut,
   Zap, Flame, X, Globe, Sparkles, BookOpen, FileText, CheckCircle2,
-  Award, Terminal, Layers, ArrowRight, CornerDownLeft
+  Award, Terminal, Layers, ArrowRight, CornerDownLeft, GraduationCap
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import {
@@ -12,6 +12,7 @@ import {
 } from '@/data/mockData';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import PortalStatusBadge from '@/components/igot/PortalStatusBadge';
 
 function HighlightMatch({ text, query }) {
   if (!query || !query.trim() || typeof text !== 'string') return <span>{text}</span>;
@@ -52,7 +53,8 @@ export default function Header() {
     theme, toggleTheme, logout,
     officers, currentUserIndex, switchOfficer,
     resetToZero,
-    language, setLanguage, availableLanguages, t
+    language, setLanguage, availableLanguages, t,
+    portalRole, setPortalRole, setShowRoleModal
   } = useApp();
 
   const [showSearch, setShowSearch] = useState(false);
@@ -408,15 +410,67 @@ export default function Header() {
             <Search size={15} />
           </button>
 
+          {/* ⚡ iGOT Karmayogi Live Latency & Status Pill */}
+          <div className="header-desktop-only hide-mobile" style={{ display: 'flex', alignItems: 'center' }}>
+            <PortalStatusBadge compact={true} />
+          </div>
+
+          {/* 🏛️ Civil Services Role Mode Switcher (Learner vs Trainer) */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+            <button
+              onClick={() => {
+                const nextRole = portalRole === 'trainer' ? 'learner' : 'trainer';
+                setPortalRole(nextRole);
+                if (nextRole === 'trainer') {
+                  router.push('/trainer-dashboard');
+                } else {
+                  router.push('/dashboard');
+                }
+              }}
+              title={`Currently in ${portalRole === 'trainer' ? 'Trainer & SME View' : 'Civil Services Learner View'}. Click to switch.`}
+              aria-label="Toggle Portal Role"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '4px 10px',
+                fontSize: 11.5,
+                fontWeight: 700,
+                borderRadius: 'var(--radius-full)',
+                border: portalRole === 'trainer' ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)',
+                background: portalRole === 'trainer' ? 'rgba(139, 92, 246, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                color: portalRole === 'trainer' ? '#8b5cf6' : '#10b981',
+                cursor: 'pointer',
+                height: 32,
+                whiteSpace: 'nowrap',
+                width: 'auto',
+                flexShrink: 0,
+                boxSizing: 'border-box'
+              }}
+            >
+              {portalRole === 'trainer' ? <Users size={13} /> : <GraduationCap size={13} />}
+              <span className="hide-mobile" style={{ fontSize: 11 }}>{portalRole === 'trainer' ? 'Trainer View' : 'Learner View'}</span>
+              <span style={{
+                fontSize: 9,
+                padding: '1px 5px',
+                borderRadius: 4,
+                background: portalRole === 'trainer' ? 'rgba(139, 92, 246, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em'
+              }}>
+                Switch
+              </span>
+            </button>
+          </div>
+
           {/* 🌐 Indian Languages Selector (Visible on ALL devices) */}
-          <div ref={langMenuRef} style={{ position: 'relative' }}>
+          <div ref={langMenuRef} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
             <button
               onClick={() => setShowLangMenu(prev => !prev)}
-              className="header-icon-btn"
               title={t('language_select', 'Language')}
               aria-label="Select Language"
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5,
                 padding: '4px 8px',
@@ -427,7 +481,10 @@ export default function Header() {
                 background: 'var(--bg-surface)',
                 cursor: 'pointer',
                 height: 32,
-                color: 'var(--text-primary)'
+                width: 'auto',
+                flexShrink: 0,
+                color: 'var(--text-primary)',
+                boxSizing: 'border-box'
               }}
             >
               <Globe size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />

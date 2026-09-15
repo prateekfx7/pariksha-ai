@@ -432,7 +432,10 @@ export const translations = {
     btn_preview: "Preview",
     btn_print: "Print",
     btn_download_json: "Download JSON",
-    btn_take_quiz_now: "Take This Quiz Now"
+    btn_take_quiz_now: "Take This Quiz Now",
+    btn_igot_bridge: "iGOT Publisher Bridge",
+    btn_igot_bridge_sm: "iGOT Bridge",
+    btn_export_igot: "Export to iGOT Karmayogi"
   },
 
   hi: {
@@ -737,7 +740,10 @@ export const translations = {
     btn_preview: "पूर्वावलोकन",
     btn_print: "प्रिंट करें",
     btn_download_json: "JSON डाउनलोड करें",
-    btn_take_quiz_now: "अब यह प्रश्नोत्तरी लें"
+    btn_take_quiz_now: "अब यह प्रश्नोत्तरी लें",
+    btn_igot_bridge: "iGOT प्रकाशक ब्रिज",
+    btn_igot_bridge_sm: "iGOT ब्रिज",
+    btn_export_igot: "iGOT कर्मयोगी में निर्यात करें"
   },
 
   bn: {

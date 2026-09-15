@@ -87,6 +87,28 @@ export function AppProvider({ children }) {
   const tSkill = useCallback((skillName) => {
     return translateSkill(skillName, language);
   }, [language]);
+
+  const [portalRole, setPortalRoleState] = useState('learner'); // 'learner' | 'trainer'
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedRole = localStorage.getItem('pariksha_portal_role');
+      if (savedRole) {
+        setPortalRoleState(savedRole);
+      } else {
+        setShowRoleModal(true);
+      }
+    } catch(e) {}
+  }, []);
+
+  const setPortalRole = useCallback((role) => {
+    setPortalRoleState(role);
+    try {
+      localStorage.setItem('pariksha_portal_role', role);
+    } catch(e) {}
+  }, []);
+
   const [defaultDifficulty, setDefaultDifficulty] = useState('Mixed');
   const [notifPrefs, setNotifPrefs] = useState({
     'Course recommendations': true,
@@ -311,7 +333,15 @@ export function AppProvider({ children }) {
   // Auth login handler
   const login = useCallback((userData) => {
     setIsLoggedIn(true);
-    const newName = userData?.name || "Officer";
+    if (userData?.portalRole) {
+      setPortalRoleState(userData.portalRole);
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('pariksha_portal_role', userData.portalRole);
+        } catch (e) {}
+      }
+    }
+    const newName = userData?.name || (userData?.portalRole === 'trainer' ? "SME Trainer & Evaluator" : "Statistical Officer");
     const initials = newName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || "SO";
     const newOfficer = {
       id: userData?.id || Date.now(),
@@ -785,6 +815,10 @@ export function AppProvider({ children }) {
       targetRole,
       setTargetRole,
       cadreHierarchy,
+      portalRole,
+      setPortalRole,
+      showRoleModal,
+      setShowRoleModal,
     }}>
       {children}
     </AppContext.Provider>

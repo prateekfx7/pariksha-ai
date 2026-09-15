@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Users, TrendingUp, Clock, Award, BarChart2, AlertTriangle, Download, Printer, Filter, X, ChevronRight, Check } from 'lucide-react';
+import { Users, TrendingUp, Clock, Award, BarChart2, AlertTriangle, Download, Printer, Filter, X, ChevronRight, Check, ShieldCheck } from 'lucide-react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { officers, departments, skills, heatmapData, departmentCadreStats } from '@/data/mockData';
 import { useApp } from '@/context/AppContext';
+import Link from 'next/link';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -137,6 +138,9 @@ export default function AdminAnalyticsPage() {
           <p className="section-subtitle">{t('analytics_subtitle', "Macro-level competency gap diagnosis across India's Official Statistical System")}</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <Link href="/admin/content-audit" className="btn btn-outline btn-sm">
+            <ShieldCheck size={15} /> AI Regulatory & Content Audit
+          </Link>
           <button className="btn btn-outline btn-sm" onClick={handleExportCSV}>
             <Download size={15} /> {t('export_csv', 'Export CSV Matrix')}
           </button>

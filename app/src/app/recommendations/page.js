@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Clock, BookOpen, BarChart2, Filter, TrendingUp, Award, ArrowUpRight, CheckCircle2, Search, X, Play, Check, Zap, Terminal } from 'lucide-react';
+import { Clock, BookOpen, BarChart2, Filter, TrendingUp, Award, ArrowUpRight, CheckCircle2, Search, X, Play, Check, Zap, Terminal, ShieldCheck, ChevronRight, Compass } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { skills } from '@/data/mockData';
 import Link from 'next/link';
@@ -13,6 +13,11 @@ export default function RecommendationsPage() {
   const [animateIn, setAnimateIn] = useState(false);
   const [enrollToast, setEnrollToast] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+  const [selectedRole, setSelectedRole] = useState('Junior Statistical Officer (JSO)');
+  const [timeBudget, setTimeBudget] = useState('30'); // 10, 30, 120 mins
+  const [activeWeek, setActiveWeek] = useState(1);
+  const [showWeakTopicModal, setShowWeakTopicModal] = useState(false);
 
   useEffect(() => {
     setAnimateIn(true);
@@ -136,6 +141,188 @@ export default function RecommendationsPage() {
           </div>
         ))}
       </div>
+
+      {/* Competency Gap Learning Path Engine (Problems #7, #8, #13, Opportunity #3) */}
+      <div className="card mb-6" style={{
+        padding: 22,
+        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(20, 24, 33, 0.3) 100%)',
+        border: '1px solid rgba(59, 130, 246, 0.25)',
+        borderRadius: 'var(--radius-lg)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <span className="tag tag-priority" style={{ fontSize: 11 }}>
+                <Compass size={12} /> AI Learning Path Engine
+              </span>
+              <span className="tag tag-easy" style={{ fontSize: 11 }}>
+                Problems #7, #8 & #13 Resolution
+              </span>
+            </div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 4px', color: 'var(--text-primary)' }}>
+              Competency-Driven Learning Pathway
+            </h2>
+            <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: 0, maxWidth: 680 }}>
+              Replaces manual course searching with a structured 4-week roadmap tailored to your civil service cadre, time availability, and assessed skill deficits.
+            </p>
+          </div>
+
+          {/* Role & Time Budget Selectors */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', display: 'block', marginBottom: 2 }}>
+                Cadre / Role
+              </label>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                style={{ fontSize: 12, padding: '5px 10px' }}
+              >
+                <option value="Junior Statistical Officer (JSO)">Junior Statistical Officer (JSO)</option>
+                <option value="Senior Statistical Officer (SSO)">Senior Statistical Officer (SSO)</option>
+                <option value="Assistant Director (ISS)">Assistant Director (ISS Cadre)</option>
+                <option value="Section Officer">Section Officer / Desk Officer</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', display: 'block', marginBottom: 2 }}>
+                Time Budget
+              </label>
+              <select
+                value={timeBudget}
+                onChange={(e) => setTimeBudget(e.target.value)}
+                style={{ fontSize: 12, padding: '5px 10px' }}
+              >
+                <option value="10">10 mins/day (Micro-burst)</option>
+                <option value="30">30 mins/day (Standard)</option>
+                <option value="120">2 hrs/wknd (Intensive)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* 4-Week Milestone Timeline */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12, marginBottom: 16 }}>
+          {[
+            { week: 1, title: 'Week 1: Core Circulars', desc: 'MoSPI Guidelines & Neyman sample allocation rules', hours: timeBudget === '10' ? '1.2 hrs' : '3.5 hrs' },
+            { week: 2, title: 'Week 2: Field Protocols', desc: 'CAPI validation scripts & non-response mitigation', hours: timeBudget === '10' ? '1.2 hrs' : '3.5 hrs' },
+            { week: 3, title: 'Week 3: Weak-Topic Revision', desc: 'Built-in practice mode & explanation drills (Problem #13)', hours: timeBudget === '10' ? '1.5 hrs' : '4.0 hrs', highlight: true },
+            { week: 4, title: 'Week 4: Karmayogi Exam', desc: 'Proctored CAT assessment & QR certificate sealing', hours: timeBudget === '10' ? '1.0 hr' : '2.5 hrs' }
+          ].map((m) => (
+            <div
+              key={m.week}
+              onClick={() => setActiveWeek(m.week)}
+              style={{
+                padding: 12,
+                borderRadius: 'var(--radius-md)',
+                background: activeWeek === m.week ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
+                border: activeWeek === m.week ? '1.5px solid #3b82f6' : '1px solid var(--border)',
+                cursor: 'pointer',
+                transition: 'all 150ms ease'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: activeWeek === m.week ? '#3b82f6' : 'var(--text-tertiary)' }}>
+                  {m.title}
+                </span>
+                <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: 'var(--bg-elevated)', color: 'var(--text-secondary)' }}>
+                  {m.hours}
+                </span>
+              </div>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
+                {m.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, paddingTop: 12, borderTop: '1px solid var(--border-light)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+              Target Focus: <strong>{topGaps[0]?.skill || 'Survey Design'}</strong> ({topGaps[0]?.gap || 28}pt deficit)
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => setShowWeakTopicModal(true)}
+              className="btn btn-outline btn-sm"
+              style={{ color: 'var(--primary)', borderColor: 'var(--primary)', fontWeight: 700 }}
+            >
+              <BookOpen size={13} /> Built-in Practice Mode (Problem #13)
+            </button>
+            <Link href="/adaptive-test" className="btn btn-primary btn-sm">
+              <Play size={13} /> Launch Adaptive Benchmark
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Weak-Topic Revision Modal Dialog (Problem #13) */}
+      {showWeakTopicModal && (
+        <div className="modal-overlay" onClick={() => setShowWeakTopicModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ padding: 'clamp(18px, 4vw, 28px)', maxWidth: 680 }}>
+            <div className="flex-between mb-4">
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span className="tag tag-easy" style={{ fontSize: 11 }}>
+                    <ShieldCheck size={12} /> Built-in Practice Mode
+                  </span>
+                  <span className="tag" style={{ fontSize: 11, background: 'var(--bg-elevated)' }}>
+                    Problem #13 Solution
+                  </span>
+                </div>
+                <h2 style={{ fontSize: 19, fontWeight: 800, margin: 0 }}>
+                  Weak-Topic Revision & Practice Sandbox
+                </h2>
+                <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
+                  Integrated official explanations and mock drills to prevent relying on external web answers.
+                </p>
+              </div>
+              <button onClick={() => setShowWeakTopicModal(false)} style={{ color: 'var(--text-tertiary)', padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ padding: 14, borderRadius: 8, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>
+                  Concept Note #1: Neyman Optimum Sample Allocation
+                </span>
+                <p style={{ fontSize: 13, color: 'var(--text-primary)', margin: '6px 0 8px', fontWeight: 600 }}>
+                  Why do high-variance survey strata receive disproportionately larger sample allocations?
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  Under fixed overall survey budget constraints, Neyman allocation minimizes the overall variance of the estimator by drawing larger samples from strata with greater within-stratum standard deviation (S_h).
+                </p>
+              </div>
+
+              <div style={{ padding: 14, borderRadius: 8, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>
+                  Concept Note #2: Double Deflation in National Accounts
+                </span>
+                <p style={{ fontSize: 13, color: 'var(--text-primary)', margin: '6px 0 8px', fontWeight: 600 }}>
+                  How does double deflation isolate true economic output from intermediate inflation shocks?
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  Gross Output is deflated with output price indices (WPI/CPI) and intermediate input costs are deflated independently with input price indices, preventing systematic over/under-estimation of GVA during price volatility.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-between mt-6 pt-4" style={{ borderTop: '1px solid var(--border-light)' }}>
+              <button onClick={() => setShowWeakTopicModal(false)} className="btn btn-ghost btn-sm">
+                Close Practice Mode
+              </button>
+              <Link href="/quiz" className="btn btn-primary btn-sm">
+                <Play size={13} /> Take Mock Revision Quiz
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search & Filter Controls */}
       <div className="card mb-6" style={{ padding: 18 }}>

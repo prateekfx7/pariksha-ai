@@ -10,6 +10,7 @@ import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler,
 import { Radar } from 'react-chartjs-2';
 import { useApp } from '@/context/AppContext';
 import { skills } from '@/data/mockData';
+import RoleProfilerWidget from '@/components/RoleProfilerWidget';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
@@ -296,6 +297,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* 🏛️ AI Role Profiler & 5,500+ iGOT Course Library Navigator */}
+      <RoleProfilerWidget initialRole="jso" />
 
       {/* 3. Competency Radar & Gap Status */}
       <div className="card mb-6" style={{ padding: 'clamp(14px, 3vw, 22px)' }}>

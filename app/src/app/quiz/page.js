@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Play, Clock, Award, BrainCircuit, Search, Filter, CheckCircle2, Zap, Sparkles, X } from 'lucide-react';
+import { Play, Clock, Award, BrainCircuit, Search, Filter, CheckCircle2, Zap, Sparkles, X, Layers, Mic } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 
@@ -50,20 +50,44 @@ export default function QuizListPage() {
         overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'
       }}>
         <Link href="/quiz" style={{
-          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 700, fontSize: 13, textDecoration: 'none',
           background: 'var(--primary)', color: '#fff', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Play size={15} /> {t('tab_take_quiz', 'Take a Quiz')}
+          <Play size={14} /> {t('tab_take_quiz', 'Quizzes')}
         </Link>
-        <Link href="/quiz-generator" style={{
-          flex: 1, padding: '11px 16px', borderRadius: 'var(--radius-md)',
-          textAlign: 'center', fontWeight: 600, fontSize: 13.5, textDecoration: 'none',
+        <Link href="/adaptive-test" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
           background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
         }}>
-          <Sparkles size={15} /> {t('tab_gen_quiz', 'Generate New Quiz')}
+          <BrainCircuit size={14} color="#3b82f6" /> Adaptive Test (CAT)
+        </Link>
+        <Link href="/simulations" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Layers size={14} color="#22c55e" /> Case Simulations
+        </Link>
+        <Link href="/oral-viva" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Mic size={14} color="#a855f7" /> Oral Viva (Voice)
+        </Link>
+        <Link href="/quiz-generator" style={{
+          padding: '10px 14px', borderRadius: 'var(--radius-md)',
+          textAlign: 'center', fontWeight: 600, fontSize: 13, textDecoration: 'none',
+          background: 'transparent', color: 'var(--text-secondary)', transition: 'all 150ms ease',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap',
+        }}>
+          <Sparkles size={14} /> {t('tab_gen_quiz', 'AI Generator')}
         </Link>
       </div>
 
